@@ -23,6 +23,9 @@ sub testBinary(@) {
   print "$argc\n";
   my $values = shift;
 
+#  print ref($values);
+#  print Dumper($values);
+
   my $type = shift;
   my $options = ();
   my $msg = "";
@@ -40,11 +43,15 @@ sub testBinary(@) {
   print "cn = $cn \n";
 
   my $r = new $cn();
+
+  print "r is a " . ref($r) . "[$r]\n";
   
   my $tt  = lc($type);
   
   if ( $r->isVector()) {
+    print "r is a Vector\n";
     if ($r -> isList() && @$options['named']) {
+      print "r is a List\n";
       $r->setValues($values, Rserve::TRUE);			
     } 
     else {
@@ -55,29 +62,43 @@ sub testBinary(@) {
     $r->setValue($values);
   }
 
+
+
   my $bin = Rserve::Parser::createBinary($r);
 
   print "bin = ";
   print Dumper($bin);
-  print "\n";
+  print "end bin\n";
 
+  print "debug: \n";
   print Dumper(Rserve::Parser::parseDebug($bin, 0));
+  print "end debug\n";
 
   my $r2 = Rserve::Parser::parseREXP($bin, 0);
-    print Dumper($r2);
+  
+  print "r2 = ";
+  print Dumper($r2);
+  print "end r2\n";
 
-  my $cn2 = get_class($r2);
-  if ( strtolower($cn2) != strtolower($cn)) {
-    print 'Differentes classes';
+  my $cn2 = ref($r2);
+  if ( lc($cn2) != lc(ref($cn))) {
+    print 'Different classes';
     return Rserve::FALSE;
   } 
   else {
-    print 'Class Type ok';
+    print "Class Type ok\n";
+    print "cn = $cn\n";
+    print "cn2 = $cn2\n";
   }
 }
 
+print "Test 1: ----------------------------------------\n";
 testBinary( [1,2,3], 'Integer'  );
 
+print "Test 2: ----------------------------------------\n";
+
 testBinary([1.1,2.2,3.3], 'Double'  );
+
+print "Test 3: ----------------------------------------\n";
 
 testBinary([Rserve::TRUE, Rserve::FALSE, Rserve::TRUE, []], 'Logical');

@@ -14,22 +14,34 @@
 
 # class Rserve_REXP_List extends Rserve_REXP_Vector implements ArrayAccess {
 
+use strict;
+use Rserve;
+use Rserve qw( :xt_types );
 use Rserve::REXP::Vector;
+
 package Rserve::REXP::List;
-@ISA = (Rserve::REXP::Vector);
+our @ISA = qw( Rserve::REXP::Vector );
 
-$names = (); # protected
-$is_named = FALSE; # protected
+my $names = (); # protected
+my $is_named = Rserve::FALSE; # protected
 
-sub setValues($values, $getNames = FALSE) {
-  $names = undef;
+#sub setValues($values, $getNames = FALSE) {
+sub setValues(@) {
+  my $self = shift;
+  my $values = shift;
+  my $getNames = shift;
+  if (!defined($getNames)) {
+    $getNames = Rserve::FALSE;
+  }
+  
+  my $names = undef;
   if ($getNames) {
     $names = array_keys($values);
   }
   $values = array_values($values);
   parent::setValues($values);
   if ($names) {
-    $this->setNames($names);
+    $self->setNames($names);
   }
 }
 
@@ -38,38 +50,44 @@ sub setValues($values, $getNames = FALSE) {
 #  * @param unknown_type $names
 
 sub setNames($names) {
-  if (count($this->values) != count($names)) {
+  my $self = shift;
+  if (count($self->values) != count($names)) {
     #throw new LengthException('Invalid names length');
-    die("Invalid names length: " . count($this->values)  . " != " . count($names));
+    die("Invalid names length: " . count($self->values)  . " != " . count($names));
   }
-  $this::names = $names;
-  $this::is_named = Rserve::REXP::TRUE;
+  $self::names = $names;
+  $self::is_named = Rserve::TRUE;
 }
   
 
 # * return array list of names
 sub getNames() {
-  return ($this->is_named) ? $this->names : array();
+  my $self = shift;
+  return ($self->is_named) ? $self->names : array();
 }
 
 
 # * return TRUE if the list is named
 
 sub isNamed() {
-  return $this->is_named;
+  my $self = shift;
+  return $self->is_named;
 }
 
 
 # * Get the value for a given name entry, if list is not named, get the indexed element
 # * @param string $name
 
-sub at($name) {
-  if ($this->is_named) {
-    $i = array_search($name, $this->names);
+sub at($) {
+  my $self = shift;
+  my $name = shift;
+
+  if ($self->is_named) {
+    my $i = array_search($name, $self->names);
     if ($i < 0) {
       return undef;
     }
-    return $this::values[$i];
+    return $self::values[$i];
   }
 }
 	
@@ -79,61 +97,73 @@ sub at($name) {
 # * @return mixed Rserve_REXP or native value
 
 sub atIndex($) {
-  $i = shift;
+  my $self = shift;
+  my $i = shift;
   $i = 0 + $i;
-  $n = count($this::values);
+  my $n = count($self::values);
   if ( ($i < 0) || ($i >= $n) ) {
     #throw new OutOfBoundsException('Invalid index');
     die ("Index out of bounds: i = $i\n");
   }
-  return $this::values[$i];
+  return $self::values[$i];
 }
 
-sub isList() { return TRUE; }
+sub isList() { return Rserve::TRUE; }
 
 
-sub offsetExists($offset) {
-  if ($this->is_named) {
-    return array_search($offset, $this->names) >= 0;
+sub offsetExists($) {
+  my $self = shift;
+  my $offset = shift;
+  if ($self->is_named) {
+    return array_search($offset, $self->names) >= 0;
   } 
   else {
-    return isset($this::names[$offset]);
+    return isset($self::names[$offset]);
   }
 }
 
-sub offsetGet($offset) {
-  return $this->at($offset);
+sub offsetGet($) {
+  my $self = shift;
+  my $offset = shift;
+  return $self->at($offset);
 }
 
-sub offsetSet($offset, $value) {
+sub offsetSet($$) {
+  my $self = shift;
+  my $offset = shift;
+  my $value = shift;
   # throw new Exception('assign not implemented');
   die ("Assign not implemented.\n");
 }
 
-sub offsetUnset($offset) {
+sub offsetUnset($) {
+  my $self = shift;
+  my $offset = shift;
   #throw new Exception('unset not implemented');
   die ("Unset not implemented.\n");
 }
 
 sub getType() {
-  if ( $this->isNamed() ) {
-    return Rserve::Parser::XT_LIST_TAG;
+  my $self = shift;
+  if ( $self->isNamed() ) {
+    return Rserve::XT_LIST_TAG;
   } 
   else {
-    return Rserve::Parser::XT_LIST_NOTAG;
+    return Rserve::XT_LIST_NOTAG;
   }
 }
 
 sub toHTML() {
-  $is_named = $this->is_named;
-  $s = '<div class="rexp xt_'.$this->getType().'">';
-  $n = $this->length();
+  my $self = shift;
+  $is_named = $self->is_named;
+  my $s = '<div class="rexp xt_'.$self->getType().'">';
+  my $n = $self->length();
   $s .= '<ul class="list"><span class="typename">List of '.$n.'</span>';
-  for ($i = 0; $i < $n; ++$i) {
+  for (my $i = 0; $i < $n; ++$i) {
     $s .= '<li>';
-    $idx = ($is_named) ? $this::names[$i] : $i;
+    my $idx = ($is_named) ? $self::names[$i] : $i;
     $s .= '<div class="name">'.$idx.'</div>:<div class="value">';
-    $v = $this::values[$i];
+    my $v = $self::values[$i];
     if (is_object($v) and ($v->isa('Rserve::REXP'))) {
       $s .= $v->toHTML();
     } 
@@ -144,7 +174,7 @@ sub toHTML() {
     $s .= '</li>';
   }
   $s .='</ul>';
-  $s .= $this->attrToHTML();
+  $s .= $self->attrToHTML();
   $s .= '</div>';
   return $s;
 }
