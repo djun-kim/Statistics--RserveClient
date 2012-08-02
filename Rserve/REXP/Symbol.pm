@@ -13,6 +13,9 @@
 # R symbol element
 # class Rserve_REXP_Symbol extends Rserve_REXP {
 
+use Rserve;
+use Rserve qw (:xt_types );
+
 use  Rserve::REXP;
 use  Rserve::Parser;
 
@@ -32,7 +35,7 @@ sub getValue() {
 sub isSymbol() { return Rserve::REXP::TRUE; }
 
 sub getType() {
-  return Rserve::Parser::XT_SYM;
+  return Rserve::XT_SYM;
 }
 
 sub toHTML() {
