@@ -13,8 +13,10 @@
 #  R Raw data
 # class Rserve_REXP_Raw extends Rserve_REXP {
 
+use Rserve;
+use Rserve qw (:xt_types );
+
 use Rserve::REXP;
-use Rserve::Parser;
 
 package Rserve::REXP::Raw;
 @ISA = (Rserve::REXP);
@@ -38,7 +40,7 @@ sub getValue($value) {
 sub  isRaw() { return Rserve::REXP::TRUE; }
 
 sub getType() {
-  return Rserve::Parser::XT_RAW;
+  return Rserve::XT_RAW;
 }
 
 sub toHTML() {

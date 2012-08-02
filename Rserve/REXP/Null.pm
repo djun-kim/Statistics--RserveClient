@@ -12,8 +12,10 @@
 
 # R Null value
 
+use Rserve;
+use Rserve qw (:xt_types );
+
 use Rserve::REXP;
-use Rserve::Parser;
 
 # class Rserve_REXP_Null extends Rserve_REXP {
 package Rserve::REXP::Null;
@@ -23,7 +25,7 @@ sub isList() { return Rserve::REXP::TRUE; }
 sub isNull() { return Rserve::REXP::TRUE; }
 
 sub getType() {
-  return Rserve::Parser::XT_NULL;
+  return Rserve::XT_NULL;
 }
 
 1;

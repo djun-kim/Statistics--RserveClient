@@ -14,6 +14,9 @@
 
 #class Rserve_REXP_Language extends Rserve_REXP_List {
 
+use Rserve;
+use Rserve qw (:xt_types );
+
 use Rserve::REXP::List;
 
 package Rserve::REXP::Language;
@@ -22,7 +25,7 @@ package Rserve::REXP::Language;
 sub isLanguage() { return Rserve::REXP::TRUE; }
 	
 sub getType() {
-  return Rserve::Parser::XT_LANG;
+  return Rserve::XT_LANG;
 }
 	
 1;

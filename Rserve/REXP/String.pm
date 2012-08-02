@@ -13,8 +13,10 @@
 # R character vector
 # class Rserve_REXP_String extends Rserve_REXP_Vector {
 
+use Rserve;
+use Rserve qw (:xt_types );
+
 use  Rserve::REXP::Vector;
-use  Rserve::Parser;
 
 package Rserve::REXP::String;
 @ISA = (Rserve::REXP::Vector);
@@ -22,7 +24,7 @@ package Rserve::REXP::String;
 sub isString() { return true; }
 	
 sub getType() {
-  return Rserve::Parser::XT_STR;
+  return Rserve::XT_STR;
 }
 	
 1;
