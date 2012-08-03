@@ -17,6 +17,7 @@ use Rserve;
 use Rserve;
 use Rserve qw (:xt_types );
 
+use Rserve::Parser;
 
 use strict;
 

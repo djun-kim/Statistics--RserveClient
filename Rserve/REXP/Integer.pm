@@ -13,6 +13,9 @@
 
 #class Rserve_REXP_Integer extends Rserve_REXP_Vector {
 
+use Rserve;
+use Rserve qw (:xt_types );
+
 use Rserve::REXP::Vector;
 
 package Rserve::REXP::Integer;
@@ -22,7 +25,7 @@ sub isInteger() { return Rserve::REXP::TRUE; }
 sub isNumeric() { return Rserve::REXP::TRUE; }
 
 sub getType() {
-  return Rserve::Parser::XT_ARRAY_INT;
+  return Rserve::XT_ARRAY_INT;
 }
 	
 1;

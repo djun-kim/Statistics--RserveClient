@@ -13,6 +13,9 @@
 
 # class Rserve_REXP_Logical extends Rserve_REXP_Vector {
 
+use Rserve;
+use Rserve qw (:xt_types );
+
 use  Rserve::REXP::Vector;
 
 package Rserve::REXP::Logical;
@@ -24,7 +27,7 @@ sub isNumeric() { return Rserve::REXP::TRUE; }
 sub isLogical() { return Rserve::REXP::TRUE; }
 	
 sub getType() {
-  return Rserve::Parser::XT_ARRAY_BOOL;
+  return Rserve::XT_ARRAY_BOOL;
 }
 	
 1;
