@@ -43,7 +43,7 @@ sub isVector() {
 # Returns the length of the instance vector
 sub length() {
   my $self = shift;
-  return(@{$self->{_values}});
+  return defined($self->{_values}) ? (@{$self->{_values}}) : 0;
 }
 
 # Sets the value of the instance vector to the value of the given array reference
@@ -59,7 +59,7 @@ sub setValues($$) {
 # Gets the value of the instance vector
 sub getValues($) {
   my $self = shift;
-  return @{$self->{_values}};
+  return defined($self->{_values}) ? @{$self->{_values}} : ();
 }
 
 # * Get value 
