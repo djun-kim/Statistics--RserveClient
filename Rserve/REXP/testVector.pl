@@ -18,6 +18,7 @@ $vector->setValues(\@arr1);
 
 print "Length of vector is:". $vector->length() . "\n";
 @v = $vector->getValues();
+print "Value of vector is: @v\n";
 
 print Dumper($vector);
 print "\n";
