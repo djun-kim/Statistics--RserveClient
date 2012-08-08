@@ -27,6 +27,6 @@ sub isNumeric() { return Rserve::REXP::TRUE; }
 sub getType() {
   return Rserve::XT_ARRAY_INT;
 }
-	
+        
 1;
 

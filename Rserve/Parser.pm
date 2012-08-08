@@ -143,18 +143,18 @@ sub parse(@) {
       print "Vector"; print "\n";
       @a = ();
       while ($i < $eoa) {
-	#$a[] = parse($buf, &$i);
-	push (@a, parse($buf, &$i));
+        #$a[] = parse($buf, &$i);
+        push (@a, parse($buf, &$i));
       }
       # if the 'names' attribute is set, convert the plain array into a map
       if ( defined($attr['names']) ) {
-	@names = $attr['names'];
-	@na = ();
-	my $n = length($a);
-	for (my $k = 0; $k < $n; $k++) {
-	  $na[$names[$k]] = $a[$k];
-	}
-	@a = @na;
+        @names = $attr['names'];
+        @na = ();
+        my $n = length($a);
+        for (my $k = 0; $k < $n; $k++) {
+          $na[$names[$k]] = $a[$k];
+        }
+        @a = @na;
       }
       break;
     }
@@ -184,7 +184,7 @@ sub parse(@) {
       print "Rserve::XT_SYMNAME\n";
       my $oi = $i;
       while ($i < $eoa && ord($r[$i]) != 0) {
-	$i++;
+        $i++;
       }
       @a = split '', substr($buf, $oi, $i - $oi);
       break;
@@ -194,8 +194,8 @@ sub parse(@) {
       print "Rserve::XT_LANG_NOTAG or Rserve::XT_LIST_NOTAG\n";
       @a = ();
       while ($i < $eoa) {
-	# $a[] = self::parse($buf, &$i);
-	push (@a, parse($buf, &$i));
+        # $a[] = self::parse($buf, &$i);
+        push (@a, parse($buf, &$i));
       }
       break;
     }
@@ -204,9 +204,9 @@ sub parse(@) {
       print "Rserve::XT_LIST_TAG or Rserve::XT_LANG_TAG\n";
       @a = ();
       while ($i < $eoa) {
-	my $val = parse($buf, &$i);
-	my $tag = parse($buf, &$i);
-	@a[$tag] = $val;
+        my $val = parse($buf, &$i);
+        my $tag = parse($buf, &$i);
+        @a[$tag] = $val;
       }
       break;
     }
@@ -215,29 +215,29 @@ sub parse(@) {
       print "Rserve::XT_ARRAY_INT\n";
       @a = ();
       while ($i < $eoa) {
-	# $a[] = int32(@r, $i);
-	push (@a, int32(@r, $i));
-	$i += 4;
+        # $a[] = int32(@r, $i);
+        push (@a, int32(@r, $i));
+        $i += 4;
       }
       if (length(@a) == 1) {
-	@a = @a[0];
+        @a = @a[0];
       }
       # If factor, then transform to characters
       #if (self::$factor_as_string and isset($attr['class'])) {
       if (factor_as_string() and isset($attr['class'])) {
-	my $c = $attr['class'];
-	if (is_string($c) && ($c == 'factor')) {
-	  my $n = length(@a);
-	  my @levels = $attr['levels'];
-	  for (my $k = 0; $k < $n; ++$k) {
-	    $i = @a[$k];
-	    if ($i < 0) {
-	      $a[$k] = undef;
-	    } else {
-	      $a[$k] = $levels[ $i -1];       
-	    }
-	  }
-	}
+        my $c = $attr['class'];
+        if (is_string($c) && ($c == 'factor')) {
+          my $n = length(@a);
+          my @levels = $attr['levels'];
+          for (my $k = 0; $k < $n; ++$k) {
+            $i = @a[$k];
+            if ($i < 0) {
+              $a[$k] = undef;
+            } else {
+              $a[$k] = $levels[ $i -1];       
+            }
+          }
+        }
       }
       break;
     }
@@ -246,12 +246,12 @@ sub parse(@) {
       print "Rserve::XT_ARRAY_DOUBLE\n";
       @a = ();
       while ($i < $eoa) {
-	#$a[] = flt64(@r, $i);
-	push(@a, flt64(@r, $i));
-	$i += 8;
+        #$a[] = flt64(@r, $i);
+        push(@a, flt64(@r, $i));
+        $i += 8;
       }
       if (length(@a) == 1) {
-	@a = $a[0];
+        @a = $a[0];
       }
       break;
     }
@@ -265,15 +265,15 @@ sub parse(@) {
       #print "eoa = $eoa\n";
 
       while ($i < $eoa) {
-	if (ord($r[$i]) == 0) {
-	  #$a[] = substr($r, $oi, $i - $oi);
-	  push(@a, splice(@r, $oi, $i - $oi));
-	  $oi = $i + 1;
-	}
-	$i++;
+        if (ord($r[$i]) == 0) {
+          #$a[] = substr($r, $oi, $i - $oi);
+          push(@a, splice(@r, $oi, $i - $oi));
+          $oi = $i + 1;
+        }
+        $i++;
       }
       if (length(@a) == 1) {
-	@a = $a[0];
+        @a = $a[0];
       }
       break;
     }
@@ -285,11 +285,11 @@ sub parse(@) {
       my $k = 0;
       @a = ();
       while ($k < $n) {
-	my $v = int8(@r, $i++);
-	$a[$k++] = ($v == 1) ? Rserve::TRUE : (($v == 0) ? Rserve::FALSE : undef);
+        my $v = int8(@r, $i++);
+        $a[$k++] = ($v == 1) ? Rserve::TRUE : (($v == 0) ? Rserve::FALSE : undef);
       }
       if ($n == 1) {
-	@a =  $a[0];
+        @a =  $a[0];
       }
       break;
     }
@@ -403,7 +403,7 @@ sub parseDebug(@) {
       #$a[] = self::parseDebug($buf, &$i);
       push(@a, parseDebug($buf, &$i));
     }
-    $result['contents'] = $a;			
+    $result['contents'] = $a;                        
   }
   if ($ra == Rserve::XT_SYMNAME) { # symbol
     my $oi = $i;
@@ -457,9 +457,9 @@ sub parseDebug(@) {
     my $oi = $i;
     while ($i < $eoa) {
       if (ord($r[$i]) == 0) {
-	# $a[] = substr($r, $oi, $i - $oi);
-	push(@a, splice(@r, $oi, $i - $oi));
-	$oi = $i + 1;
+        # $a[] = substr($r, $oi, $i - $oi);
+        push(@a, splice(@r, $oi, $i - $oi));
+        $oi = $i + 1;
       }
       $i++;
     }
@@ -478,7 +478,7 @@ sub parseDebug(@) {
       my $v = int8(@r, $i++);
       # $a[$k] = ($v === 1) ? Rserve::TRUE : (($v === 0) ? Rserve::FALSE : undef);
       $a[$k] = (($v == 1) && is_number($v)) ? Rserve::TRUE :
-	((($v == 0) && is_number($v)) ? Rserve::FALSE : undef);
+        ((($v == 0) && is_number($v)) ? Rserve::FALSE : undef);
       ++$k;
     }
     if (length($a) == 1) {
@@ -570,8 +570,8 @@ sub parseREXP(@) {
       print "Rserve::XT_VECTOR\n";
       @v = ();
       while ($i < $eoa) {
-	# $v[] = self::parseREXP($buf, &$i);
-	push(@v, parseREXP($buf, &$i));
+        # $v[] = self::parseREXP($buf, &$i);
+        push(@v, parseREXP($buf, &$i));
       }
       $a =  new Rserve::REXP::GenericVector();
       $a->setValues(@v);
@@ -582,7 +582,7 @@ sub parseREXP(@) {
       print "Rserve::XT_SYMNAME\n";
       my $oi = $i;
       while ($i < $eoa && ord($r[$i]) != 0) {
-	$i++;
+        $i++;
       }
       my $v =  substr($buf, $oi, $i - $oi);
       my $a = new Rserve::REXP::Symbol();
@@ -593,8 +593,8 @@ sub parseREXP(@) {
       print "Rserve::XT_LIST_NOTAG or Rserve::XT_LANG_NOTAG\n";
       @v = ();
       while ($i < $eoa) {
-	#$v[] = self::parseREXP($buf, &$i);
-	push(@v, parseREXP($buf, &$i));
+        #$v[] = self::parseREXP($buf, &$i);
+        push(@v, parseREXP($buf, &$i));
       }
       my $clasz = ($ra == Rserve::XT_LIST_NOTAG) ? 'Rserve::REXP::List' : 'Rserve::REXP::Language';
       $a = new ${clasz}();
@@ -608,10 +608,10 @@ sub parseREXP(@) {
       my @v = ();
       my @names = ();
       while ($i < $eoa) {
-	#$v[] = self::parseREXP($buf, &$i);
-	push(@v, parseREXP($buf, &$i));
-	# $names[] = self::parseREXP($buf, &$i);
-	push(@names, parseREXP($buf, &$i));
+        #$v[] = self::parseREXP($buf, &$i);
+        push(@v, parseREXP($buf, &$i));
+        # $names[] = self::parseREXP($buf, &$i);
+        push(@names, parseREXP($buf, &$i));
       }
       $a = new ${clasz}();
       $a->setValues(@v);
@@ -623,9 +623,9 @@ sub parseREXP(@) {
       print "Rserve::XT_ARRAY_INT\n";
       my @v = ();
       while (my $i < $eoa) {
-	#$v[] = int32(@r, $i);
-	push(@v, int32(@r, $i));
-	$i += 4;
+        #$v[] = int32(@r, $i);
+        push(@v, int32(@r, $i));
+        $i += 4;
       }
       $a = new Rserve::REXP::Integer();
       $a->setValues(@v);
@@ -636,9 +636,9 @@ sub parseREXP(@) {
       print "Rserve::XT_ARRAY_DOUBLE\n";
       @v = ();
       while (my $i < $eoa) {
-	# $v[] = flt64($r, $i);
-	push(@v, flt64(@r, $i));
-	$i += 8;
+        # $v[] = flt64($r, $i);
+        push(@v, flt64(@r, $i));
+        $i += 8;
       }
       $a = new Rserve::REXP::Double();
       $a->setValues(@v);
@@ -650,12 +650,12 @@ sub parseREXP(@) {
       @v = ();
       my $oi = $i;
       while (my $i < $eoa) {
-	if (ord($r[$i]) == 0) {
-	  # $v[] = substr($r, $oi, $i - $oi);
-	  push(@v, substr(@r, $oi, $i - $oi));
-	  $oi = $i + 1;
-	}
-	$i++;
+        if (ord($r[$i]) == 0) {
+          # $v[] = substr($r, $oi, $i - $oi);
+          push(@v, substr(@r, $oi, $i - $oi));
+          $oi = $i + 1;
+        }
+        $i++;
       }
       $a = new Rserve::REXP::String();
       $a->setValues(@v);
@@ -669,9 +669,9 @@ sub parseREXP(@) {
       my $k = 0;
       my @vv = ();
       while ($k < $n) {
-	my $v = int8(@r, $i++);
-	$vv[$k] = ($v == 1) ? Rserve::TRUE : (($v == 0) ? Rserve::FALSE : undef);
-	$k++;
+        my $v = int8(@r, $i++);
+        $vv[$k] = ($v == 1) ? Rserve::TRUE : (($v == 0) ? Rserve::FALSE : undef);
+        $k++;
       }
       $a = new Rserve::REXP::Logical();
       $a->setValues(@vv);
@@ -789,9 +789,9 @@ sub createBinary($) {
       my $n = length(@vv);
       my $v;
       for (my $i = 0; $i < $n; ++$i) {
-	$v = $vv[$i];
-	$contents .= mkint32($v);
-	$o += 4;
+        $v = $vv[$i];
+        $contents .= mkint32($v);
+        $o += 4;
       }
       break;
     }
@@ -802,24 +802,24 @@ sub createBinary($) {
       $contents .= mkint32($n);
       $o += 4;
       if ( $n ) {
-	for (my $i = 0; $i < $n; ++$i) {
-	  $v = $vv[$i];
-	  if (defined($v)) {
-	    $v = 2;
-	  } 
-	  else {
-	    $v = 0 + $v;
-	  }
-	  if ($v != 0 and $v != 1) {
-	    $v = 2;
-	  }
-	  $contents .= chr($v);
-	  ++$o;
-	}
-	while ( ($o & 3) != 0 ) {
-	  $contents .= chr(3);
-	  ++$o;
-	}
+        for (my $i = 0; $i < $n; ++$i) {
+          $v = $vv[$i];
+          if (defined($v)) {
+            $v = 2;
+          } 
+          else {
+            $v = 0 + $v;
+          }
+          if ($v != 0 and $v != 1) {
+            $v = 2;
+          }
+          $contents .= chr($v);
+          ++$o;
+        }
+        while ( ($o & 3) != 0 ) {
+          $contents .= chr(3);
+          ++$o;
+        }
       }
       break;
     }
@@ -828,9 +828,9 @@ sub createBinary($) {
       my $n = length(@vv);
       my $v;
       for (my $i = 0; $i < $n; ++$i) {
-	$v = 0.0 + $vv[$i];
-	$contents .= mkfloat64($v);
-	$o += 8;
+        $v = 0.0 + $vv[$i];
+        $contents .= mkfloat64($v);
+        $o += 8;
       }
       break;
     }
@@ -847,22 +847,22 @@ sub createBinary($) {
       my $n = length(@vv);
       my @v;
       for (my $i = 0; $i < $n; ++$i) {
-	@v = $vv[$i];
-	if (@v) {
-	  if ( ord($v[0]) == 255 ) {
-	    $contents .= chr(255);
-	    ++$o;
-	  }
-	  $contents .= join ('', @v);
-	  $o += length(@v);
-	} else {
-	  $contents .= chr(255).chr(0);
-	  $o += 2;
-	}
+        @v = $vv[$i];
+        if (@v) {
+          if ( ord($v[0]) == 255 ) {
+            $contents .= chr(255);
+            ++$o;
+          }
+          $contents .= join ('', @v);
+          $o += length(@v);
+        } else {
+          $contents .= chr(255).chr(0);
+          $o += 2;
+        }
       }
       while ( ($o & 3) != 0) {
-	$contents .= chr(1);
-	++$o;
+        $contents .= chr(1);
+        ++$o;
       }
       break;
     }
@@ -876,23 +876,23 @@ sub createBinary($) {
       my @l = $value->getValues();
       my @names = ();
       if ($type == Rserve::XT_LIST_TAG || $type == Rserve::XT_LANG_TAG) {
-	@names = $value->getNames();
+        @names = $value->getNames();
       }
       my $i = 0; 
       my $n = length(@l);
       while ($i < $n) {
-	my $x = $l[$i];
-	if (defined($x) ) {
-	  $x = new Rserve::REXP::Null();
-	}
-	my $iof = strlen($contents);
-	$contents .= createBinary($x);
-	if ($type == Rserve::XT_LIST_TAG || $type == Rserve::XT_LANG_TAG) {
-	  my $sym = new Rserve::REXP::Symbol();
-	  $sym->setValue($names[$i]);
-	  $contents .= createBinary($sym);
-	}
-	++$i;
+        my $x = $l[$i];
+        if (defined($x) ) {
+          $x = new Rserve::REXP::Null();
+        }
+        my $iof = strlen($contents);
+        $contents .= createBinary($x);
+        if ($type == Rserve::XT_LIST_TAG || $type == Rserve::XT_LANG_TAG) {
+          my $sym = new Rserve::REXP::Symbol();
+          $sym->setValue($names[$i]);
+          $contents .= createBinary($sym);
+        }
+        ++$i;
       }
       break;
     }
@@ -905,8 +905,8 @@ sub createBinary($) {
       ++$o;
       #padding if necessary
       while ( ($o & 3) != 0) {
-	$contents .= chr(0);
-	++$o;
+        $contents .= chr(0);
+        ++$o;
       }
       break;
     }

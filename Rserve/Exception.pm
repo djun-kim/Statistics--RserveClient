@@ -13,8 +13,8 @@ sub new() {
   my $class = shift;
   my $message = shift;
   my $self = {
-	      msg => $message,
-	     };
+              msg => $message,
+             };
   bless $self, $class;
   return $self;
 }

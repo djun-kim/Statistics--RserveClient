@@ -20,7 +20,7 @@ use Rserve::REXP;
 # class Rserve_REXP_Null extends Rserve_REXP {
 package Rserve::REXP::Null;
 @ISA = (Rserve::REXP);
-	
+        
 sub isList() { return Rserve::REXP::TRUE; }
 sub isNull() { return Rserve::REXP::TRUE; }
 

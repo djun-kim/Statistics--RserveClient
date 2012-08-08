@@ -22,7 +22,7 @@ package Rserve::REXP::Raw;
 @ISA = (Rserve::REXP);
 
 $value; #protected
-	
+        
 
 # * return int
 sub length() {
@@ -50,8 +50,8 @@ sub toHTML() {
   return '<div class="rexp xt_'.
     $this->getType().
       '"> <span class="typename">raw</span><div class="value">'.
-	$s.'</div>'.
-	  $this->attrToHTML().'</div>';	
+        $s.'</div>'.
+          $this->attrToHTML().'</div>';        
 }
 
 1;

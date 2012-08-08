@@ -28,12 +28,12 @@ use Exporter;
 
 #protected $attr = NULL;
 my $attr = undef;
-	
+        
 sub new() {
   my $class = shift;
   my $self = {
-	      _attr => (),
-	     };
+              _attr => (),
+             };
   bless $self, $class;
   return $self;
 }
@@ -85,7 +85,7 @@ sub toHTML() {
   my $self = shift;
   return "<div class='rexp xt_". $self->getType(). "'><span class='typename'>".
     Rserve::Parser::xtName($self->getType()).
-	"</span>".$self->attrToHTML()."</div>\n";
+        "</span>".$self->attrToHTML()."</div>\n";
 }
 
 #protected function attrToHTML() {
