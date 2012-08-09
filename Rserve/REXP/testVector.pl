@@ -1,4 +1,5 @@
 use Rserve::REXP::Vector;
+use Data::Dumper;
 
 my @arr1 = ('a', 'b', 4);
 
@@ -12,6 +13,9 @@ print "Length of vector is:". $vector->length() . "\n";
 
 @v = $vector->getValues();
 print "Value of vector is: @v\n";
+
+print Dumper($vector);
+print "\n";
 
 print "setting value...\n";
 $vector->setValues(\@arr1);
