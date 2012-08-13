@@ -224,9 +224,9 @@ sub parse(@) {
       }
       # If factor, then transform to characters
       #if (self::$factor_as_string and isset($attr['class'])) {
-      if (factor_as_string() and isset($attr['class'])) {
+      if (factor_as_string() and defined($attr['class'])) {
 	my $c = $attr['class'];
-	if (is_string($c) && ($c == 'factor')) {
+	if ($c eq 'factor') {
 	  my $n = length(@a);
 	  my @levels = $attr['levels'];
 	  for (my $k = 0; $k < $n; ++$k) {
