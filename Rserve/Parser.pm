@@ -267,7 +267,7 @@ sub parse(@) {
       while ($i < $eoa) {
 	if (ord($r[$i]) == 0) {
 	  #$a[] = substr($r, $oi, $i - $oi);
-	  push(@a, splice(@r, $oi, $i - $oi));
+	  push(@a, join('', @r[$oi..$i-1]));
 	  $oi = $i + 1;
 	}
 	$i++;
