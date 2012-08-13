@@ -136,17 +136,20 @@ sub mkfloat64($) {
 
 #sub flt64($buf, $o = 0) {
 sub flt64($$) {
-  my ($buf, $o) = shift;
+  my ($b, $o) = @_;
   $o = defined($o) ? $o : 0;
 
-  $ss = substr($buf, $o, 8);
+  my @buf = @$b;
+
+  @ss = @buf[$o..($o+8)];
   #	if (Rserve_Connection::$machine_is_bigendian) {
   if (Rserve_Connection->$machine_is_bigendian) {
     for ($k = 0; $k < 7; $k++) { 
       $ss[7 - $k] = $buf[$o + $k];
     }	
-  } 
-  $r = unpack('d', substr($buf, $o, 8)); 
+  }
+
+  $r = unpack('d', join('', @ss)); 
   return $r[1]; 
 }
 
