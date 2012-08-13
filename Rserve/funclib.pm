@@ -143,7 +143,7 @@ sub flt64($$) {
 
   @ss = @buf[$o..($o+8)];
   #	if (Rserve_Connection::$machine_is_bigendian) {
-  if (Rserve_Connection->$machine_is_bigendian) {
+  if (Rserve::Connection::machine_is_bigendian()) {
     for ($k = 0; $k < 7; $k++) { 
       $ss[7 - $k] = $buf[$o + $k];
     }	
