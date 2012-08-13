@@ -219,7 +219,7 @@ sub parse(@) {
 	push (@a, int32(\@r, $i));
 	$i += 4;
       }
-      if (length(@a) == 1) {
+      if (scalar(@a) == 1) {
 	@a = @a[0];
       }
       # If factor, then transform to characters
@@ -227,7 +227,7 @@ sub parse(@) {
       if (factor_as_string() and defined($attr['class'])) {
 	my $c = $attr['class'];
 	if ($c eq 'factor') {
-	  my $n = length(@a);
+	  my $n = scalar(@a);
 	  my @levels = $attr['levels'];
 	  for (my $k = 0; $k < $n; ++$k) {
 	    $i = @a[$k];
@@ -250,7 +250,7 @@ sub parse(@) {
 	push(@a, flt64(\@r, $i));
 	$i += 8;
       }
-      if (length(@a) == 1) {
+      if (scalar(@a) == 1) {
 	@a = $a[0];
       }
       break;
@@ -272,7 +272,7 @@ sub parse(@) {
 	}
 	$i++;
       }
-      if (length(@a) == 1) {
+      if (scalar(@a) == 1) {
 	@a = $a[0];
       }
       break;
@@ -712,7 +712,7 @@ sub parseREXP(@) {
   print Dumper(@a);
   print "done\n";
 
-  if ( length(@attr) && is_object(@a) ) {
+  if ( scalar(@attr) && is_object(@a) ) {
     @a->setAttributes(@attr);
   }
   
@@ -786,7 +786,7 @@ sub createBinary($) {
     }
     when (Rserve::XT_ARRAY_INT) {
       my @vv = $value->getValues();
-      my $n = length(@vv);
+      my $n = scalar(@vv);
       my $v;
       for (my $i = 0; $i < $n; ++$i) {
 	$v = $vv[$i];
@@ -797,7 +797,7 @@ sub createBinary($) {
     }
     when (Rserve::XT_ARRAY_BOOL) {
       my @vv = $value->getValues();
-      my $n = length(@vv);
+      my $n = scalar(@vv);
       my $v;
       $contents .= mkint32($n);
       $o += 4;
@@ -825,7 +825,7 @@ sub createBinary($) {
     }
     when (Rserve::XT_ARRAY_DOUBLE) {
       my @vv = $value->getValues();
-      my $n = length(@vv);
+      my $n = scalar(@vv);
       my $v;
       for (my $i = 0; $i < $n; ++$i) {
 	$v = 0.0 + $vv[$i];
@@ -844,7 +844,7 @@ sub createBinary($) {
     }
     when (Rserve::XT_ARRAY_STR) {
       my @vv = $value->getValues();
-      my $n = length(@vv);
+      my $n = scalar(@vv);
       my @v;
       for (my $i = 0; $i < $n; ++$i) {
 	@v = $vv[$i];
@@ -854,7 +854,7 @@ sub createBinary($) {
 	    ++$o;
 	  }
 	  $contents .= join ('', @v);
-	  $o += length(@v);
+	  $o += scalar(@v);
 	} else {
 	  $contents .= chr(255).chr(0);
 	  $o += 2;
@@ -879,7 +879,7 @@ sub createBinary($) {
 	@names = $value->getNames();
       }
       my $i = 0; 
-      my $n = length(@l);
+      my $n = scalar(@l);
       while ($i < $n) {
 	my $x = $l[$i];
 	if (defined($x) ) {
