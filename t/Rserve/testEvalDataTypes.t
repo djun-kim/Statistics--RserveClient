@@ -1,64 +1,70 @@
 use Rserve::Connection;
 
-use Test::More tests => 10;
+use Test::More tests => 12;
 
 my $cnx = new_ok('Rserve::Connection' => ['localhost']);
 
-@bool_scalar = $cnx->evalString('TRUE');
-ok(@bool_scalar, 'return simple TRUE value') or
-    diag explain @bool_scalar;
+@expected_true_scalar = (1);
+@true_scalar = $cnx->evalString('TRUE');
+is(@true_scalar, @expected_true_scalar, 'scalar TRUE value') or
+    diag explain @true_scalar;
+
+@expected_false_scalar = (0);
+@false_scalar = $cnx->evalString('FALSE');
+is(@false_scalar, @expected_false_scalar, 'scalar FALSE value') or
+    diag explain @false_scalar;
 
 @expected_bool_vector = (1, 0);
 @bool_vector = $cnx->evalString('c(TRUE, FALSE)');
-is(@bool_vector, @expected_bool_vector, 'return an boolean array') or
+is(@bool_vector, @expected_bool_vector, 'boolean array') or
     diag explain @bool_vector;
 
-$expected_char_scalar = 'z';
-$char_scalar = $cnx->evalString('letters[26]');
+@expected_char_scalar = 'z';
+@char_scalar = $cnx->evalString('letters[26]');
 is($char_scalar, $expected_char_scalar,
-   'return a scalar of single-char strings') or
+   'single-char string scalar') or
     diag explain $char_scalar;
 
 @expected_char_vector = ('a', 'b', 'c', 'd');
 @char_vector = $cnx->evalString('letters[1:4]');
 is(@char_vector, @expected_char_vector,
-   'return a vector of single-char strings') or
+   'vector of single-char strings') or
     diag explain @char_vector;
 
-$expected_string_scalar = 'Dec';
-$string_scalar = $cnx->evalString('month.abb[12]');
+@expected_string_scalar = 'Dec';
+@string_scalar = $cnx->evalString('month.abb[12]');
 is($string_scalar, $expected_string_scalar,
-   'return a string scalar') or
+   'string scalar') or
     diag explain $string_scalar;
 
 @expected_string_vector = ('Jan', 'Feb', 'Mar');
 @string_vector = $cnx->evalString('month.abb[1:3]');
 is(@string_vector, @expected_string_vector,
-   'return a vector of strings') or
+   'vector of strings') or
     diag explain @string_vector;
 
-$expected_int_scalar = 123;
-$int_scalar = $cnx->evalString('123L');
-is($int_scalar, $expected_int_scalar,
-   'return a scalar of single-int strings') or
+@expected_int_scalar = 123;
+@int_scalar = $cnx->evalString('123L');
+is(@int_scalar, @expected_int_scalar,
+   'single-int scalar') or
     diag explain $int_scalar;
 
 @expected_int_vector = (101..110);
 @int_vector = $cnx->evalString('101:110');
 is(@int_vector, @expected_int_vector,
-   'return a vector of single-int strings') or
+   'vector of ints') or
     diag explain @int_vector;
 
-$expected_double_scalar = 1.5;
-$double_scalar = $cnx->evalDouble('1.5');
-is($double_scalar, $expected_double_scalar,
-   'return a double scalar') or
+@expected_double_scalar = 1.5;
+@double_scalar = $cnx->evalString('1.5');
+is(@double_scalar, @expected_double_scalar,
+   'double scalar') or
     diag explain $double_scalar;
 
-@expected_double_vector = (.5, 1, 1.5, 2);
-@double_vector = $cnx->evalDouble('(1:4)/2');
+@expected_double_vector = (0.5, 1, 1.5, 2);
+@double_vector = $cnx->evalString('(1:4)/2');
 is(@double_vector, @expected_double_vector,
-   'return a vector of doubles') or
+   'vector of doubles') or
     diag explain @double_vector;
 
 
