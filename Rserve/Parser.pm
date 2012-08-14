@@ -126,7 +126,7 @@ sub parse(@) {
   if ($ra > Rserve::XT_HAS_ATTR) {
     # print '(ATTR*[';
     $ra &= ~Rserve::XT_HAS_ATTR;
-    $al = int24(@r, $i + 1);
+    $al = int24(\@r, $i + 1);
     @attr = parse($buf, $i);
     # print '])';
     $i += $al + 4;
@@ -161,21 +161,21 @@ sub parse(@) {
 
     when(Rserve::XT_INT) {
       print "Rserve::XT_INT\n";
-      @a = int32(@r, $i);
+      @a = int32(\@r, $i);
       $i += 4;
       break;
     }
     
     when(Rserve::XT_DOUBLE) {
       print "Rserve::XT_DOUBLE\n";
-      @a = flt64(@r, $i);
+      @a = flt64(\@r, $i);
       $i += 8;
       break;
     }
     
     when(Rserve::XT_BOOL) {
       print "Rserve::XT_BOOL\n";
-      my $v = int8(@r, $i++);
+      my $v = int8(\@r, $i++);
       @a = ($v == 1) ? Rserve::TRUE : (($v == 0) ? Rserve::FALSE : undef);
       break;
     }
@@ -216,18 +216,18 @@ sub parse(@) {
       @a = ();
       while ($i < $eoa) {
 	# $a[] = int32(@r, $i);
-	push (@a, int32(@r, $i));
+	push (@a, int32(\@r, $i));
 	$i += 4;
       }
-      if (length(@a) == 1) {
+      if (scalar(@a) == 1) {
 	@a = @a[0];
       }
       # If factor, then transform to characters
       #if (self::$factor_as_string and isset($attr['class'])) {
-      if (factor_as_string() and isset($attr['class'])) {
+      if (factor_as_string() and defined($attr['class'])) {
 	my $c = $attr['class'];
-	if (is_string($c) && ($c == 'factor')) {
-	  my $n = length(@a);
+	if ($c eq 'factor') {
+	  my $n = scalar(@a);
 	  my @levels = $attr['levels'];
 	  for (my $k = 0; $k < $n; ++$k) {
 	    $i = @a[$k];
@@ -247,10 +247,10 @@ sub parse(@) {
       @a = ();
       while ($i < $eoa) {
 	#$a[] = flt64(@r, $i);
-	push(@a, flt64(@r, $i));
+	push(@a, flt64(\@r, $i));
 	$i += 8;
       }
-      if (length(@a) == 1) {
+      if (scalar(@a) == 1) {
 	@a = $a[0];
       }
       break;
@@ -267,12 +267,12 @@ sub parse(@) {
       while ($i < $eoa) {
 	if (ord($r[$i]) == 0) {
 	  #$a[] = substr($r, $oi, $i - $oi);
-	  push(@a, splice(@r, $oi, $i - $oi));
+	  push(@a, join('', @r[$oi..$i-1]));
 	  $oi = $i + 1;
 	}
 	$i++;
       }
-      if (length(@a) == 1) {
+      if (scalar(@a) == 1) {
 	@a = $a[0];
       }
       break;
@@ -280,12 +280,12 @@ sub parse(@) {
 
     when (Rserve::XT_ARRAY_BOOL) {  # boolean vector
       print "Rserve::XT_ARRAY_BOOL\n";
-      my $n = int32(@r, $i);
+      my $n = int32(\@r, $i);
       $i += 4;
       my $k = 0;
       @a = ();
       while ($k < $n) {
-	my $v = int8(@r, $i++);
+	my $v = int8(\@r, $i++);
 	$a[$k++] = ($v == 1) ? Rserve::TRUE : (($v == 0) ? Rserve::FALSE : undef);
       }
       if ($n == 1) {
@@ -296,7 +296,7 @@ sub parse(@) {
     
     when(Rserve::XT_RAW) { # raw vector
       print "Rserve::XT_RAW\n";
-      my $len = int32(@r, $i);
+      my $len = int32(\@r, $i);
       $i += 4;
       @a =  splice(@r, $i, $len);
       break;
@@ -307,7 +307,7 @@ sub parse(@) {
     # }
 
     when (48) { # unimplemented type in Rserve
-      my $uit = int32(@r, $i);
+      my $uit = int32(\@r, $i);
       # echo "Note: result contains type #$uit unsupported by Rserve.<br/>";
       @a = undef;
       break;
@@ -365,8 +365,8 @@ sub parseDebug(@) {
   my @a = ();
   
   # some simple parsing - just skip attributes and assume short responses
-  my $ra = int8(@r, $i);
-  my $rl = int24(@r, $i + 1);
+  my $ra = int8(\@r, $i);
+  my $rl = int24(\@r, $i + 1);
 
   print "ra = $ra\n";
   print "rl = $ra\n";
@@ -389,7 +389,7 @@ sub parseDebug(@) {
   if ($ra > Rserve::XT_HAS_ATTR) {
     
     $ra &= ~Rserve::XT_HAS_ATTR;
-    my $al = int24(@r, $i + 1);
+    my $al = int24(\@r, $i + 1);
     @attr = parseDebug($buf, $i);
     $result['attr'] = @attr;
     $i += $al + 4;
@@ -433,7 +433,7 @@ sub parseDebug(@) {
     @a = ();
     while ($i < $eoa) {
       #$a[] = int32(@r, $i);
-      push(@a,int32(@r, $i));
+      push(@a,int32(\@r, $i));
       $i += 4;
     }
     if (length($a) == 1) {
@@ -444,7 +444,7 @@ sub parseDebug(@) {
   if ($ra == Rserve::XT_ARRAY_DOUBLE) { # double array
     @a = ();
     while ($i < $eoa) {
-      push(@a, flt64(@r, $i));
+      push(@a, flt64(\@r, $i));
       $i += 8;
     }
     if (length($a) == 1) {
@@ -469,13 +469,13 @@ sub parseDebug(@) {
     $result['contents'] = $a;
   }
   if ($ra == Rserve::XT_ARRAY_BOOL) {  # boolean vector
-    my $n = int32(@r, $i);
+    my $n = int32(\@r, $i);
     $result['size'] = $n;
     $i += 4;
     my $k = 0;
     @a = ();
     while ($k < $n) {
-      my $v = int8(@r, $i++);
+      my $v = int8(\@r, $i++);
       # $a[$k] = ($v === 1) ? Rserve::TRUE : (($v === 0) ? Rserve::FALSE : undef);
       $a[$k] = (($v == 1) && is_number($v)) ? Rserve::TRUE :
 	((($v == 0) && is_number($v)) ? Rserve::FALSE : undef);
@@ -487,7 +487,7 @@ sub parseDebug(@) {
     $result['contents'] = $a;
   }
   if ($ra == Rserve::XT_RAW) { # raw vector
-    my $len = int32(@r, $i);
+    my $len = int32(\@r, $i);
     $i += 4;
     $result['size'] = $len;
     my $contents = join('', substr(@r, $i, $len));
@@ -498,7 +498,7 @@ sub parseDebug(@) {
     # TODO: complex
   }
   if ($ra == 48) { # unimplemented type in Rserve
-    my $uit = int32(@r, $i);
+    my $uit = int32(\@r, $i);
     $result['unknownType'] = $uit;
   }
   return @result;
@@ -535,8 +535,8 @@ sub parseREXP(@) {
   my @v = ();
   
   # some simple parsing - just skip attributes and assume short responses
-  my $ra = int8(@r, $i);
-  my $rl = int24(@r, $i + 1);
+  my $ra = int8(\@r, $i);
+  my $rl = int24(\@r, $i + 1);
 
   print "ra = $ra\n";
   print "rl = $ra\n";
@@ -556,7 +556,7 @@ sub parseREXP(@) {
   
   if ($ra > Rserve::XT_HAS_ATTR) {
     $ra &= ~Rserve::XT_HAS_ATTR;
-    $al = int24(@r, $i + 1);
+    $al = int24(\@r, $i + 1);
     @attr = parseREXP($buf, $i);
     $i += $al + 4;
   }
@@ -624,7 +624,7 @@ sub parseREXP(@) {
       my @v = ();
       while (my $i < $eoa) {
 	#$v[] = int32(@r, $i);
-	push(@v, int32(@r, $i));
+	push(@v, int32(\@r, $i));
 	$i += 4;
       }
       $a = new Rserve::REXP::Integer();
@@ -637,7 +637,7 @@ sub parseREXP(@) {
       @v = ();
       while (my $i < $eoa) {
 	# $v[] = flt64($r, $i);
-	push(@v, flt64(@r, $i));
+	push(@v, flt64(\@r, $i));
 	$i += 8;
       }
       $a = new Rserve::REXP::Double();
@@ -664,12 +664,12 @@ sub parseREXP(@) {
     
     when (Rserve::XT_ARRAY_BOOL) {  # boolean vector
       print "Rserve::XT_ARRAY_BOOL\n";
-      my $n = int32(@r, $i);
+      my $n = int32(\@r, $i);
       $i += 4;
       my $k = 0;
       my @vv = ();
       while ($k < $n) {
-	my $v = int8(@r, $i++);
+	my $v = int8(\@r, $i++);
 	$vv[$k] = ($v == 1) ? Rserve::TRUE : (($v == 0) ? Rserve::FALSE : undef);
 	$k++;
       }
@@ -680,7 +680,7 @@ sub parseREXP(@) {
     
     when (Rserve::XT_RAW) { # raw vector
       print "Rserve::XT_RAW\n";
-      my $len = int32(@r, $i);
+      my $len = int32(\@r, $i);
       $i += 4;
       my @v = substr(@r, $i, $len);
       my $a = new Rserve::REXP::Raw();
@@ -696,7 +696,7 @@ sub parseREXP(@) {
     
     when (48) { # unimplemented type in Rserve
       print "48\n";
-      my $uit = int32(@r, $i);
+      my $uit = int32(\@r, $i);
       # echo "Note: result contains type #$uit unsupported by Rserve.<br/>";
       @a = undef;
       break;
@@ -712,7 +712,7 @@ sub parseREXP(@) {
   print Dumper(@a);
   print "done\n";
 
-  if ( length(@attr) && is_object(@a) ) {
+  if ( scalar(@attr) && is_object(@a) ) {
     @a->setAttributes(@attr);
   }
   
@@ -786,7 +786,7 @@ sub createBinary($) {
     }
     when (Rserve::XT_ARRAY_INT) {
       my @vv = $value->getValues();
-      my $n = length(@vv);
+      my $n = scalar(@vv);
       my $v;
       for (my $i = 0; $i < $n; ++$i) {
 	$v = $vv[$i];
@@ -797,7 +797,7 @@ sub createBinary($) {
     }
     when (Rserve::XT_ARRAY_BOOL) {
       my @vv = $value->getValues();
-      my $n = length(@vv);
+      my $n = scalar(@vv);
       my $v;
       $contents .= mkint32($n);
       $o += 4;
@@ -825,7 +825,7 @@ sub createBinary($) {
     }
     when (Rserve::XT_ARRAY_DOUBLE) {
       my @vv = $value->getValues();
-      my $n = length(@vv);
+      my $n = scalar(@vv);
       my $v;
       for (my $i = 0; $i < $n; ++$i) {
 	$v = 0.0 + $vv[$i];
@@ -844,7 +844,7 @@ sub createBinary($) {
     }
     when (Rserve::XT_ARRAY_STR) {
       my @vv = $value->getValues();
-      my $n = length(@vv);
+      my $n = scalar(@vv);
       my @v;
       for (my $i = 0; $i < $n; ++$i) {
 	@v = $vv[$i];
@@ -854,7 +854,7 @@ sub createBinary($) {
 	    ++$o;
 	  }
 	  $contents .= join ('', @v);
-	  $o += length(@v);
+	  $o += scalar(@v);
 	} else {
 	  $contents .= chr(255).chr(0);
 	  $o += 2;
@@ -879,7 +879,7 @@ sub createBinary($) {
 	@names = $value->getNames();
       }
       my $i = 0; 
-      my $n = length(@l);
+      my $n = scalar(@l);
       while ($i < $n) {
 	my $x = $l[$i];
 	if (defined($x) ) {
