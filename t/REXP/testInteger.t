@@ -1,3 +1,7 @@
+use v5.12;
+use warnings;
+use autodie;
+
 use Rserve::REXP;
 use Rserve::REXP::Integer;
 
@@ -9,4 +13,4 @@ isa_ok($int, 'Rserve::REXP::Integer', 'new returns an object that');
 ok(!$int->isExpression(), 'Integer is not an expression');
 ok($int->isInteger(), 'Integer is an integer');
 
-done_testing($number_of_tests);
+done_testing();

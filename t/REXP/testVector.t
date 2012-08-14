@@ -1,3 +1,7 @@
+use v5.12;
+use warnings;
+use autodie;
+
 use Rserve::REXP::Vector;
 
 use Test::More tests => 18;
@@ -17,7 +21,7 @@ is($vector->length(), 3, 'length 3 when set to 3 values');
 
 is($vector->getValues(), @arr1, 'values is ["a", "b", 4]');
 
-$expected_html = << 'END_HTML';
+my $expected_html = << 'END_HTML';
 <div class='rexp vector xt_16'>
 <span class="typename">vector</span>
 <span class='length'>3</span>
@@ -72,4 +76,4 @@ is($vector2->toHTML(), $expected_html, 'convert to HTML');
 is($vector->getValues(), @arr1, 'the first vector is unchanged');
 is($vector2->getValues(), @arr2, 'the second vector is distinct from the first');
 
-done_testing($number_of_tests);
+done_testing();
