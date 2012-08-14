@@ -7,6 +7,10 @@
 # * Rserve::ParserException extends Rserve::Exception
 # * @author Djun Kim
 
+use v5.12;
+use warnings;
+use autodie;
+
 package Rserve::ParserException;
 
 use Rserve::Exception;

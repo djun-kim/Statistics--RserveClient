@@ -8,6 +8,10 @@
 # Handle Connection and communicating with Rserve instance
 # @author Djun Kim
 
+use v5.12;
+use warnings;
+use autodie;
+
 package Rserve::Connection;
 
 use Rserve;
@@ -16,10 +20,6 @@ use Data::Dumper;
 
 use Exporter;
 @EXPORT = qw(init new);
-
-use strict;
-
-use v5.12;
 
 use Socket;
 

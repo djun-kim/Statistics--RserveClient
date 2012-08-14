@@ -2,14 +2,17 @@
 # * @author Djun Kim
 # * Licensed under GPL v2 or at your option v3
 
+use v5.12;
+use warnings;
+use autodie;
+
 package Rserve;
 
-use strict;
 use Exporter;
 
 use constant FALSE => 0;
 use constant TRUE => 1;
-our @EXPORT = qw( TRUE, FALSE );
+our @EXPORT = qw( TRUE FALSE );
 
 our @EXPORT_OK = ( 
 		  'XT_NULL', 
