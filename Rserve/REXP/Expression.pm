@@ -9,9 +9,9 @@
 # * This code is inspired from Java client for Rserve (Rserve package
 #   v0.6.2) developed by Simon Urbanek(c)
 
-#class Rserve_REXP_Factor extends Rserve_REXP_GenericVector {
-use strict;
-
+use v5.12;
+use warnings;
+use autodie;
 
 use Rserve;
 use Rserve qw (:xt_types );
@@ -19,6 +19,7 @@ use Rserve qw (:xt_types );
 use Rserve::REXP;
 use Rserve::REXP::GenericVector;
 
+#class Rserve_REXP_Factor extends Rserve_REXP_GenericVector {
 package Rserve::REXP::Expression; 
 our @ISA = qw(Rserve::REXP::GenericVector);
 

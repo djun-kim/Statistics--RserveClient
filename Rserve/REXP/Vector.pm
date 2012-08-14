@@ -11,6 +11,11 @@
 # * This code is derived from Java client for Rserve (Rserve package
 #   v0.6.2) developed by Simon Urbanek(c)
 
+
+use v5.12;
+use warnings;
+use autodie;
+
 use Rserve;
 use Rserve qw (:xt_types );
 
@@ -24,12 +29,10 @@ use Exporter;
 package Rserve::REXP::Vector;
 our @ISA = ("Rserve::REXP", qw(Exporter));
 
-use strict;
-	
 sub new() {
   my $class = shift;
   my $self = {
-	      _values => (),
+	      _values => undef,
 	     };
   bless $self, $class;
   return $self;
@@ -75,7 +78,7 @@ sub getType() {
   return Rserve::XT_VECTOR;
 }
 
-sub toHTML() {
+sub toHTML($) {
   my $self = shift;
   my $s = "<div class='rexp vector xt_".$self->getType()."'>\n";
   my $n = $self->length();

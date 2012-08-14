@@ -11,18 +11,21 @@
 
 #  R Integer vector
 
-#class Rserve_REXP_Integer extends Rserve_REXP_Vector {
+use v5.12;
+use warnings;
+use autodie;
 
 use Rserve;
 use Rserve qw (:xt_types );
 
 use Rserve::REXP::Vector;
 
+#class Rserve_REXP_Integer extends Rserve_REXP_Vector {
 package Rserve::REXP::Integer;
-@ISA = (Rserve::REXP::Vector);
+our @ISA = qw(Rserve::REXP::Vector);
 
-sub isInteger() { return Rserve::REXP::TRUE; }
-sub isNumeric() { return Rserve::REXP::TRUE; }
+sub isInteger() { return Rserve::TRUE; }
+sub isNumeric() { return Rserve::TRUE; }
 
 sub getType() {
   return Rserve::XT_ARRAY_INT;
