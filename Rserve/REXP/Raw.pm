@@ -10,6 +10,10 @@
 #   v0.6.2) developed by Simon Urbanek(c)
 
 
+use v5.12;
+use warnings;
+use autodie;
+
 #  R Raw data
 # class Rserve_REXP_Raw extends Rserve_REXP {
 
@@ -19,39 +23,45 @@ use Rserve qw (:xt_types );
 use Rserve::REXP;
 
 package Rserve::REXP::Raw;
-@ISA = (Rserve::REXP);
+our @ISA = qw(Rserve::REXP);
 
-$value; #protected
+my $_value; #protected
 	
 
 # * return int
-sub length() {
-  return strlen($value);
+sub length($) {
+  my $self = shift;    
+  return strlen($self->_value);
 }
 
-sub setValue($value) {
-  $this->value = $value;
+sub setValue($$) {
+  my $self = shift;
+  my $value = shift;
+  
+  $self->_value = $value;
 }
 
-sub getValue($value) {
-  return $this->value;
+sub getValue($) {
+  my $self = shift;
+  return $self->_value;
 }
 
-sub  isRaw() { return Rserve::REXP::TRUE; }
+sub  isRaw() { return Rserve::TRUE; }
 
 sub getType() {
   return Rserve::XT_RAW;
 }
 
-sub toHTML() {
-  $s = strlen($this->value) > 60 ? 
-    substr($this->value,0,60).' (truncated)': 
-      $this->value;
+sub toHTML($) {
+  my $self = shift;
+  my $s = strlen($self->value) > 60 ? 
+    substr($self->value,0,60).' (truncated)': 
+      $self->value;
   return '<div class="rexp xt_'.
-    $this->getType().
+    $self->getType().
       '"> <span class="typename">raw</span><div class="value">'.
 	$s.'</div>'.
-	  $this->attrToHTML().'</div>';	
+	  $self->attrToHTML().'</div>';	
 }
 
 1;

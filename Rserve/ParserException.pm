@@ -7,11 +7,15 @@
 # * Rserve::ParserException extends Rserve::Exception
 # * @author Djun Kim
 
+use v5.12;
+use warnings;
+use autodie;
+
 package Rserve::ParserException;
 
 use Rserve::Exception;
 use strict;
-our @ISA = qw(Exception);    # inherits from Exception
+our @ISA = qw(Rserve::Exception);    # inherits from Exception
 
 sub new {
   my $class = shift;

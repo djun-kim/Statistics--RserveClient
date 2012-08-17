@@ -10,6 +10,11 @@
 #   v0.6.2) developped by Simon Urbanek(c)
 
 # * R Expression wrapper
+
+use v5.12;
+use warnings;
+use autodie;
+
 package Rserve::REXP;
 
 use Rserve;
@@ -18,8 +23,6 @@ use Rserve;
 use Rserve qw (:xt_types );
 
 use Rserve::Parser;
-
-use strict;
 
 use Exporter;
 
@@ -32,7 +35,7 @@ my $attr = undef;
 sub new() {
   my $class = shift;
   my $self = {
-	      _attr => (),
+	      _attr => undef,
 	     };
   bless $self, $class;
   return $self;

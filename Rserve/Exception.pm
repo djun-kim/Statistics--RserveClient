@@ -7,6 +7,10 @@
 # * Rserve::Exception
 # * @author Djun Kim
 
+use v5.12;
+use warnings;
+use autodie;
+
 package Rserve::Exception;
 
 sub new() {

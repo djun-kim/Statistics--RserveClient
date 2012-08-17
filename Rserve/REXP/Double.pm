@@ -13,7 +13,10 @@
 # R Double vector
 # class Rserve_REXP_Double extends Rserve_REXP_Vector {
 
-use strict;
+
+use v5.12;
+use warnings;
+use autodie;
 
 use Rserve;
 use Rserve qw (:xt_types );
