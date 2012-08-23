@@ -25,12 +25,12 @@ package Rserve::REXP::Vector;
 our @ISA = ("Rserve::REXP", qw(Exporter));
 
 use strict;
-	
+        
 sub new() {
   my $class = shift;
   my $self = {
-	      _values => (),
-	     };
+              _values => (),
+             };
   bless $self, $class;
   return $self;
 }
@@ -88,15 +88,15 @@ sub toHTML() {
     for (my $i = 0; $i < $m; ++$i) {
       my $v = @{$self->{_values}}[$i];
       if (ref($v) and ($v->isa('Rserve::REXP'))) {
-	$v = $v->toHTML();
+        $v = $v->toHTML();
       }
       else {
-	if ($self->isString()) {
-	  $v = '"'.$v.'"';
-	} 
-	else {
-	  $v = "".$v;
-	}
+        if ($self->isString()) {
+          $v = '"'.$v.'"';
+        } 
+        else {
+          $v = "".$v;
+        }
       }
       # print "^$v\n";
       $s .= "<div class='value'>$v</div>\n";

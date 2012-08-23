@@ -20,10 +20,10 @@ use Rserve;
 use Rserve qw (:xt_types );
 
 use Rserve::REXP::Integer;
-	
+        
 #protected $levels;
 my @_levels;
-	
+        
 sub isFactor() { return Rserve::TRUE; }
 
 sub getLevels() {

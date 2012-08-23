@@ -25,10 +25,10 @@ package Rserve::REXP::Logical;
 sub isInteger() { return Rserve::REXP::TRUE; }
 sub isNumeric() { return Rserve::REXP::TRUE; }
 sub isLogical() { return Rserve::REXP::TRUE; }
-	
+        
 sub getType() {
   return Rserve::XT_ARRAY_BOOL;
 }
-	
+        
 1;
 

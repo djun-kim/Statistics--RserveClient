@@ -46,48 +46,48 @@ use constant DT_ARRAY => 11;
 
 use constant DT_LARGE => 64;
 
-use constant CMD_login			=> 0x001;
-use constant CMD_voidEval		=> 0x002;
-use constant CMD_eval			=> 0x003;
-use constant CMD_shutdown		=> 0x004;
-use constant CMD_openFile		=> 0x010;
+use constant CMD_login                        => 0x001;
+use constant CMD_voidEval                => 0x002;
+use constant CMD_eval                        => 0x003;
+use constant CMD_shutdown                => 0x004;
+use constant CMD_openFile                => 0x010;
 use constant CMD_createFile             => 0x011;
-use constant CMD_closeFile		=> 0x012;
-use constant CMD_readFile		=> 0x013;
-use constant CMD_writeFile		=> 0x014;
-use constant CMD_removeFile		=> 0x015;
-use constant CMD_setSEXP		=> 0x020;
-use constant CMD_assignSEXP		=> 0x021;
+use constant CMD_closeFile                => 0x012;
+use constant CMD_readFile                => 0x013;
+use constant CMD_writeFile                => 0x014;
+use constant CMD_removeFile                => 0x015;
+use constant CMD_setSEXP                => 0x020;
+use constant CMD_assignSEXP                => 0x021;
 
-use constant CMD_setBufferSize		=> 0x081;
-use constant CMD_setEncoding		=> 0x082;
+use constant CMD_setBufferSize                => 0x081;
+use constant CMD_setEncoding                => 0x082;
 
-use constant CMD_detachSession		=> 0x030;
-use constant CMD_detachedVoidEval 	=> 0x031;
-use constant CMD_attachSession 		=> 0x032;
+use constant CMD_detachSession                => 0x030;
+use constant CMD_detachedVoidEval         => 0x031;
+use constant CMD_attachSession                 => 0x032;
 
 # control commands since 0.6-0
-use constant CMD_ctrlEval		=> 0x42;
-use constant CMD_ctrlSource		=> 0x45;
-use constant CMD_ctrlShutdown		=> 0x44;
+use constant CMD_ctrlEval                => 0x42;
+use constant CMD_ctrlSource                => 0x45;
+use constant CMD_ctrlShutdown                => 0x44;
 
 # errors as returned by Rserve
-use constant ERR_auth_failed		=> 0x41;
-use constant ERR_conn_broken		=> 0x42;
-use constant ERR_inv_cmd		=> 0x43;
-use constant ERR_inv_par		=> 0x44;
-use constant ERR_Rerror			=> 0x45;
-use constant ERR_IOerror		=> 0x46;
-use constant ERR_not_open		=> 0x47;
-use constant ERR_access_denied 		=> 0x48;
-use constant ERR_unsupported_cmd	=> 0x49;
-use constant ERR_unknown_cmd		=> 0x4a;
-use constant ERR_data_overflow		=> 0x4b;
-use constant ERR_object_too_big		=> 0x4c;
-use constant ERR_out_of_mem		=> 0x4d;
-use constant ERR_ctrl_closed		=> 0x4e;
-use constant ERR_session_busy		=> 0x50;
-use constant ERR_detach_failed		=> 0x51;
+use constant ERR_auth_failed                => 0x41;
+use constant ERR_conn_broken                => 0x42;
+use constant ERR_inv_cmd                => 0x43;
+use constant ERR_inv_par                => 0x44;
+use constant ERR_Rerror                        => 0x45;
+use constant ERR_IOerror                => 0x46;
+use constant ERR_not_open                => 0x47;
+use constant ERR_access_denied                 => 0x48;
+use constant ERR_unsupported_cmd        => 0x49;
+use constant ERR_unknown_cmd                => 0x4a;
+use constant ERR_data_overflow                => 0x4b;
+use constant ERR_object_too_big                => 0x4c;
+use constant ERR_out_of_mem                => 0x4d;
+use constant ERR_ctrl_closed                => 0x4e;
+use constant ERR_session_busy                => 0x50;
+use constant ERR_detach_failed                => 0x51;
 
 use Config;
 
@@ -144,10 +144,10 @@ sub new() {
   # print "new()\n";
   my $class = shift;
   my $self = {
-	      socket => undef,
-	      auth_request => Rserve::FALSE,
-	      auth_method => undef,
-	     };
+              socket => undef,
+              auth_request => Rserve::FALSE,
+              auth_method => undef,
+             };
 
   bless $self, $class;
 
@@ -296,32 +296,32 @@ sub evalString() {
     my @res = undef;
     switch ($parser) {
       case (PARSER_NATIVE) {
-	#print "calling parser.parse()\n";
-	#print "buf = $buf\n";
-	#print "i = $i\n";
-	#print "attr = $attr\n";
+        #print "calling parser.parse()\n";
+        #print "buf = $buf\n";
+        #print "i = $i\n";
+        #print "attr = $attr\n";
 
-	@res = Rserve::Parser::parse($buf, $i, \$attr);
-	last;
+        @res = Rserve::Parser::parse($buf, $i, \$attr);
+        last;
       }
       case (PARSER_REXP) {
-	@res = Rserve::Parser::parseREXP($buf, $i, \$attr);
-	last;
+        @res = Rserve::Parser::parseREXP($buf, $i, \$attr);
+        last;
       }
       case (PARSER_DEBUG) {
-	@res = Rserve::Parser::parseDebug($buf, $i, \$attr);
-	last;
+        @res = Rserve::Parser::parseDebug($buf, $i, \$attr);
+        last;
       }
       case (PARSER_NATIVE_WRAPPED) {
-	my $old = Rserve::Parser->use_array_object();
-	Rserve::Parser->use_array_object(Rserve::TRUE);
-	@res = Rserve::Parser->parse($buf, $i, \$attr);
-	Rserve::Parser->use_array_object($old);
-	last;
+        my $old = Rserve::Parser->use_array_object();
+        Rserve::Parser->use_array_object(Rserve::TRUE);
+        @res = Rserve::Parser->parse($buf, $i, \$attr);
+        Rserve::Parser->use_array_object($old);
+        last;
       }
       else {
-	die(new Rserve::Exception('Unknown parser'));
-	die('Unknown parser');
+        die(new Rserve::Exception('Unknown parser'));
+        die('Unknown parser');
       }
     }
     return @res;
@@ -332,7 +332,7 @@ sub evalString() {
 }
 
 #
-#	 * Close the current connection
+#         * Close the current connection
 #
 sub close() {
   my $self = shift;
@@ -412,7 +412,7 @@ sub command() {
     eval {
       # $n = socket_recv($self->{socket}, $buf2, $ltg, 0);      
       (defined(recv($self->{socket}, $buf2, $ltg, 0))) or
-	die Rserve::Exception->new('error getting result from server:');
+        die Rserve::Exception->new('error getting result from server:');
       $n = length($buf2);
       # print "  n = $n\n";
     };
@@ -444,10 +444,10 @@ sub command() {
   #print "\n";
 
   my %r = (code => $code,
-	  is_error => (($code & 15) != 1) ? Rserve::TRUE : Rserve::FALSE,
-	  'error' => ($code >> 24) & 127,
-	  'contents' => $buf
-	 );
+          is_error => (($code & 15) != 1) ? Rserve::TRUE : Rserve::FALSE,
+          'error' => ($code >> 24) & 127,
+          'contents' => $buf
+         );
 
   return(%r);
 }
@@ -457,18 +457,18 @@ sub command() {
 #  @param string $symbol name of the variable to set (should be compliant with R syntax !)
 #  @param Rserve_REXP $value value to set
 #  Commented because not ready for this release
-#	sub assign($symbol, $value) {
-#		if (!is_object($symbol) and !$symbol instanceof Rserve_REXP_Symbol) {
-#			$symbol = (string)$symbol;
-#			$s = new Rserve_REXP_Symbol();
-#			$s->setValue($symbol);
-#		}
-#		if (!is_object($value) AND ! $value instanceof Rserve_REXP) {
-#			throw new InvalidArgumentException('value should be REXP object');
-#		}
-#		$contents .= Rserve_Parser::createBinary($s);
-#		$contents .= Rserve_Parser::createBinary($value);
-#	}
+#        sub assign($symbol, $value) {
+#                if (!is_object($symbol) and !$symbol instanceof Rserve_REXP_Symbol) {
+#                        $symbol = (string)$symbol;
+#                        $s = new Rserve_REXP_Symbol();
+#                        $s->setValue($symbol);
+#                }
+#                if (!is_object($value) AND ! $value instanceof Rserve_REXP) {
+#                        throw new InvalidArgumentException('value should be REXP object');
+#                }
+#                $contents .= Rserve_Parser::createBinary($s);
+#                $contents .= Rserve_Parser::createBinary($value);
+#        }
 
 1;
 
