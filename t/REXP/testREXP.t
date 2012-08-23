@@ -1,3 +1,7 @@
+use v5.12;
+use warnings;
+use autodie;
+
 use Rserve::REXP;
 
 use Test::More tests => 3;
@@ -12,4 +16,4 @@ is($rexp->toHTML(),
    'HTML representation');
 
 
-done_testing($number_of_tests);
+done_testing();
