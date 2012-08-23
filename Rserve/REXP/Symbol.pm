@@ -21,11 +21,11 @@ use  Rserve::Parser;
 
 package Rserve::REXP::Symbol;
 @ISA = (Rserve::REXP);
-	
+        
 $name; #protected
 
 sub setValue($value) {
-  $this->name = $value;	
+  $this->name = $value;        
 }
 
 sub getValue() {
@@ -39,7 +39,7 @@ sub getType() {
 }
 
 sub toHTML() {
-  return '<div class="rexp xt_'.$this->getType().'"><span class="typename">'.Rserve::Parser::xtName($this->getType()).'</span>'.$this->name.$this->attrToHTML().'</div>';	
+  return '<div class="rexp xt_'.$this->getType().'"><span class="typename">'.Rserve::Parser::xtName($this->getType()).'</span>'.$this->name.$this->attrToHTML().'</div>';        
 }
 
 sub __toString() {

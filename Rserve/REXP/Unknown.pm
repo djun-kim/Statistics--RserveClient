@@ -15,7 +15,7 @@
 #class Rserve_REXP_Unknown extends Rserve_REXP {
 
 package Rserve::REXP::Unknown;
-	
+        
 #protected $unknowntype;
 $unknowntype;
 
@@ -23,8 +23,8 @@ sub new($) {
  my $class = shift;
  my $type = shift;
  my $self = {
-	     unknowntype => $type,
-	    };
+             unknowntype => $type,
+            };
  bless $self, $class;
  return $self;
 }

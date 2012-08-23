@@ -22,10 +22,10 @@ package Rserve::REXP::String;
 @ISA = (Rserve::REXP::Vector);
 
 sub isString() { return true; }
-	
+        
 sub getType() {
   return Rserve::XT_STR;
 }
-	
+        
 1;
 

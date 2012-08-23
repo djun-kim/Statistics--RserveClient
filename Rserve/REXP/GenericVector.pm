@@ -21,11 +21,11 @@ use Rserve qw (:xt_types );
 use Rserve::REXP::Vector;
 
 our @ISA = qw( Rserve::REXP::Vector );
-	
+        
 sub isList() { return Rserve::TRUE; }
 
 sub getType() {
   return Rserve::XT_VECTOR;
 }
-	
+        
 1;

@@ -21,11 +21,11 @@ use Rserve::REXP::List;
 
 package Rserve::REXP::Language;
 @ISA = (Rserve::REXP::List);
-	
+        
 sub isLanguage() { return Rserve::REXP::TRUE; }
-	
+        
 sub getType() {
   return Rserve::XT_LANG;
 }
-	
+        
 1;

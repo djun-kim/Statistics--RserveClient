@@ -63,9 +63,9 @@ sub int32(@) {
   #print "3:" . (ord($buf[$offset+3]) << 24) . "\n";
 
   return (ord($buf[$offset]) | 
-	  (ord($buf[$offset + 1]) << 8) | 
-	  (ord($buf[$offset + 2]) << 16) | 
-	  (ord($buf[$offset + 3]) << 24));
+          (ord($buf[$offset + 1]) << 8) | 
+          (ord($buf[$offset + 2]) << 16) | 
+          (ord($buf[$offset + 3]) << 24));
 }
 
 
@@ -140,11 +140,11 @@ sub flt64($$) {
   $o = defined($o) ? $o : 0;
 
   $ss = substr($buf, $o, 8);
-  #	if (Rserve_Connection::$machine_is_bigendian) {
+  #        if (Rserve_Connection::$machine_is_bigendian) {
   if (Rserve_Connection->$machine_is_bigendian) {
     for ($k = 0; $k < 7; $k++) { 
       $ss[7 - $k] = $buf[$o + $k];
-    }	
+    }        
   } 
   $r = unpack('d', substr($buf, $o, 8)); 
   return $r[1]; 
@@ -215,7 +215,7 @@ sub _rserve_make_data($$) {
   $s .= chr($type & 255) | ($is_large ? Rserve_Connection::DT_LARGE : 0);
   $s .= chr($len & 255);
   $s .= chr( ($len & 0xff00) >> 8);
-  $s .= chr( ($len & 0xff0000) >> 16); 	
+  $s .= chr( ($len & 0xff0000) >> 16);         
   if($is_large) {
     $s .= chr(($len & 0xff000000) >> 24).chr(0).chr(0).chr(0);
   }
@@ -234,7 +234,7 @@ sub _rserve_get_response($) {
 
   $n = socket_recv($socket, $buf, 16, 0);
   if ($n != 16) {
-    return FALSE;		
+    return FALSE;                
   }
   $len = int32($buf, 4);
   $ltg = $len;
@@ -245,7 +245,7 @@ sub _rserve_get_response($) {
       unset($b2); 
       $ltg -= $n; 
     } else {
-      break;	
+      break;        
     }
   }
   return $buf;
