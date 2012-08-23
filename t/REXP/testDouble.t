@@ -1,3 +1,7 @@
+use v5.12;
+use warnings;
+use autodie;
+
 use Rserve::REXP::Double;
 
 use Test::More tests => 8;
@@ -17,7 +21,7 @@ is($dbl->length(), 3, 'length 3 when set to 3 values');
 
 is($dbl->getValues(), @val, 'values is [1, 2, 3]');
 
-$expected_html = << 'END_HTML';
+my $expected_html = << 'END_HTML';
 <div class='rexp vector xt_33'>
 <span class="typename">real*</span>
 <span class='length'>3</span>
@@ -32,4 +36,4 @@ chomp($expected_html);
 
 is($dbl->toHTML(), $expected_html, 'convert to HTML');
 
-done_testing($number_of_tests);
+done_testing();

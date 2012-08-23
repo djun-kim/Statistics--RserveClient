@@ -1,3 +1,7 @@
+use v5.12;
+use warnings;
+use autodie;
+
 use Rserve::REXP::Raw;
 
 use Test::More tests => 3;
@@ -8,6 +12,4 @@ isa_ok($raw, 'Rserve::REXP::Raw', 'new returns an object that');
 ok(!$raw->isExpression(), 'Raw is not an expression');
 ok($raw->isRaw(), 'Raw is a raw');
 
-done_testing($number_of_tests);
-
-
+done_testing();

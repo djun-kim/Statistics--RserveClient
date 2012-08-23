@@ -1,3 +1,7 @@
+use v5.12;
+use warnings;
+use autodie;
+
 use Rserve::REXP::Symbol;
 
 use Test::More tests => 3;
@@ -8,4 +12,4 @@ isa_ok($symbol, 'Rserve::REXP::Symbol', 'new returns an object that');
 ok(!$symbol->isExpression(), 'Symbol is not an expression');
 ok($symbol->isSymbol(), 'Symbol is a symbol');
 
-done_testing($number_of_tests);
+done_testing();
