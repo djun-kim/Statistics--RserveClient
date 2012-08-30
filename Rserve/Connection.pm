@@ -8,6 +8,10 @@
 # Handle Connection and communicating with Rserve instance
 # @author Djun Kim
 
+use v5.12;
+use warnings;
+use autodie;
+
 package Rserve::Connection;
 
 use Rserve;
@@ -15,11 +19,7 @@ use Rserve;
 use Data::Dumper;
 
 use Exporter;
-@EXPORT = qw(init new);
-
-use strict;
-
-use v5.12;
+our @EXPORT = qw(init new);
 
 use Socket;
 
@@ -120,7 +120,7 @@ sub init {
   }
   # print "initing...\n";
   # print "setting byte order...\n";
-  if ($Config{byteorder} == '87654321') {
+  if ($Config{byteorder} eq '87654321') {
     machine_is_bigendian(Rserve::TRUE);
   }
   else {
@@ -192,7 +192,7 @@ sub new() {
       $self->{socket} = *SOCKET;
     } 
     else {
-      socket(*SOCKET, Socket::AF_INET, Socket::SOCK_STREAM, $Socket::Class::Const::SOL_TCP);
+      socket(*SOCKET, Socket::AF_INET, Socket::SOCK_STREAM, Socket::IPPROTO_TCP);
       $paddr = sockaddr_in($port, $inet_addr);
 
       $self->{socket} = *SOCKET;
@@ -208,9 +208,9 @@ sub new() {
   # print "created socket...\n";
 
   # socket_set_option($self->{socket}, SOL_TCP, SO_DEBUG,2);
-  setsockopt($self->{socket}, $Socket::Class::Const::SOL_TCP, Socket::SO_DEBUG, 2);
+  setsockopt($self->{socket}, Socket::IPPROTO_TCP, Socket::SO_DEBUG, 2);
 
-  my $paddr = sockaddr_in($port, $inet_addr);
+  $paddr = sockaddr_in($port, $inet_addr);
   
   eval { 
     connect($self->{socket}, $paddr);
@@ -225,7 +225,7 @@ sub new() {
   eval {
     (defined(recv($self->{socket}, $buf, 32, 0)) && 
      length($buf) >= 32 &&
-     substr($buf, 4, 0)  == 'Rsrv') or
+     substr($buf, 4, 0)  eq 'Rsrv') or
        die Rserve::Exception->new("Invalid response from server:".$@."\n");
   };
   if ($@) {
@@ -233,21 +233,21 @@ sub new() {
   }
 
   my $rv = substr($buf, 4, 4);
-  if ($rv != '0103') {
+  if ($rv ne '0103') {
     die Rserve::Exception->new('Unsupported protocol version.');
   }
   for (my $i = 12; $i < 32; $i += 4) {
     my $attr = substr($buf, $i, $i + 4);
     # print "attr = $attr\n";
-    if ($attr == 'ARpt') {
+    if ($attr eq 'ARpt') {
       $self->{auth_request} = Rserve::TRUE;
       $self->{auth_method} = 'plain';
     } 
-    elsif ($attr == 'ARuc') {
+    elsif ($attr eq 'ARuc') {
       $self->{auth_request} = Rserve::TRUE;
       $self->{auth_method} = 'crypt';
     }
-    if (substr($attr, 0, 1) == 'K') {
+    if (substr($attr, 0, 1) eq 'K') {
       my $key = substr($attr, 1, 3);
     }
   }

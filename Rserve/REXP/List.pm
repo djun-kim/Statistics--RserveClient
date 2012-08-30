@@ -10,11 +10,14 @@
 #   v0.6.2) developed by Simon Urbanek(c)
 
 
+use v5.12;
+use warnings;
+use autodie;
+
 # * R List
 
 # class Rserve_REXP_List extends Rserve_REXP_Vector implements ArrayAccess {
 
-use strict;
 use Rserve;
 use Rserve qw( :xt_types );
 use Rserve::REXP::Vector;
@@ -49,8 +52,9 @@ sub setValues(@) {
 #  * Set names
 #  * @param unknown_type $names
 
-sub setNames($names) {
+sub setNames($$) {
   my $self = shift;
+  my $names = shift;
   if (count($self->values) != count($names)) {
     #throw new LengthException('Invalid names length');
     die("Invalid names length: " . count($self->values)  . " != " . count($names));
@@ -61,7 +65,7 @@ sub setNames($names) {
   
 
 # * return array list of names
-sub getNames() {
+sub getNames($) {
   my $self = shift;
   return ($self->is_named) ? $self->names : array();
 }

@@ -10,15 +10,16 @@
 #   v0.6.2) developed by Simon Urbanek(c)
 
 
+use v5.12;
+use warnings;
+use autodie;
+
 # wrapper for R Unknown type
 
 #class Rserve_REXP_Unknown extends Rserve_REXP {
 
 package Rserve::REXP::Unknown;
-        
-#protected $unknowntype;
-$unknowntype;
-
+	
 sub new($) {
  my $class = shift;
  my $type = shift;

@@ -10,6 +10,10 @@
 #   v0.6.2) developed by Simon Urbanek(c)
 
 
+use v5.12;
+use warnings;
+use autodie;
+
 # R symbol element
 # class Rserve_REXP_Symbol extends Rserve_REXP {
 
@@ -20,30 +24,43 @@ use  Rserve::REXP;
 use  Rserve::Parser;
 
 package Rserve::REXP::Symbol;
-@ISA = (Rserve::REXP);
-        
-$name; #protected
 
-sub setValue($value) {
-  $this->name = $value;        
+our @ISA = qw(Rserve::REXP);
+	
+my $name; #protected
+
+sub setValue($$) {
+  my $self = shift;
+  my $value = shift;
+  
+  $self->_value = $value;
 }
 
-sub getValue() {
-  return $this->name;
+sub getValue($) {
+  my $self = shift;
+  return $self->_value;
 }
 
-sub isSymbol() { return Rserve::REXP::TRUE; }
+sub isSymbol() { return Rserve::TRUE; }
 
 sub getType() {
   return Rserve::XT_SYM;
 }
 
-sub toHTML() {
-  return '<div class="rexp xt_'.$this->getType().'"><span class="typename">'.Rserve::Parser::xtName($this->getType()).'</span>'.$this->name.$this->attrToHTML().'</div>';        
+sub toHTML($) {
+  my $self = shift;
+
+  return '<div class="rexp xt_' . $self->getType() . 
+      '"><span class="typename">' . 
+      Rserve::Parser::xtName($self->getType()) .
+      '</span>' . 
+      $self->name . $self->attrToHTML() . '</div>';	
 }
 
-sub __toString() {
-  return '"'.$this->name.'"';
+sub __toString($) {
+  my $self = shift;
+
+  return '"'.$self->name.'"';
 }
 
 1;

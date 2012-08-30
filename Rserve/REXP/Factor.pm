@@ -9,7 +9,9 @@
 # * This code is inspired from Java client for Rserve (Rserve package
 #   v0.6.2) developed by Simon Urbanek(c)
 
-use strict;
+use v5.12;
+use warnings;
+use autodie;
 
 # R Double Factor
 # class Rserve_REXP_Factor extends Rserve_REXP_Integer {

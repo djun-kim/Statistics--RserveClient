@@ -9,11 +9,14 @@
 # * This code is inspired from Java client for Rserve (Rserve package
 #   v0.6.2) developed by Simon Urbanek(c)
 
+use v5.12;
+use warnings;
+use autodie;
+
 # R Generic vector
 # class Rserve_REXP_GenericVector extends Rserve_REXP_Vector 
-package Rserve::REXP::GenericVector;
 
-use strict;
+package Rserve::REXP::GenericVector;
 
 use Rserve;
 use Rserve qw (:xt_types );

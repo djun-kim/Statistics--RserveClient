@@ -10,6 +10,10 @@
 #   v0.6.2) developed by Simon Urbanek(c)
 
 
+use v5.12;
+use warnings;
+use autodie;
+
 # R Null value
 
 use Rserve;
@@ -19,10 +23,11 @@ use Rserve::REXP;
 
 # class Rserve_REXP_Null extends Rserve_REXP {
 package Rserve::REXP::Null;
-@ISA = (Rserve::REXP);
-        
-sub isList() { return Rserve::REXP::TRUE; }
-sub isNull() { return Rserve::REXP::TRUE; }
+
+our @ISA = qw(Rserve::REXP);
+	
+sub isList() { return Rserve::TRUE; }
+sub isNull() { return Rserve::TRUE; }
 
 sub getType() {
   return Rserve::XT_NULL;
