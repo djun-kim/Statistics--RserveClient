@@ -1,4 +1,4 @@
-x# * Rserve client for PHP
+# * Rserve client for PHP
 
 # * Supports Rserve protocol 0103 only (used by Rserve 0.5 and higher)
 # * @author Djun Kim based on php version by Clément TURBELIN
