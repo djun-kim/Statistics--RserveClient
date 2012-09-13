@@ -1,9 +1,9 @@
-#
-#* Rserve client for PHP
+#* Rserve client for Perl
 #* Supports Rserve protocol 0103 only (used by Rserve 0.5 and higher)
 #* $Revision$
-#* @author Clément TURBELIN
-#* Developped using code from Simple Rserve client for PHP by Simon Urbanek Licensed under #GPL v2 or at your option v3
+#* @author Djun Kim
+#* Based on Clément TURBELIN's PHP client.
+#* Licensed under #GPL v2 or at your option v3
 
 #
 # * Read byte from a binary packed format @see Rserve protocol
