@@ -9,7 +9,6 @@
 # * This code is inspired from Java client for Rserve (Rserve package
 #   v0.6.2) developed by Simon Urbanek(c)
 
-
 use v5.12;
 use warnings;
 use autodie;
@@ -25,42 +24,46 @@ use Rserve::REXP;
 package Rserve::REXP::Raw;
 our @ISA = qw(Rserve::REXP);
 
-my $_value; #protected
-	
+my $_value;    #protected
+
 # * return int
 sub length($) {
-  my $self = shift;    
-  return strlen($self->_value);
+    my $self = shift;
+    return strlen( $self->_value );
 }
 
 sub setValue($$) {
-  my $self = shift;
-  my $value = shift;
-  
-  $self->_value = $value;
+    my $self  = shift;
+    my $value = shift;
+
+    $self->_value = $value;
 }
 
 sub getValue($) {
-  my $self = shift;
-  return $self->_value;
+    my $self = shift;
+    return $self->_value;
 }
 
-sub  isRaw() { return Rserve::TRUE; }
+sub isRaw() { return Rserve::TRUE; }
 
 sub getType() {
-  return Rserve::XT_RAW;
+    return Rserve::XT_RAW;
 }
 
 sub toHTML($) {
-  my $self = shift;
-  my $s = strlen($self->value) > 60 ? 
-    substr($self->value,0,60).' (truncated)': 
-      $self->value;
-  return '<div class="rexp xt_'.
-    $self->getType().
-      '"> <span class="typename">raw</span><div class="value">'.
-	$s.'</div>'.
-	  $self->attrToHTML().'</div>';	
+    my $self = shift;
+    my $s
+        = strlen( $self->value ) > 60
+        ? substr( $self->value, 0, 60 ) . ' (truncated)'
+        : $self->value;
+    return
+          '<div class="rexp xt_'
+        . $self->getType()
+        . '"> <span class="typename">raw</span><div class="value">'
+        . $s
+        . '</div>'
+        . $self->attrToHTML()
+        . '</div>';
 }
 
 1;

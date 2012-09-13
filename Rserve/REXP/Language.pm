@@ -13,7 +13,6 @@ use v5.12;
 use warnings;
 use autodie;
 
-
 use Rserve;
 use Rserve qw (:xt_types );
 
@@ -24,11 +23,11 @@ use Rserve::REXP::List;
 #class Rserve_REXP_Language extends Rserve_REXP_List {
 package Rserve::REXP::Language;
 our @ISA = qw(Rserve::REXP::List);
-	
+
 sub isLanguage() { return Rserve::TRUE; }
-	
+
 sub getType() {
-  return Rserve::XT_LANG;
+    return Rserve::XT_LANG;
 }
-        
+
 1;

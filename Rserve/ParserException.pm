@@ -18,10 +18,10 @@ use strict;
 our @ISA = qw(Rserve::Exception);    # inherits from Exception
 
 sub new {
-  my $class = shift;
-  my $self = Exception->new();
-  bless $self, $class;
-  return $self;
+    my $class = shift;
+    my $self  = Exception->new();
+    bless $self, $class;
+    return $self;
 }
 
 1;

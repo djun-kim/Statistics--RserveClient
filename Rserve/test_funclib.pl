@@ -8,8 +8,8 @@ my $buf = pack 'a8', 'a';
 
 print "buf = $buf\n";
 
-foreach(unpack("(a1)*", $buf)) {
-    print sprintf("%x", ord), " ";
+foreach ( unpack( "(a1)*", $buf ) ) {
+    print sprintf( "%x", ord ), " ";
 }
 print "\n";
 

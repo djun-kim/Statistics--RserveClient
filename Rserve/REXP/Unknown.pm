@@ -9,7 +9,6 @@
 # * This code is inspired from Java client for Rserve (Rserve package
 #   v0.6.2) developed by Simon Urbanek(c)
 
-
 use v5.12;
 use warnings;
 use autodie;
@@ -19,20 +18,18 @@ use autodie;
 #class Rserve_REXP_Unknown extends Rserve_REXP {
 
 package Rserve::REXP::Unknown;
-	
+
 sub new($) {
- my $class = shift;
- my $type = shift;
- my $self = {
-             unknowntype => $type,
-            };
- bless $self, $class;
- return $self;
+    my $class = shift;
+    my $type  = shift;
+    my $self  = { unknowntype => $type, };
+    bless $self, $class;
+    return $self;
 }
 
 sub getUnknownType($) {
-  my $this = shift;
-  return $this->{unknowntype};
+    my $this = shift;
+    return $this->{unknowntype};
 }
 
 1;

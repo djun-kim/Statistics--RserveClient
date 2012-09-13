@@ -9,7 +9,6 @@
 # * This code is inspired from Java client for Rserve (Rserve package
 #   v0.6.2) developed by Simon Urbanek(c)
 
-
 use v5.12;
 use warnings;
 use autodie;
@@ -21,19 +20,18 @@ use autodie;
 use Rserve;
 use Rserve qw (:xt_types );
 
-use  Rserve::REXP::Vector;
+use Rserve::REXP::Vector;
 
 package Rserve::REXP::Logical;
 our @ISA = qw(Rserve::REXP::Vector);
 
-
 sub isInteger() { return Rserve::TRUE; }
 sub isNumeric() { return Rserve::TRUE; }
 sub isLogical() { return Rserve::TRUE; }
-	
+
 sub getType() {
-  return Rserve::XT_ARRAY_BOOL;
+    return Rserve::XT_ARRAY_BOOL;
 }
-        
+
 1;
 

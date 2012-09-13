@@ -14,7 +14,7 @@ use warnings;
 use autodie;
 
 # R Generic vector
-# class Rserve_REXP_GenericVector extends Rserve_REXP_Vector 
+# class Rserve_REXP_GenericVector extends Rserve_REXP_Vector
 
 package Rserve::REXP::GenericVector;
 
@@ -24,11 +24,11 @@ use Rserve qw (:xt_types );
 use Rserve::REXP::Vector;
 
 our @ISA = qw( Rserve::REXP::Vector );
-        
+
 sub isList() { return Rserve::TRUE; }
 
 sub getType() {
-  return Rserve::XT_VECTOR;
+    return Rserve::XT_VECTOR;
 }
-        
+
 1;

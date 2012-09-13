@@ -7,19 +7,19 @@ use Rserve::REXP::Double;
 use Test::More tests => 8;
 
 my $dbl = new Rserve::REXP::Double;
-isa_ok($dbl, 'Rserve::REXP::Double', 'new returns an object that');
-ok($dbl->isDouble(), 'Double is a double');
-ok($dbl->isVector(), 'Double is a vector');
+isa_ok( $dbl, 'Rserve::REXP::Double', 'new returns an object that' );
+ok( $dbl->isDouble(), 'Double is a double' );
+ok( $dbl->isVector(), 'Double is a vector' );
 
-is($dbl->length(), 0, 'empty vector has length 0');
-ok(!defined $dbl->getValues(), 'empty vector has no values');
+is( $dbl->length(), 0, 'empty vector has length 0' );
+ok( !defined $dbl->getValues(), 'empty vector has no values' );
 
-my @val = (1.0, 2.0, 3.0);
-$dbl->setValues(\@val);
+my @val = ( 1.0, 2.0, 3.0 );
+$dbl->setValues( \@val );
 
-is($dbl->length(), 3, 'length 3 when set to 3 values');
+is( $dbl->length(), 3, 'length 3 when set to 3 values' );
 
-is($dbl->getValues(), @val, 'values is [1, 2, 3]');
+is( $dbl->getValues(), @val, 'values is [1, 2, 3]' );
 
 my $expected_html = << 'END_HTML';
 <div class='rexp vector xt_33'>
@@ -34,6 +34,6 @@ my $expected_html = << 'END_HTML';
 END_HTML
 chomp($expected_html);
 
-is($dbl->toHTML(), $expected_html, 'convert to HTML');
+is( $dbl->toHTML(), $expected_html, 'convert to HTML' );
 
 done_testing();

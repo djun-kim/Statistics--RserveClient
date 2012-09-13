@@ -14,18 +14,16 @@ use autodie;
 package Rserve::Exception;
 
 sub new() {
-  my $class = shift;
-  my $message = shift;
-  my $self = {
-              msg => $message,
-             };
-  bless $self, $class;
-  return $self;
+    my $class   = shift;
+    my $message = shift;
+    my $self    = { msg => $message, };
+    bless $self, $class;
+    return $self;
 }
 
 sub getErrorMessage() {
-  my $self = shift;
-  return $self->{msg};
+    my $self = shift;
+    return $self->{msg};
 }
 
 1;

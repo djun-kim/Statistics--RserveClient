@@ -22,31 +22,31 @@ use Rserve;
 use Rserve qw (:xt_types );
 
 use Rserve::REXP::Integer;
-        
+
 #protected $levels;
 my @_levels;
-        
+
 sub isFactor() { return Rserve::TRUE; }
 
 sub getLevels() {
-  return @_levels;
+    return @_levels;
 }
 
 sub setLevels($) {
-  my @levels = shift;
-  @_levels = @levels;
+    my @levels = shift;
+    @_levels = @levels;
 }
 
 sub asCharacters() {
-  my @r = array();
-  foreach (@_levels) {
-    push(@r, $_levels[$_]);
-  }
-  return @r;
+    my @r = array();
+    foreach (@_levels) {
+        push( @r, $_levels[$_] );
+    }
+    return @r;
 }
 
 sub getType() {
-  return Rserve::XT_FACTOR;
+    return Rserve::XT_FACTOR;
 }
 
 1;

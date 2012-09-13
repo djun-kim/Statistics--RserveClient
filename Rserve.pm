@@ -1,4 +1,4 @@
-# * Rserve 
+# * Rserve
 # * @author Djun Kim
 # * Licensed under GPL v2 or at your option v3
 
@@ -11,73 +11,44 @@ package Rserve;
 use Exporter;
 
 use constant FALSE => 0;
-use constant TRUE => 1;
+use constant TRUE  => 1;
 our @EXPORT = qw( TRUE FALSE );
 
-our @EXPORT_OK = ( 
-                  'XT_NULL', 
-                  'XT_INT', 
-                  'XT_DOUBLE', 
-                  'XT_STR', 
-                  'XT_LANG', 
-                  'XT_SYM', 
-                  'XT_BOOL', 
-                  'XT_S4', 
-                  'XT_VECTOR', 
-                  'XT_LIST', 
-                  'XT_CLOS', 
-                  'XT_SYMNAME', 
-                  'XT_LIST_NOTAG', 
-                  'XT_LIST_TAG', 
-                  'XT_LANG_NOTAG', 
-                  'XT_LANG_TAG', 
-                  'XT_VECTOR_EXP', 
-                  'XT_VECTOR_STR', 
-                  'XT_ARRAY_INT', 
-                  'XT_ARRAY_DOUBLE', 
-                  'XT_ARRAY_STR', 
-                  'XT_ARRAY_BOOL_UA', 
-                  'XT_ARRAY_BOOL', 
-                  'XT_RAW', 
-                  'XT_ARRAY_CPLX', 
-                  'XT_UNKNOWN', 
-                  'XT_FACTOR', 
-                  'XT_HAS_ATTR',
+our @EXPORT_OK = (
+    'XT_NULL',       'XT_INT',
+    'XT_DOUBLE',     'XT_STR',
+    'XT_LANG',       'XT_SYM',
+    'XT_BOOL',       'XT_S4',
+    'XT_VECTOR',     'XT_LIST',
+    'XT_CLOS',       'XT_SYMNAME',
+    'XT_LIST_NOTAG', 'XT_LIST_TAG',
+    'XT_LANG_NOTAG', 'XT_LANG_TAG',
+    'XT_VECTOR_EXP', 'XT_VECTOR_STR',
+    'XT_ARRAY_INT',  'XT_ARRAY_DOUBLE',
+    'XT_ARRAY_STR',  'XT_ARRAY_BOOL_UA',
+    'XT_ARRAY_BOOL', 'XT_RAW',
+    'XT_ARRAY_CPLX', 'XT_UNKNOWN',
+    'XT_FACTOR',     'XT_HAS_ATTR',
 );
 
 our %EXPORT_TAGS = (
-                    xt_types => [
-                                 'XT_NULL', 
-                                 'XT_INT', 
-                                 'XT_DOUBLE', 
-                                 'XT_STR', 
-                                 'XT_LANG', 
-                                 'XT_SYM', 
-                                 'XT_BOOL', 
-                                 'XT_S4', 
-                                 'XT_VECTOR', 
-                                 'XT_LIST', 
-                                 'XT_CLOS', 
-                                 'XT_SYMNAME', 
-                                 'XT_LIST_NOTAG', 
-                                 'XT_LIST_TAG', 
-                                 'XT_LANG_NOTAG', 
-                                 'XT_LANG_TAG', 
-                                 'XT_VECTOR_EXP', 
-                                 'XT_VECTOR_STR', 
-                                 'XT_ARRAY_INT', 
-                                 'XT_ARRAY_DOUBLE', 
-                                 'XT_ARRAY_STR', 
-                                 'XT_ARRAY_BOOL_UA', 
-                                 'XT_ARRAY_BOOL', 
-                                 'XT_RAW', 
-                                 'XT_ARRAY_CPLX', 
-                                 'XT_UNKNOWN', 
-                                 'XT_FACTOR', 
-                                 'XT_HAS_ATTR',
-                                ]
-                   );
-
+    xt_types => [
+        'XT_NULL',       'XT_INT',
+        'XT_DOUBLE',     'XT_STR',
+        'XT_LANG',       'XT_SYM',
+        'XT_BOOL',       'XT_S4',
+        'XT_VECTOR',     'XT_LIST',
+        'XT_CLOS',       'XT_SYMNAME',
+        'XT_LIST_NOTAG', 'XT_LIST_TAG',
+        'XT_LANG_NOTAG', 'XT_LANG_TAG',
+        'XT_VECTOR_EXP', 'XT_VECTOR_STR',
+        'XT_ARRAY_INT',  'XT_ARRAY_DOUBLE',
+        'XT_ARRAY_STR',  'XT_ARRAY_BOOL_UA',
+        'XT_ARRAY_BOOL', 'XT_RAW',
+        'XT_ARRAY_CPLX', 'XT_UNKNOWN',
+        'XT_FACTOR',     'XT_HAS_ATTR',
+    ]
+);
 
 my %typeHash = ();
 
@@ -109,8 +80,8 @@ $typeHash{5} = 'XT_SYM';
 use constant XT_BOOL => 6;
 $typeHash{6} = 'XT_BOOL';
 
-# xpression type: S4 object 
-#  @since Rserve 0.5 
+# xpression type: S4 object
+#  @since Rserve 0.5
 use constant XT_S4 => 7;
 $typeHash{7} = 'XT_S4';
 
@@ -122,35 +93,35 @@ $typeHash{16} = 'XT_VECTOR';
 use constant XT_LIST => 17;
 $typeHash{17} = 'XT_LIST';
 
-# xpression type: closure 
-# (there is no java class for that type (yet?). 
+# xpression type: closure
+# (there is no java class for that type (yet?).
 # Currently the body of the closure is stored in the content
 # part of the REXP. Please note that this may change in the future!)
 use constant XT_CLOS => 18;
 $typeHash{18} = 'XT_CLOS';
 
-# xpression type: symbol name 
-# @since Rserve 0.5 
+# xpression type: symbol name
+# @since Rserve 0.5
 use constant XT_SYMNAME => 19;
 $typeHash{19} = 'XT_SYMNAME';
 
-# xpression type: dotted-pair list (w/o tags)        
-# @since Rserve 0.5 
+# xpression type: dotted-pair list (w/o tags)
+# @since Rserve 0.5
 use constant XT_LIST_NOTAG => 20;
 $typeHash{20} = 'LIST_NOTAG';
 
-# xpression type: dotted-pair list (w tags) 
+# xpression type: dotted-pair list (w tags)
 # @since Rserve 0.5
 use constant XT_LIST_TAG => 21;
 $typeHash{21} = 'LIST_TAG';
 
 # xpression type: language list (w/o tags)
-# @since Rserve 0.5 
+# @since Rserve 0.5
 use constant XT_LANG_NOTAG => 22;
 $typeHash{22} = 'LANG_NOTAG';
 
 # xpression type: language list (w tags)
-# @since Rserve 0.5 
+# @since Rserve 0.5
 use constant XT_LANG_TAG => 23;
 $typeHash{23} = 'LANG_TAG';
 
@@ -183,11 +154,11 @@ use constant XT_ARRAY_BOOL => 36;
 $typeHash{36} = 'XT_ARRAY_BOOL';
 
 # xpression type: raw (byte[])
-# @since Rserve 0.4-? 
+# @since Rserve 0.4-?
 use constant XT_RAW => 37;
 $typeHash{37} = 'XT_RAW';
 
-# xpression type: Complex[] 
+# xpression type: Complex[]
 # @since Rserve 0.5
 use constant XT_ARRAY_CPLX => 38;
 $typeHash{38} = 'ARRAY_CPLX';
@@ -205,6 +176,5 @@ $typeHash{127} = 'XT_FACTOR';
 # used for transport only - has attribute
 use constant XT_HAS_ATTR => 128;
 $typeHash{128} = 'HAS_ATTR';
-
 
 1;

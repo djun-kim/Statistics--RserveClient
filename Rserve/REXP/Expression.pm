@@ -20,13 +20,13 @@ use Rserve::REXP;
 use Rserve::REXP::GenericVector;
 
 #class Rserve_REXP_Factor extends Rserve_REXP_GenericVector {
-package Rserve::REXP::Expression; 
+package Rserve::REXP::Expression;
 our @ISA = qw(Rserve::REXP::GenericVector);
 
 sub isExpression() { return Rserve::TRUE; }
 
 sub getType() {
-  return Rserve::XT_VECTOR_EXP;
+    return Rserve::XT_VECTOR_EXP;
 }
 
 1;

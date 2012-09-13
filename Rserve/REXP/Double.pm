@@ -9,10 +9,8 @@
 # * This code is inspired from Java client for Rserve (Rserve package
 #   v0.6.2) developed by Simon Urbanek(c)
 
-
 # R Double vector
 # class Rserve_REXP_Double extends Rserve_REXP_Vector {
-
 
 use v5.12;
 use warnings;
@@ -23,7 +21,7 @@ use Rserve qw (:xt_types );
 
 use Rserve::REXP::Vector;
 
-package Rserve::REXP::Double; 
+package Rserve::REXP::Double;
 our @ISA = ("Rserve::REXP::Vector");
 
 sub isInteger() { return Rserve::FALSE; }
@@ -31,7 +29,7 @@ sub isNumeric() { return Rserve::TRUE; }
 sub isDouble()  { return Rserve::TRUE; }
 
 sub getType() {
-  return Rserve::XT_ARRAY_DOUBLE;
+    return Rserve::XT_ARRAY_DOUBLE;
 }
 
 1;

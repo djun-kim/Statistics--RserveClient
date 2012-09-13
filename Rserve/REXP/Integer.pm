@@ -28,8 +28,8 @@ sub isInteger() { return Rserve::TRUE; }
 sub isNumeric() { return Rserve::TRUE; }
 
 sub getType() {
-  return Rserve::XT_ARRAY_INT;
+    return Rserve::XT_ARRAY_INT;
 }
-        
+
 1;
 

@@ -9,7 +9,6 @@
 # * This code is inspired from Java client for Rserve (Rserve package
 #   v0.6.2) developed by Simon Urbanek(c)
 
-
 use v5.12;
 use warnings;
 use autodie;
@@ -25,12 +24,12 @@ use Rserve::REXP;
 package Rserve::REXP::Null;
 
 our @ISA = qw(Rserve::REXP);
-	
+
 sub isList() { return Rserve::TRUE; }
 sub isNull() { return Rserve::TRUE; }
 
 sub getType() {
-  return Rserve::XT_NULL;
+    return Rserve::XT_NULL;
 }
 
 1;
