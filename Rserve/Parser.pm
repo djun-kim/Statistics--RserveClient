@@ -1,6 +1,6 @@
 # * Rserve message Parser
 # * @author Djun Kim
-# * Based on Clément Turbelin's php client
+# * Based on Clément Turbelin's PHP client
 # * Licensed under GPL v2 or at your option v3
 
 package Rserve::Parser;
@@ -326,7 +326,7 @@ sub parse(@) {
         default {
             print(    'Warning: type '
                     . $ra
-                    . ' is currently not implemented in the PHP client.' );
+                    . ' is currently not implemented in the Perl client.' );
             @a = undef;
         }
     }    # end switch
@@ -731,7 +731,7 @@ sub parseREXP(@) {
         default {
             print(    'Warning: type '
                     . $ra
-                    . ' is currently not implemented in the PHP client.' );
+                    . ' is currently not implemented in the Perl client.' );
             @a = Rserve::FALSE;
         }
     }
