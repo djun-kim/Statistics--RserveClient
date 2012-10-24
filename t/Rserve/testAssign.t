@@ -49,5 +49,22 @@ is_deeply(\@int_vector, \@expected_int_vector,
    'vector of ints') or
     diag explain @int_vector;
 
+my @expected_double_scalar = 1.5;
+my $x = new Rserve::REXP::Double;
+$x->setValues(\@expected_double_scalar);
+$cnx->assign('x', $x);
+my @double_scalar = $cnx->evalString('x');
+is_deeply(\@double_scalar, \@expected_double_scalar,
+   'double scalar') or
+    diag explain @double_scalar;
+
+my @expected_double_vector = (0.5, 1, 1.5, 2);
+$x->setValues(\@expected_double_vector);
+$cnx->assign('x', $x);
+my @double_vector = $cnx->evalString('x');
+is_deeply(\@double_vector, \@expected_double_vector,
+   'vector of doubles') or
+    diag explain @double_vector;
+
 
 done_testing();
