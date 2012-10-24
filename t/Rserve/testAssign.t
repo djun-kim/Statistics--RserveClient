@@ -4,7 +4,7 @@ use autodie;
 
 use Rserve::Connection;
 
-use Test::More tests => 4;
+use Test::More;# tests => 12;
 
 my $cnx = new_ok('Rserve::Connection' => ['localhost']);
 
@@ -31,6 +31,23 @@ $cnx->assign('x', $x);
 my @bool_vector = $cnx->evalString('x');
 is_deeply(\@bool_vector, \@expected_bool_vector, 'boolean array') or
     diag explain @bool_vector;
+
+my @expected_int_scalar = 123;
+$x = new Rserve::REXP::Integer;
+$x->setValues(\@expected_int_scalar);
+$cnx->assign('x', $x);
+my @int_scalar = $cnx->evalString('x');
+is_deeply(\@int_scalar, \@expected_int_scalar,
+   'single-int scalar') or
+    diag explain @int_scalar;
+
+my @expected_int_vector = (101..110);
+$x->setValues(\@expected_int_vector);
+$cnx->assign('x', $x);
+my @int_vector = $cnx->evalString('x');
+is_deeply(\@int_vector, \@expected_int_vector,
+   'vector of ints') or
+    diag explain @int_vector;
 
 
 done_testing();
