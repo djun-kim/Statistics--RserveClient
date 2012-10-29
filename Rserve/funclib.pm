@@ -138,7 +138,8 @@ sub flt64($$) {
 
     my @buf = @$b;
 
-    @ss = @buf[ $o .. ( $o + 8 ) ];
+    @ss = @buf[ $o .. ( $o + 7 ) ];
+
     #	if (Rserve_Connection::$machine_is_bigendian) {
     if ( Rserve::Connection::machine_is_bigendian() ) {
         for ( $k = 0; $k < 7; $k++ ) {
@@ -147,7 +148,7 @@ sub flt64($$) {
     }
 
     $r = unpack( 'd', join( '', @ss ) );
-    return $r[1];
+    return $r;
 }
 
 # * Create a packet for QAP1 message
