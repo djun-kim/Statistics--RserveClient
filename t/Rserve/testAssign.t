@@ -50,7 +50,7 @@ is_deeply(\@int_vector, \@expected_int_vector,
     diag explain @int_vector;
 
 my @expected_double_scalar = 1.5;
-my $x = new Rserve::REXP::Double;
+$x = new Rserve::REXP::Double;
 $x->setValues(\@expected_double_scalar);
 $cnx->assign('x', $x);
 my @double_scalar = $cnx->evalString('x');
