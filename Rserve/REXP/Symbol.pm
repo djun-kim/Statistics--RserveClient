@@ -28,18 +28,18 @@ package Rserve::REXP::Symbol;
 
 our @ISA = qw(Rserve::REXP);
 
-my $name;    #protected
-
-sub setValue($$) {
-    my $self  = shift;
-    my $value = shift;
-
-    $self->_value = $value;
+sub new($$) {
+    my $class = shift;
+    my $self = {
+        name => shift,
+    };
+    bless $self, $class;
+    return $self;
 }
 
 sub getValue($) {
     my $self = shift;
-    return $self->_value;
+    return $self->{name};
 }
 
 sub isSymbol() { return Rserve::TRUE; }
@@ -52,20 +52,19 @@ sub toHTML($) {
     my $self = shift;
 
     return
-          '<div class="rexp xt_'
-        . $self->getType()
-        . '"><span class="typename">'
+          '<div class="rexp xt_' . $self->getType() . '">' . "\n"
+        . '<span class="typename">'
         . Rserve::Parser::xtName( $self->getType() )
-        . '</span>'
-        . $self->name
-        . $self->attrToHTML()
+        . '</span>' . "\n"
+        . $self->{name}
+        . $self->attrToHTML() . "\n"
         . '</div>';
 }
 
 sub __toString($) {
     my $self = shift;
 
-    return '"' . $self->name . '"';
+    return '"' . $self->{name} . '"';
 }
 
 1;
