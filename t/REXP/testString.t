@@ -4,53 +4,37 @@ use autodie;
 
 use Rserve::REXP::String;
 
-use Test::More tests => 12;
+use Test::More tests => 8;
 
 my $string = new Rserve::REXP::String;
 
 isa_ok( $string, 'Rserve::REXP::String', 'new returns an object that' );
-ok( !$string->isExpression(), 'String is not an expression' );
 ok( $string->isString(),      'String is a string' );
+ok( $string->isVector(),      'String is a vector' );
 
-ok(!defined($string->getValue()), 'default string value is undef');
-is($string->__toString(), '""', 'defaultstring string');
+is( $string->length(), 0, 'empty vector has length 0' );
+ok( !defined $string->getValues(), 'empty vector has no values' );
+
+my @val = ( "foo", "bar", "baz" );
+$string->setValues( \@val );
+
+is( $string->length(), 3, 'length 3 when set to 3 values' );
+
+is( $string->getValues(), @val, 'values is [1, 2, 3]' );
 
 my $expected_html = << 'END_HTML';
-<div class="rexp xt_3">
-<span class="typename">string</span>
-
+<div class='rexp vector xt_34'>
+<span class="typename">string*</span>
+<span class='length'>3</span>
+<div class='values'>
+<div class='value'>"foo"</div>
+<div class='value'>"bar"</div>
+<div class='value'>"baz"</div>
+</div>
 </div>
 END_HTML
 chomp($expected_html);
 
-is($string->toHTML(), $expected_html, 'default HTML representation');
-
-$string->setValue('foo');
-is($string->getValue(), 'foo', 'string value');
-is($string->__toString(), '"foo"', 'string string');
-
-$expected_html = << 'END_HTML';
-<div class="rexp xt_3">
-<span class="typename">string</span>
-foo
-</div>
-END_HTML
-chomp($expected_html);
-
-is($string->toHTML(), $expected_html, 'HTML representation');
-
-$string->setValue('bar');
-is($string->getValue(), 'bar', 'new string value');
-is($string->__toString(), '"bar"', 'new string string');
-
-$expected_html = << 'END_HTML';
-<div class="rexp xt_3">
-<span class="typename">string</span>
-bar
-</div>
-END_HTML
-chomp($expected_html);
-
-is($string->toHTML(), $expected_html, 'new HTML representation');
+is( $string->toHTML(), $expected_html, 'convert to HTML' );
 
 done_testing();
