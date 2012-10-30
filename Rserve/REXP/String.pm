@@ -26,47 +26,10 @@ use Rserve::REXP::Vector;
 package Rserve::REXP::String;
 our @ISA = qw(Rserve::REXP::Vector);
 
-sub new($) {
-  my $class = shift;
-  my $self = {
-      value => undef,
-  };
-  bless $self, $class;
-  return $self;
-}
-
-sub setValue($$) {
-  my $self = shift;
-  my $value = shift;
-
-  $self->{value} = $value;
-}
-
-sub getValue($) {
-  my $self = shift;
-  return $self->{value};
-}
-
 sub isString() { return Rserve::TRUE; }
 
 sub getType() {
-    return Rserve::XT_STR;
-}
-
-sub toHTML($) {
-  my $self = shift;
-  return '<div class="rexp xt_' . $self->getType() . '">' . "\n"
-      . '<span class="typename">'
-      . Rserve::Parser::xtName($self->getType())
-      . '</span>' . "\n"
-      . $self->{value}
-      . $self->attrToHTML() . "\n"
-      . '</div>';
-}
-
-sub __toString($) {
-  my $self = shift;
-  return '"' . ($self->{value} or '') . '"';
+    return Rserve::XT_ARRAY_STR;
 }
 
 1;
