@@ -145,6 +145,7 @@ sub new() {
         socket       => undef,
         auth_request => Rserve::FALSE,
         auth_method  => undef,
+        auth_key     => undef,
     };
 
     bless $self, $class;
@@ -228,7 +229,7 @@ sub new() {
     eval {
         (          defined( recv( $self->{socket}, $buf, 32, 0 ) )
                 && length($buf) >= 32
-                && substr( $buf, 4, 0 ) eq 'Rsrv' )
+                && substr( $buf, 0, 4 ) eq 'Rsrv' )
             or die Rserve::Exception->new(
             "Invalid response from server:" . $@ . "\n" );
     };
@@ -240,9 +241,11 @@ sub new() {
     if ( $rv ne '0103' ) {
         die Rserve::Exception->new('Unsupported protocol version.');
     }
+
+    # grab connection attributes (each is a quad)
     for ( my $i = 12; $i < 32; $i += 4 ) {
-        my $attr = substr( $buf, $i, $i + 4 );
-        # print "attr = $attr\n";
+        my $attr = substr( $buf, $i, 4 );
+        # print "attr = $attr\n";     #debug
         if ( $attr eq 'ARpt' ) {
             $self->{auth_request} = Rserve::TRUE;
             $self->{auth_method}  = 'plain';
@@ -252,7 +255,7 @@ sub new() {
             $self->{auth_method}  = 'crypt';
         }
         if ( substr( $attr, 0, 1 ) eq 'K' ) {
-            my $key = substr( $attr, 1, 3 );
+            $self->{auth_key} = substr( $attr, 1, 3 );
         }
     }
     return $self;
@@ -272,11 +275,11 @@ sub evalString() {
     my $self = shift;
 
     my $parser = Rserve::Connection::PARSER_NATIVE;
-    my $attr   = undef;
+    my @attr   = ();
     my $string = "";
 
     if ( @_ == 3 ) {
-        ( $string, $parser, $attr ) = shift;
+        ( $string, $parser, @attr ) = shift;
     }
     elsif ( @_ == 2 ) {
         ( $string, $parser ) = shift;
@@ -286,44 +289,39 @@ sub evalString() {
     }
 
     #print "parser = $parser\n";
-    #print "attr = $attr\n";
+    #print "attr = @attr\n";
     #print "string = $string\n";
 
-    use Switch;
     my %r = $self->command( Rserve::Connection::CMD_eval, $string );
 
-    #print Dumper(%r);
+    print Dumper(%r);
 
     my $i = 20;
     if ( !$r{'is_error'} ) {
         my $buf = $r{'contents'};
         my @res = undef;
-        switch ($parser) {
-            case (PARSER_NATIVE) {
-                #print "calling parser.parse()\n";
-                #print "buf = $buf\n";
-                #print "i = $i\n";
-                #print "attr = $attr\n";
+        given ($parser) {
+            when (PARSER_NATIVE) {
+                print "calling parser.parse()\n";
+                print "buf = $buf\n";
+                print "i = $i\n";
+                print "attr = @attr\n";
 
-                @res = Rserve::Parser::parse( $buf, $i, \$attr );
-                last;
+                @res = Rserve::Parser::parse( $buf, $i, @attr );
             }
-            case (PARSER_REXP) {
-                @res = Rserve::Parser::parseREXP( $buf, $i, \$attr );
-                last;
+            when (PARSER_REXP) {
+                @res = Rserve::Parser::parseREXP( $buf, $i, @attr );
             }
-            case (PARSER_DEBUG) {
-                @res = Rserve::Parser::parseDebug( $buf, $i, \$attr );
-                last;
+            when (PARSER_DEBUG) {
+                @res = Rserve::Parser::parseDebug( $buf, $i, @attr );
             }
-            case (PARSER_NATIVE_WRAPPED) {
+            when (PARSER_NATIVE_WRAPPED) {
                 my $old = Rserve::Parser->use_array_object();
                 Rserve::Parser->use_array_object(Rserve::TRUE);
-                @res = Rserve::Parser->parse( $buf, $i, \$attr );
+                @res = Rserve::Parser->parse( $buf, $i, @attr );
                 Rserve::Parser->use_array_object($old);
-                last;
             }
-            else {
+            default {
                 die( new Rserve::Exception('Unknown parser') );
                 die('Unknown parser');
             }
@@ -400,16 +398,17 @@ sub command() {
 
     my @b = split "", $buf;
 
-    #foreach (@b) {print "[" . ord($_) . "]" }; print "\n";
+    foreach (@b) { print "[" . ord($_) . "]" }
+    print "\n";
 
     if ( $n != 16 ) {
         return Rserve::FALSE;
     }
     my $code = int32( \@b, 0 );
-    # print "code = $code\n";
+    print "code = $code\n";
 
     my $len = int32( \@b, 4 );
-    # print "len = $len\n";
+    print "len = $len\n";
 
     my $ltg = $len;
     while ( $ltg > 0 ) {
@@ -443,13 +442,13 @@ sub command() {
         }
     }
 
-    #  print "code = $code\n";
-    #  print "code & 15 = " . ($code & 15) . "\n";
-    #  print "code error = " . (($code >> 24) & 127) . "\n";
+    print "code = $code\n";
+    print "code & 15 = " .  ( $code & 15 ) . "\n";
+    print "code error = " . ( ( $code >> 24 ) & 127 ) . "\n";
 
-    #print "buf = $buf\n";
-    #foreach (split "", $buf) {print "[" . ord($_)."]"};
-    #print "\n";
+    print "buf = $buf\n";
+    foreach ( split "", $buf ) { print "[" . ord($_) . "]" }
+    print "\n";
 
     my %r = (
         code       => $code,
