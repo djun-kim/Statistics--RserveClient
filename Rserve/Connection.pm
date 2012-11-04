@@ -353,11 +353,52 @@ sub command() {
     my $self    = shift;
     my $command = shift;
     my $v       = shift;
-    my $buf     = "";
 
     #print "v = $v\n";
     #print "make pkt..\n";
     my $pkt = _rserve_make_packet( $command, $v );
+
+    # print "pkt = $pkt\n";
+
+    eval {
+        #socket_send($self->{socket}, $pkt, length($pkt), 0);
+        my $n = send( $self->{socket}, $pkt, 0 );
+        #print "n = $n\n";
+        die Rserve::Exception->new("Invalid (short) response from server:$!")
+            if ( $n == 0 );
+    };
+    if ($@) {
+        print "Error: on " . $self->{socket} . ":";
+        print $@->getErrorMessage();
+        print "\n";
+        return Rserve::FALSE;
+    }
+
+    #print "sent pkt..\n";
+
+    # get response
+    return processResponse($self);
+}
+
+
+sub commandRaw() {
+    my $self    = shift;
+    my $cmd     = shift;
+    my $v       = shift;
+
+    my $n = length($v);
+
+    # print "cmd: $cmd; string: $v, n=$n\n";
+
+    # take next largest muliple of 4 to pad out string length
+    $n = $n + ( ( $n % 4 ) ? ( 4 - $n % 4 ) : 0 );
+
+    # [0]  (int) command
+    # [4]  (int) length of the message (bits 0-31)
+    # [8]  (int) offset of the data part
+    # [12] (int) length of the message (bits 32-63)
+    my $pkt = pack( "V V V V Z$n",
+        ( $cmd, $n, 0, 0, $v ) );
 
     #print "pkt = $pkt\n";
 
@@ -378,9 +419,13 @@ sub command() {
     #print "sent pkt..\n";
 
     # get response
-    #$n = socket_recv($self->{socket}, $buf, 16, 0);
+    return processResponse($self);
+}
+
+sub processResponse() {
+    my $self = shift;
     my $n = 0;
-    $buf = "";
+    my $buf = "";
     eval {
         #print "receiving pkt..\n";
         ( defined( recv( $self->{socket}, $buf, 16, 0 ) )
@@ -464,19 +509,36 @@ sub command() {
 # Assign a value to a symbol in R
 #  @param string $symbol name of the variable to set (should be compliant with R syntax !)
 #  @param Rserve_REXP $value value to set
-#  Commented because not ready for this release
-#        sub assign($symbol, $value) {
-#                if (!is_object($symbol) and !$symbol instanceof Rserve_REXP_Symbol) {
-#                        $symbol = (string)$symbol;
-#                        $s = new Rserve_REXP_Symbol();
-#                        $s->setValue($symbol);
-#                }
-#                if (!is_object($value) AND ! $value instanceof Rserve_REXP) {
-#                        throw new InvalidArgumentException('value should be REXP object');
-#                }
-#                $contents .= Rserve_Parser::createBinary($s);
-#                $contents .= Rserve_Parser::createBinary($value);
-#        }
+sub assign($$$) {
+    my $self = shift;
+    my $symbol = shift;
+    my $value = shift;
+
+    unless ($symbol->isa('Rserve::REXP::Symbol') ||
+            $symbol->isa('Rserve::REXP::String')) {
+        $symbol = '' . $symbol;
+        my $s = new Rserve::REXP::Symbol($symbol);
+        $symbol = $s;
+    }
+    unless ($value->isa('Rserve::REXP')) {
+        die Rserve::Exception->new("value should be REXP object");
+    }
+
+    my $n = length($symbol->getValue());
+
+    my $data = join('', Rserve::Parser::createBinary($value));
+    # my @d = split '', $data;
+    # foreach (@d) {print "[" . ord($_) . "]"};  print "\n";
+
+    my $contents = '' . mkint8(DT_STRING) . mkint24($n+1) . $symbol->getValue() . chr(0) .
+        mkint8(DT_SEXP) . join('', mkint24(length($data))) . $data;
+
+    # my @c = split "", $contents;
+    # foreach (@c) {print "[" . ord($_). ":". $_ . "]"};  print "\n";
+
+    my %r = $self->commandRaw(Rserve::Connection::CMD_assignSEXP, $contents);
+    die if $r{'is_error'};
+}
 
 1;
 

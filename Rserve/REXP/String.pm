@@ -29,7 +29,7 @@ our @ISA = qw(Rserve::REXP::Vector);
 sub isString() { return Rserve::TRUE; }
 
 sub getType() {
-    return Rserve::XT_STR;
+    return Rserve::XT_ARRAY_STR;
 }
 
 1;

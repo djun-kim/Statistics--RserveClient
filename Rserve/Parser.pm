@@ -827,7 +827,7 @@ sub createBinary($) {
             if ($n) {
                 for ( my $i = 0; $i < $n; ++$i ) {
                     $v = $vv[$i];
-                    if ( defined($v) ) {
+                    if ( !defined($v) ) {
                         $v = 2;
                     }
                     else {

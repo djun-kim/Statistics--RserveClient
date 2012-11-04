@@ -138,9 +138,7 @@ sub flt64($$) {
 
     my @buf = @$b;
 
-    # print "flt64( $b, $o )\n";
-
-    @ss = @buf[ $o .. ( $o + 8 ) ];
+    @ss = @buf[ $o .. ( $o + 7 ) ];
 
     #	if (Rserve_Connection::$machine_is_bigendian) {
     if ( Rserve::Connection::machine_is_bigendian() ) {
@@ -151,7 +149,6 @@ sub flt64($$) {
     }
 
     $r = unpack( 'd', join( '', @ss ) );
-
     return $r + 0;
 }
 
