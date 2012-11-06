@@ -872,16 +872,16 @@ sub createBinary($) {
         when (Rserve::XT_ARRAY_STR) {
             my @vv = $value->getValues();
             my $n  = scalar(@vv);
-            my @v;
+            my $v;
             for ( my $i = 0; $i < $n; ++$i ) {
-                @v = $vv[$i];
-                if (@v) {
-                    if ( ord( $v[0] ) == 255 ) {
+                $v = $vv[$i];
+                if ($v) {
+                    if ( ord( substr($v, 0, 1) ) == 255 ) {
                         $contents .= chr(255);
                         ++$o;
                     }
-                    $contents .= join( '', @v );
-                    $o += scalar(@v);
+                    $contents .= $v . chr(0);
+                    $o += length($v) + 1;
                 }
                 else {
                     $contents .= chr(255) . chr(0);
