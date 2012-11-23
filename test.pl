@@ -13,8 +13,7 @@ $cnx = new Rserve::Connection('localhost');
 print "Established connection: $cnx.\n";
 
 print "Initializing connection...\n";
-Rserve::Connection->init();
-print "Checing if connection initialized... " . 
+print "Checking if connection initialized... " . 
   (Rserve::Connection::initialized() ? "TRUE" : "FALSE") . "\n";
 
 print "Sending string to R server for evaluation. Result is:\n";
