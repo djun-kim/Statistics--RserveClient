@@ -50,6 +50,14 @@ our %EXPORT_TAGS = (
     ]
 );
 
+my $DEBUG = Rserve::TRUE;
+
+sub debug($) {
+  my $msg = shift;
+  $msg = "debug [". caller() . "] $msg";
+  print ($msg) if ($DEBUG);
+}
+
 my %typeHash = ();
 
 # xpression type: NULL
