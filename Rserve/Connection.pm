@@ -8,7 +8,6 @@
 # Handle Connection and communicating with Rserve instance
 # @author Djun Kim
 
-use v5.10.1;
 use warnings;
 #use diagnostics;
 #use autodie;

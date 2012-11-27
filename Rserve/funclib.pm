@@ -10,7 +10,7 @@
 # * @param string $buf buffer
 # * @param int $o offset
 
-use v5.10.1;
+use strict;
 
 package Rserve::funclib;
 
