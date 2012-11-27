@@ -6,20 +6,20 @@
 # string to be evaluated (it prints 'Hello, world!')
 # gets the result from the server and prints the result.
 
+use strict;
+
 use Rserve::Connection;
 
 print "Opening connection...\n";
-$cnx = new Rserve::Connection('localhost');
+my $cnx = new Rserve::Connection('localhost');
 print "Established connection: $cnx.\n";
 
-print "Initializing connection...\n";
-Rserve::Connection->init();
-print "Checing if connection initialized... " . 
+print "Checking if connection initialized... " . 
   (Rserve::Connection::initialized() ? "TRUE" : "FALSE") . "\n";
 
 print "Sending string to R server for evaluation. Result is:\n";
 
-@result = $cnx->evalString("x='Hello, world!'; x");
+my @result = $cnx->evalString("x='Hello, world!'; x");
 
 print join "", @result;
 print "\n";
