@@ -514,8 +514,7 @@ sub assign($$$) {
     my $symbol = shift;
     my $value = shift;
 
-    unless ($symbol->isa('Rserve::REXP::Symbol') ||
-            $symbol->isa('Rserve::REXP::String')) {
+    unless ($symbol->isa('Rserve::REXP::Symbol')) {
         $symbol = '' . $symbol;
         my $s = new Rserve::REXP::Symbol($symbol);
         $symbol = $s;
