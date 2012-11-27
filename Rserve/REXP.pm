@@ -13,13 +13,10 @@
 
 # * R Expression wrapper
 
-use v5.12;
 use warnings;
-use autodie;
+#use autodie;
 
 package Rserve::REXP;
-
-use Rserve;
 
 use Rserve;
 use Rserve qw (:xt_types );
@@ -27,6 +24,9 @@ use Rserve qw (:xt_types );
 use Rserve::Parser;
 
 use Exporter;
+our @ISA    = qw(Exporter);
+our @EXPORT = qw(setAttributes getAttribute hasAttribute attr);
+
 
 #  * List of attributes associated with the R object
 #  * @var Rserve_REXP_List

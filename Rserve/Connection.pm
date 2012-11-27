@@ -8,22 +8,25 @@
 # Handle Connection and communicating with Rserve instance
 # @author Djun Kim
 
-use v5.12;
+use v5.10.1;
 use warnings;
-use autodie;
+#use diagnostics;
+#use autodie;
 
 package Rserve::Connection;
 
-use Rserve;
+#use Rserve;
 
 use Data::Dumper;
 
 use Exporter;
-our @EXPORT = qw(init new);
+
+our @EXPORT = qw ( new init evalString );
 
 use Socket;
 
-use Rserve::Funclib;
+use Rserve::funclib qw( _rserve_make_packet );
+
 use Rserve::Parser qw( parse );
 use Rserve::Exception;
 use Rserve::ParserException;
@@ -101,7 +104,7 @@ sub initialized(@) {
 
 my $_machine_is_bigendian = Rserve::FALSE;
 # get/setter for class variable
-sub machine_is_bigendian($) {
+sub machine_is_bigendian(;$) {
     $_machine_is_bigendian = shift if @_;
     return $_machine_is_bigendian;
 }
@@ -110,15 +113,15 @@ sub machine_is_bigendian($) {
 # initialization of the library
 #
 sub init {
-    # print "init()\n";
+    # Rserve::debug "init()\n";
     my $self = shift;
 
     if ( initialized() ) {
-        # print "already initialised...\n";
+        # Rserve::debug "already initialised...\n";
         return;
     }
-    # print "initing...\n";
-    # print "setting byte order...\n";
+    # Rserve::debug "initing...\n";
+    # Rserve::debug "setting byte order...\n";
     if ( $Config{byteorder} eq '87654321' ) {
         machine_is_bigendian(Rserve::TRUE);
     }
@@ -127,7 +130,7 @@ sub init {
     }
 
     initialized(Rserve::TRUE);
-    # print "set initialized to true...\n";
+    # Rserve::debug "set initialized to true...\n";
     return $self;
 }
 
@@ -138,8 +141,8 @@ sub init {
 
 # public
 #sub new($host='127.0.0.1', $port = 6311, $debug = FALSE) {
-sub new() {
-    # print "new()\n";
+sub new {
+    # Rserve::debug "new()\n";
     my $class = shift;
     my $self  = {
         socket       => undef,
@@ -167,19 +170,19 @@ sub new() {
         die("Bad number of arguments in creating connection\n");
     }
 
-    #print "host: $host\n";
-    #print "port: $port\n";
+    #Rserve::debug "host: $host\n";
+    #Rserve::debug "port: $port\n";
 
     my $proto = getprotobyname('tcp');
     my $inet_addr;
     my $paddr;
 
-    # print "class = $class\n";
+    # Rserve::debug "class = $class\n";
 
-    # print "class = $class\n";
+    # Rserve::debug "class = $class\n";
     if ( !$self->initialized() ) {
-        # print "calling init from new()\n";
-        Rserve::Connection::init();
+        # Rserve::debug "calling init from new()\n";
+        init();
     }
 
     eval {
@@ -210,7 +213,7 @@ sub new() {
         );
     }
 
-    # print "created socket...\n";
+    # Rserve::debug "created socket...\n";
 
     # socket_set_option($self->{socket}, SOL_TCP, SO_DEBUG,2);
     setsockopt( $self->{socket}, Socket::IPPROTO_TCP, Socket::SO_DEBUG, 2 );
@@ -223,7 +226,7 @@ sub new() {
             "Unable to connect" . $@->getErrorMessage() );
     }
 
-    # print "connected...\n";
+    # Rserve::debug "connected...\n";
 
     my $buf = '';
     eval {
@@ -234,7 +237,7 @@ sub new() {
             "Invalid response from server:" . $@ . "\n" );
     };
     if ($@) {
-        print $@->getErrorMessage();
+        warn $@->getErrorMessage();
     }
 
     my $rv = substr( $buf, 4, 4 );
@@ -245,7 +248,7 @@ sub new() {
     # grab connection attributes (each is a quad)
     for ( my $i = 12; $i < 32; $i += 4 ) {
         my $attr = substr( $buf, $i, 4 );
-        # print "attr = $attr\n";     #debug
+        # Rserve::debug "attr = $attr\n";
         if ( $attr eq 'ARpt' ) {
             $self->{auth_request} = Rserve::TRUE;
             $self->{auth_method}  = 'plain';
@@ -262,7 +265,7 @@ sub new() {
 }
 
 sub DESTROY() {
-    close();
+    Rserve::Connection::close();
 }
 
 # Evaluate a string as an R code and return result
@@ -274,54 +277,63 @@ sub DESTROY() {
 sub evalString() {
     my $self = shift;
 
-    my $parser = Rserve::Connection::PARSER_NATIVE;
-    my @attr   = ();
+    my $parser = PARSER_NATIVE;
+    my %attr   = ();
     my $string = "";
 
     if ( @_ == 3 ) {
-        ( $string, $parser, @attr ) = shift;
+	Rserve::debug "3 args to evalString\n";
+        ( $string, $parser, %attr ) = shift;
     }
     elsif ( @_ == 2 ) {
+	Rserve::debug "2 args to evalString\n";
         ( $string, $parser ) = shift;
     }
     elsif ( @_ == 1 ) {
+	Rserve::debug "1 arg to evalString\n";
         $string = shift;
     }
 
-    #print "parser = $parser\n";
-    #print "attr = @attr\n";
-    #print "string = $string\n";
+    #Rserve::debug "parser = $parser\n";
+    #Rserve::debug "attr = $attr\n";
+    #Rserve::debug "string = $string\n";
 
     my %r = $self->command( Rserve::Connection::CMD_eval, $string );
 
-    print Dumper(%r);
+    #Rserve::debug Dumper(%r);
 
     my $i = 20;
     if ( !$r{'is_error'} ) {
         my $buf = $r{'contents'};
         my @res = undef;
-        given ($parser) {
-            when (PARSER_NATIVE) {
-                print "calling parser.parse()\n";
-                print "buf = $buf\n";
-                print "i = $i\n";
-                print "attr = @attr\n";
+        for ($parser) {
+            if ($parser == PARSER_NATIVE) {
+                Rserve::debug "calling parser.parse()\n";
+                Rserve::debug "buf = $buf\n";
+                Rserve::debug "i = $i\n";
+                Rserve::debug "attr = ";
+		        Rserve::debug Dumper %attr;
+		        Rserve::debug "\n";
 
-                @res = Rserve::Parser::parse( $buf, $i, @attr );
+                @res = Rserve::Parser::parse( $buf, $i, %attr );
+                last;
             }
-            when (PARSER_REXP) {
-                @res = Rserve::Parser::parseREXP( $buf, $i, @attr );
+            elsif ($parser == PARSER_REXP) {
+                @res = Rserve::Parser::parseREXP( $buf, $i, %attr );
+                last;
             }
-            when (PARSER_DEBUG) {
-                @res = Rserve::Parser::parseDebug( $buf, $i, @attr );
+            elsif ($parser == PARSER_DEBUG) {
+                @res = Rserve::Parser::parseDebug( $buf, $i, %attr );
+                last;
             }
-            when (PARSER_NATIVE_WRAPPED) {
+            elsif ($parser == PARSER_NATIVE_WRAPPED) {
                 my $old = Rserve::Parser->use_array_object();
                 Rserve::Parser->use_array_object(Rserve::TRUE);
-                @res = Rserve::Parser->parse( $buf, $i, @attr );
+                @res = Rserve::Parser->parse( $buf, $i, %attr );
                 Rserve::Parser->use_array_object($old);
+                last;
             }
-            default {
+            else {
                 die( new Rserve::Exception('Unknown parser') );
                 die('Unknown parser');
             }
@@ -339,7 +351,7 @@ sub evalString() {
 sub close() {
     my $self = shift;
     if ( $self->{socket} ) {
-        return socket_close( $self->{socket} );
+        return $self->{socket}->close();
     }
     return Rserve::TRUE;
 }
@@ -354,27 +366,25 @@ sub command() {
     my $command = shift;
     my $v       = shift;
 
-    #print "v = $v\n";
-    #print "make pkt..\n";
-    my $pkt = _rserve_make_packet( $command, $v );
+    #Rserve::debug "v = $v\n";
+    #Rserve::debug "make pkt..\n";
+    my $pkt = Rserve::funclib::_rserve_make_packet( $command, $v );
 
-    # print "pkt = $pkt\n";
+    # Rserve::debug "pkt = $pkt\n";
 
     eval {
         #socket_send($self->{socket}, $pkt, length($pkt), 0);
         my $n = send( $self->{socket}, $pkt, 0 );
-        #print "n = $n\n";
+        #Rserve::debug "n = $n\n";
         die Rserve::Exception->new("Invalid (short) response from server:$!")
             if ( $n == 0 );
     };
     if ($@) {
-        print "Error: on " . $self->{socket} . ":";
-        print $@->getErrorMessage();
-        print "\n";
+        warn "Error on " . $self->{socket} . ":" . $@->getErrorMessage() . "\n";
         return Rserve::FALSE;
     }
 
-    #print "sent pkt..\n";
+    #Rserve::debug "sent pkt..\n";
 
     # get response
     return processResponse($self);
@@ -388,7 +398,7 @@ sub commandRaw() {
 
     my $n = length($v);
 
-    # print "cmd: $cmd; string: $v, n=$n\n";
+    # Rserve::debug "cmd: $cmd; string: $v, n=$n\n";
 
     # take next largest muliple of 4 to pad out string length
     $n = $n + ( ( $n % 4 ) ? ( 4 - $n % 4 ) : 0 );
@@ -400,65 +410,62 @@ sub commandRaw() {
     my $pkt = pack( "V V V V Z$n",
         ( $cmd, $n, 0, 0, $v ) );
 
-    #print "pkt = $pkt\n";
+    #Rserve::debug "pkt = $pkt\n";
 
     eval {
         #socket_send($self->{socket}, $pkt, length($pkt), 0);
         my $n = send( $self->{socket}, $pkt, 0 );
-        #print "n = $n\n";
+        #Rserve::debug "n = $n\n";
         die Rserve::Exception->new("Invalid (short) response from server:$!")
             if ( $n == 0 );
     };
     if ($@) {
-        print "Error: on " . $self->{socket} . ":";
-        print $@->getErrorMessage();
-        print "\n";
+        warn "Error: on " . $self->{socket} . ":" . $@->getErrorMessage() . "\n";
         return Rserve::FALSE;
     }
 
-    #print "sent pkt..\n";
+    #Rserve::debug "sent pkt..\n";
 
     # get response
     return processResponse($self);
 }
 
-sub processResponse() {
+sub processResponse($) {
     my $self = shift;
     my $n = 0;
     my $buf = "";
     eval {
-        #print "receiving pkt..\n";
+        #Rserve::debug "receiving pkt..\n";
         ( defined( recv( $self->{socket}, $buf, 16, 0 ) )
                 && length($buf) >= 16 )
             or die Rserve::Exception->new(
             'Invalid (short) response from server:');
         $n = length($buf);
-        #print "n = $n\n";
+        #Rserve::debug "n = $n\n";
     };
     if ($@) {
-        print $@->getErrorMessage();
+        warn $@->getErrorMessage();
     }
 
-    # print "got response...$buf\n";
+    # Rserve::debug "got response...$buf\n";
 
     my @b = split "", $buf;
 
-    foreach (@b) { print "[" . ord($_) . "]" }
-    print "\n";
+    #foreach (@b) {print "[" . ord($_) . "]" }; print "\n";
 
     if ( $n != 16 ) {
         return Rserve::FALSE;
     }
-    my $code = int32( \@b, 0 );
-    print "code = $code\n";
+    my $code = Rserve::funclib::int32( \@b, 0 );
+    # Rserve::debug "code = $code\n";
 
-    my $len = int32( \@b, 4 );
-    print "len = $len\n";
+    my $len = Rserve::funclib::int32( \@b, 4 );
+    # Rserve::debug "len = $len\n";
 
     my $ltg = $len;
     while ( $ltg > 0 ) {
-        #print " ltg = $ltg\n";
-        #print " getting result..\n";
+        #Rserve::debug " ltg = $ltg\n";
+        #Rserve::debug " getting result..\n";
         my $buf2 = "";
         eval {
             # $n = socket_recv($self->{socket}, $buf2, $ltg, 0);
@@ -466,16 +473,16 @@ sub processResponse() {
                 or die Rserve::Exception->new(
                 'error getting result from server:');
             $n = length($buf2);
-            # print "  n = $n\n";
+            # Rserve::debug "  n = $n\n";
         };
         if ($@) {
-            print $@->getErrorMessage();
+            warn $@->getErrorMessage();
         }
 
-        #print "buf = $buf\n";
-        #print "len(buf) = ". length($buf) . "\n";
-        #print "buf2 = $buf2\n";
-        #print "n = $n\n";
+        #Rserve::debug "buf = $buf\n";
+        #Rserve::debug "len(buf) = ". length($buf) . "\n";
+        #Rserve::debug "buf2 = $buf2\n";
+        #Rserve::debug "n = $n\n";
 
         if ( $n > 0 ) {
             $buf .= $buf2;
@@ -487,13 +494,13 @@ sub processResponse() {
         }
     }
 
-    print "code = $code\n";
-    print "code & 15 = " .  ( $code & 15 ) . "\n";
-    print "code error = " . ( ( $code >> 24 ) & 127 ) . "\n";
+    #  Rserve::debug "code = $code\n";
+    #  Rserve::debug "code & 15 = " . ($code & 15) . "\n";
+    #  Rserve::debug "code error = " . (($code >> 24) & 127) . "\n";
 
-    print "buf = $buf\n";
-    foreach ( split "", $buf ) { print "[" . ord($_) . "]" }
-    print "\n";
+    #Rserve::debug "buf = $buf\n";
+    #foreach (split "", $buf) {print "[" . ord($_)."]"};
+    #Rserve::debug "\n";
 
     my %r = (
         code       => $code,
@@ -514,7 +521,8 @@ sub assign($$$) {
     my $symbol = shift;
     my $value = shift;
 
-    unless ($symbol->isa('Rserve::REXP::Symbol')) {
+    unless ($symbol->isa('Rserve::REXP::Symbol') ||
+            $symbol->isa('Rserve::REXP::String')) {
         $symbol = '' . $symbol;
         my $s = new Rserve::REXP::Symbol($symbol);
         $symbol = $s;
@@ -529,8 +537,11 @@ sub assign($$$) {
     # my @d = split '', $data;
     # foreach (@d) {print "[" . ord($_) . "]"};  print "\n";
 
-    my $contents = '' . mkint8(DT_STRING) . mkint24($n+1) . $symbol->getValue() . chr(0) .
-        mkint8(DT_SEXP) . join('', mkint24(length($data))) . $data;
+    my $contents = '' . 
+	   Rserve::funclib::mkint8(DT_STRING) . 
+	     Rserve::funclib::mkint24($n+1) . $symbol->getValue() . chr(0) .
+         Rserve::funclib::mkint8(DT_SEXP) . 
+	     join('', Rserve::funclib::mkint24(length($data))) . $data;
 
     # my @c = split "", $contents;
     # foreach (@c) {print "[" . ord($_). ":". $_ . "]"};  print "\n";

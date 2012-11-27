@@ -20,7 +20,6 @@ while (!$EOF) {
   else {
     print "evaluating $input\n";
     @result = $cnx->evalString($input);
-    print join ", ", @result;
-    print "\n";
+    print "[" . join (", ", @result) . "]\n";
   }
 }

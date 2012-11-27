@@ -2,9 +2,8 @@
 # * @author Djun Kim
 # * Licensed under GPL v2 or at your option v3
 
-use v5.12;
-use warnings;
-use autodie;
+#use warnings;
+#use autodie;
 
 package Rserve;
 
@@ -51,6 +50,15 @@ our %EXPORT_TAGS = (
 );
 
 my %typeHash = ();
+
+my $DEBUG = Rserve::FALSE;
+
+sub debug($) {
+  my $msg = shift;
+  $msg = "debug [". caller() . "] $msg";
+  print ($msg) if ($DEBUG);
+}
+
 
 # xpression type: NULL
 use constant XT_NULL => 0;

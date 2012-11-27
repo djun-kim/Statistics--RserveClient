@@ -7,9 +7,9 @@
 # * Rserve::Exception
 # * @author Djun Kim
 
-use v5.12;
+use v5.10.1;
 use warnings;
-use autodie;
+#use autodie;
 
 package Rserve::Exception;
 

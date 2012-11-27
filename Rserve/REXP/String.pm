@@ -11,9 +11,8 @@
 # * This code is inspired from Java client for Rserve (Rserve package
 # * v0.6.2) developed by Simon Urbanek(c)
 
-use v5.12;
 use warnings;
-use autodie;
+#use autodie;
 
 # R character vector
 # class Rserve_REXP_String extends Rserve_REXP_Vector {

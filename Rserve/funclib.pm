@@ -10,6 +10,16 @@
 # * @param string $buf buffer
 # * @param int $o offset
 
+use v5.10.1;
+
+package Rserve::funclib;
+
+#use Rserve;
+
+use Exporter;
+our @EXPORT = qw( _rserve_make_packet int8 );
+
+
 #sub int8($buf, $o = 0) {
 sub int8($$) {
     my $buf = shift;
@@ -142,7 +152,6 @@ sub flt64($$) {
 
     #	if (Rserve_Connection::$machine_is_bigendian) {
     if ( Rserve::Connection::machine_is_bigendian() ) {
-        print("big endian\n");
         for ( $k = 0; $k < 7; $k++ ) {
             $ss[ 7 - $k ] = $buf[ $o + $k ];
         }
