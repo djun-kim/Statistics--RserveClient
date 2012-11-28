@@ -27,7 +27,6 @@ use Exporter;
 our @ISA    = qw(Exporter);
 our @EXPORT = qw(setAttributes getAttribute hasAttribute attr);
 
-
 #  * List of attributes associated with the R object
 #  * @var Rserve_REXP_List
 
@@ -108,7 +107,7 @@ sub attrToHTML() {
 }
 
 sub getType() {
-    return "Rserve::XT_VECTOR";
+    return Rserve::XT_VECTOR;
 }
 
 1;
