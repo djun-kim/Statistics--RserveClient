@@ -779,42 +779,38 @@ sub parseREXP(@) {
 #public static function  xtName($xt) {
 
 sub xtName($) {
-
     my $xt = shift;
-
-    for ($xt) { 
-        if    ($xt == Rserve::XT_NULL)         { return ('null'); }
-        elsif ($xt == Rserve::XT_INT)          { return 'int'; }
-        elsif ($xt == Rserve::XT_STR)          { return 'string'; }
-        elsif ($xt == Rserve::XT_DOUBLE)       { return 'real'; }
-        elsif ($xt == Rserve::XT_BOOL)         { return 'logical'; }
-        elsif ($xt == Rserve::XT_ARRAY_INT)    { return 'int*'; }
-        elsif ($xt == Rserve::XT_ARRAY_STR)    { return 'string*'; }
-        elsif ($xt == Rserve::XT_ARRAY_DOUBLE) { return 'real*'; }
-        elsif ($xt == Rserve::XT_ARRAY_BOOL)   { return 'logical*'; }
-        elsif ($xt == Rserve::XT_ARRAY_CPLX)   { return 'complex*'; }
-        elsif ($xt == Rserve::XT_SYM)          { return 'symbol'; }
-        elsif ($xt == Rserve::XT_SYMNAME)      { return 'symname'; }
-        elsif ($xt == Rserve::XT_LANG)         { return 'lang'; }
-        elsif ($xt == Rserve::XT_LIST)         { return 'list'; }
-        elsif ($xt == Rserve::XT_LIST_TAG)     { return 'list+T'; }
-        elsif ($xt == Rserve::XT_LIST_NOTAG)   { return 'list/T'; }
-        elsif ($xt == Rserve::XT_LANG_TAG)     { return 'lang+T'; }
-        elsif ($xt == Rserve::XT_LANG_NOTAG)   { return 'lang/T'; }
-        elsif ($xt == Rserve::XT_CLOS)         { return 'clos'; }
-        elsif ($xt == Rserve::XT_RAW)          { return 'raw'; }
-        elsif ($xt == Rserve::XT_S4)           { return 'S4'; }
-        elsif ($xt == Rserve::XT_VECTOR)       { return 'vector'; }
-        elsif ($xt == Rserve::XT_VECTOR_STR)   { return 'string[]'; }
-        elsif ($xt == Rserve::XT_VECTOR_EXP)   { return 'expr[]'; }
-        elsif ($xt == Rserve::XT_FACTOR)       { return 'factor'; }
-        elsif ($xt == Rserve::XT_UNKNOWN)      { return 'unknown'; }
-        else  {  
-	      # unknown type
-	      return '<? ' . $xt . '>'; 
-	    }
+    
+    if    ($xt == Rserve::XT_NULL)         { return ('null'); }
+    elsif ($xt == Rserve::XT_INT)          { return 'int'; }
+    elsif ($xt == Rserve::XT_STR)          { return 'string'; }
+    elsif ($xt == Rserve::XT_DOUBLE)       { return 'real'; }
+    elsif ($xt == Rserve::XT_BOOL)         { return 'logical'; }
+    elsif ($xt == Rserve::XT_ARRAY_INT)    { return 'int*'; }
+    elsif ($xt == Rserve::XT_ARRAY_STR)    { return 'string*'; }
+    elsif ($xt == Rserve::XT_ARRAY_DOUBLE) { return 'real*'; }
+    elsif ($xt == Rserve::XT_ARRAY_BOOL)   { return 'logical*'; }
+    elsif ($xt == Rserve::XT_ARRAY_CPLX)   { return 'complex*'; }
+    elsif ($xt == Rserve::XT_SYM)          { return 'symbol'; }
+    elsif ($xt == Rserve::XT_SYMNAME)      { return 'symname'; }
+    elsif ($xt == Rserve::XT_LANG)         { return 'lang'; }
+    elsif ($xt == Rserve::XT_LIST)         { return 'list'; }
+    elsif ($xt == Rserve::XT_LIST_TAG)     { return 'list+T'; }
+    elsif ($xt == Rserve::XT_LIST_NOTAG)   { return 'list/T'; }
+    elsif ($xt == Rserve::XT_LANG_TAG)     { return 'lang+T'; }
+    elsif ($xt == Rserve::XT_LANG_NOTAG)   { return 'lang/T'; }
+    elsif ($xt == Rserve::XT_CLOS)         { return 'clos'; }
+    elsif ($xt == Rserve::XT_RAW)          { return 'raw'; }
+    elsif ($xt == Rserve::XT_S4)           { return 'S4'; }
+    elsif ($xt == Rserve::XT_VECTOR)       { return 'vector'; }
+    elsif ($xt == Rserve::XT_VECTOR_STR)   { return 'string[]'; }
+    elsif ($xt == Rserve::XT_VECTOR_EXP)   { return 'expr[]'; }
+    elsif ($xt == Rserve::XT_FACTOR)       { return 'factor'; }
+    elsif ($xt == Rserve::XT_UNKNOWN)      { return 'unknown'; }
+    else  {  
+	# unknown type
+	return '<? ' . $xt . '>'; 
     }
-    return '<? ' . $xt . '>';
 }
 
 # * @param Rserve::REXP $value
