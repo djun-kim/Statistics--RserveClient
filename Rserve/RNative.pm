@@ -6,8 +6,8 @@
 
 #class Rserve_RNative implements ArrayAccess {
 
-use warnings;
-use autodie;
+#use warnings;
+#use autodie;
 
 package Rserve::RNative;
 
