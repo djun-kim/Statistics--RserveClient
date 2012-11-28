@@ -2,6 +2,8 @@ use warnings;
 use autodie;
 
 use Rserve::Connection;
+use Rserve::REXP::Logical;
+use Rserve::REXP::Symbol;
 
 use Test::More;# tests => 12;
 
@@ -32,7 +34,7 @@ is_deeply(\@bool_vector, \@expected_bool_vector, 'boolean array') or
     diag explain @bool_vector;
 
 my @expected_char_scalar = 'z';
-my $x = new Rserve::REXP::String;
+$x = new Rserve::REXP::String;
 $x->setValues(\@expected_char_scalar);
 $cnx->assign('x', $x);
 my @char_scalar = $cnx->evalString('x');
