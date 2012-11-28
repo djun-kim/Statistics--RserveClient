@@ -8,7 +8,7 @@
 # Handle Connection and communicating with Rserve instance
 # @author Djun Kim
 
-use warnings;
+#use warnings;
 #use diagnostics;
 #use autodie;
 
@@ -20,7 +20,7 @@ use Data::Dumper;
 
 use Exporter;
 
-our @EXPORT = qw ( new init evalString );
+our @EXPORT = qw ( new init close evalString DT_LARGE );
 
 use Socket;
 
@@ -341,16 +341,17 @@ sub evalString() {
     }
     # TODO: contents and code in exception
     #die(new Rserve::Exception('unable to evaluate'));
-    die("Error while evaluating string.\n");
+    my @loc = caller(1);
+    warn("Rserve::Connection: Error while evaluating R query string at line $loc[2] of $loc[1].\n");
 }
 
 #
-#         * Close the current connection
+# * Close the current connection
 #
 sub close() {
     my $self = shift;
     if ( $self->{socket} ) {
-        return $self->{socket}->close();
+        return CORE::close($self->{socket});
     }
     return Rserve::TRUE;
 }
