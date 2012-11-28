@@ -10,15 +10,12 @@
 # * @param string $buf buffer
 # * @param int $o offset
 
-use strict;
+#use strict;
 
 package Rserve::funclib;
 
-#use Rserve;
-
 use Exporter;
 our @EXPORT = qw( _rserve_make_packet int8 );
-
 
 #sub int8($buf, $o = 0) {
 sub int8($$) {
@@ -90,7 +87,7 @@ sub mkint8($) {
 # * @return string
 sub mkint32($) {
     my $i = shift;
-    $r = chr( $i & 255 );
+    my $r = chr( $i & 255 );
     $i >>= 8;
     $r .= chr( $i & 255 );
     $i >>= 8;
@@ -105,7 +102,7 @@ sub mkint32($) {
 
 sub mkint24($) {
     my $i = shift;
-    $r = chr( $i & 255 );
+    my $r = chr( $i & 255 );
     $i >>= 8;
     $r .= chr( $i & 255 );
     $i >>= 8;
@@ -144,20 +141,20 @@ sub mkfloat64($) {
 #sub flt64($buf, $o = 0) {
 sub flt64($$) {
     my ( $b, $o ) = @_;
-    $o = defined($o) ? $o : 0;
+    my $o = defined($o) ? $o : 0;
 
     my @buf = @$b;
 
-    @ss = @buf[ $o .. ( $o + 7 ) ];
+    my @ss = @buf[ $o .. ( $o + 7 ) ];
 
     #	if (Rserve_Connection::$machine_is_bigendian) {
     if ( Rserve::Connection::machine_is_bigendian() ) {
-        for ( $k = 0; $k < 7; $k++ ) {
+        for ( my $k = 0; $k < 7; $k++ ) {
             $ss[ 7 - $k ] = $buf[ $o + $k ];
         }
     }
 
-    $r = unpack( 'd', join( '', @ss ) );
+    my $r = unpack( 'd', join( '', @ss ) );
     return $r + 0;
 }
 
@@ -172,7 +169,7 @@ sub _rserve_make_packet($$) {
     #$n = length($string) + 1;
 
     $string .= chr(0);
-    $n = length($string);
+    my $n = length($string);
 
     # print "cmd: $cmd; string: $string, n=$n\n";
 
@@ -212,17 +209,17 @@ sub _rserve_make_packet($$) {
 sub _rserve_make_data($$) {
     my ( $type, $string ) = shift;
 
-    $s        = '';
-    $len      = length($string);    # Length of the binary string
-    $is_large = $len > 0xfffff0;
-    $pad      = 0;                  # Number of padding needed
+    my $s        = '';
+    my $len      = length($string);    # Length of the binary string
+    my $is_large = $len > 0xfffff0;
+    my $pad      = 0;                  # Number of padding needed
     while ( ( $len & 3 ) != 0 ) {
         # ensure the data packet size is divisible by 4
         ++$len;
         ++$pad;
     }
     $s .= chr( $type & 255 )
-        | ( $is_large ? Rserve_Connection::DT_LARGE : 0 );
+        | ( $is_large ? Rserve::Connection::DT_LARGE : 0 );
     $s .= chr( $len & 255 );
     $s .= chr( ( $len & 0xff00 ) >> 8 );
     $s .= chr( ( $len & 0xff0000 ) >> 16 );
@@ -240,17 +237,19 @@ sub _rserve_make_data($$) {
 
 sub _rserve_get_response($) {
     my $socket = shift;
+    my $buf;
 
-    $n = socket_recv( $socket, $buf, 16, 0 );
+    my $n = socket_recv( $socket, $buf, 16, 0 );
     if ( $n != 16 ) {
         return FALSE;
     }
-    $len = int32( $buf, 4 );
-    $ltg = $len;
+    my $len = int32( $buf, 4 );
+    my $ltg = $len;
+    my $b2;
     while ( $ltg > 0 ) {
         $n = socket_recv( $socket, $b2, $ltg, 0 );
         if ( $n > 0 ) {
-            $buf .= $b2;
+	    $buf .= $b2;
             unset($b2);
             $ltg -= $n;
         }
