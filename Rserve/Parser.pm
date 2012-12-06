@@ -5,8 +5,8 @@
 
 package Rserve::Parser;
 
-use strict;
-use warnings;
+#use strict;
+#use warnings;
 #use diagnostics;
 
 use Exporter;

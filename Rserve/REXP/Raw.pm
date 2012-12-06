@@ -11,7 +11,7 @@
 # * This code is inspired from Java client for Rserve (Rserve package
 # * v0.6.2) developed by Simon Urbanek(c)
 
-use warnings;
+#use warnings;
 #use autodie;
 
 #  R Raw data

@@ -12,7 +12,7 @@
 # * v0.6.2) developed by Simon Urbanek(c)
 
 
-use warnings;
+#use warnings;
 #use autodie;
 
 # * R List

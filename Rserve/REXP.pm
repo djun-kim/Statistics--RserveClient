@@ -13,7 +13,7 @@
 
 # * R Expression wrapper
 
-use warnings;
+#use warnings;
 #use autodie;
 
 package Rserve::REXP;

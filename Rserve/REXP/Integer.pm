@@ -13,7 +13,7 @@
 
 #  R Integer vector
 
-use warnings;
+#use warnings;
 #use autodie;
 
 use Rserve;

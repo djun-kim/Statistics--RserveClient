@@ -14,7 +14,7 @@
 # R Double vector
 # class Rserve_REXP_Double extends Rserve_REXP_Vector {
 
-use warnings;
+#use warnings;
 #use autodie;
 
 use Rserve;
