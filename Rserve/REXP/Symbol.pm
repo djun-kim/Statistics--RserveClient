@@ -11,7 +11,7 @@
 # * This code is inspired from Java client for Rserve (Rserve package
 # * v0.6.2) developed by Simon Urbanek(c)
 
-use warnings;
+#use warnings;
 #use autodie;
 
 # R symbol element
@@ -50,10 +50,12 @@ sub getType() {
 sub toHTML($) {
     my $self = shift;
 
+    my $type = $self->getType() . "";
+
     return
-          '<div class="rexp xt_' . $self->getType() . '">' . "\n"
+          '<div class="rexp xt_' . $type . '">' . "\n"
         . '<span class="typename">'
-        . Rserve::Parser::xtName( $self->getType() )
+        . Rserve::Parser::xtName( $type )
         . '</span>' . "\n"
         . $self->{name}
         . $self->attrToHTML() . "\n"
