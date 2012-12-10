@@ -30,66 +30,114 @@ use Rserve::Parser qw( parse );
 use Rserve::Exception;
 use Rserve::ParserException;
 
-use constant PARSER_NATIVE         => 0;
-use constant PARSER_REXP           => 1;
-use constant PARSER_DEBUG          => 2;
-use constant PARSER_NATIVE_WRAPPED => 3;
+#use constant PARSER_NATIVE         => 0;
+sub PARSER_NATIVE         { 0 };
+#use constant PARSER_REXP           => 1;
+sub PARSER_REXP           { 1 };
+#use constant PARSER_DEBUG          => 2;
+sub PARSER_DEBUG          { 2 };
+#use constant PARSER_NATIVE_WRAPPED => 3;
+sub PARSER_NATIVE_WRAPPED { 3 };
 
-use constant DT_INT        => 1;
-use constant DT_CHAR       => 2;
-use constant DT_DOUBLE     => 3;
-use constant DT_STRING     => 4;
-use constant DT_BYTESTREAM => 5;
-use constant DT_SEXP       => 10;
-use constant DT_ARRAY      => 11;
+#use constant DT_INT        => 1;
+sub DT_INT        { 1 };
+#use constant DT_CHAR       => 2;
+sub DT_CHAR       { 2 };
+#use constant DT_DOUBLE     => 3;
+sub DT_DOUBLE     { 3 };
+#use constant DT_STRING     => 4;
+sub DT_STRING     { 4 };
+#use constant DT_BYTESTREAM => 5;
+sub DT_BYTESTREAM { 5 };
+#use constant DT_SEXP       => 10;
+sub DT_SEXP       { 10 };
+#use constant DT_ARRAY      => 11;
+sub DT_ARRAY      { 11 };
 
 # this is a flag saying that the contents is large (>0xfffff0) and
 # hence uses 56-bit length field
 
-use constant DT_LARGE => 64;
+#use constant DT_LARGE => 64;
+sub DT_LARGE { 64 };
 
-use constant CMD_login      => 0x001;
-use constant CMD_voidEval   => 0x002;
-use constant CMD_eval       => 0x003;
-use constant CMD_shutdown   => 0x004;
-use constant CMD_openFile   => 0x010;
-use constant CMD_createFile => 0x011;
-use constant CMD_closeFile  => 0x012;
-use constant CMD_readFile   => 0x013;
-use constant CMD_writeFile  => 0x014;
-use constant CMD_removeFile => 0x015;
-use constant CMD_setSEXP    => 0x020;
-use constant CMD_assignSEXP => 0x021;
+#use constant CMD_login      => 0x001;
+sub CMD_login      { 0x001 };
+#use constant CMD_voidEval   => 0x002;
+sub CMD_voidEval   { 0x002 };
+#use constant CMD_eval       => 0x003;
+sub CMD_eval       { 0x003 };
+#use constant CMD_shutdown   => 0x004;
+sub CMD_shutdown   { 0x004 };
+#use constant CMD_openFile   => 0x010;
+sub CMD_openFile   { 0x010 };
+#use constant CMD_createFile => 0x011;
+sub CMD_createFile { 0x011 };
+#use constant CMD_closeFile  => 0x012;
+sub CMD_closeFile  { 0x012 };
+#use constant CMD_readFile   => 0x013;
+sub CMD_readFile   { 0x013 };
+#use constant CMD_writeFile  => 0x014;
+sub CMD_writeFile  { 0x014 };
+#use constant CMD_removeFile => 0x015;
+sub CMD_removeFile { 0x015 };
+#use constant CMD_setSEXP    => 0x020;
+sub CMD_setSEXP    { 0x020 };
+#use constant CMD_assignSEXP => 0x021;
+sub CMD_assignSEXP { 0x021 };
 
-use constant CMD_setBufferSize => 0x081;
-use constant CMD_setEncoding   => 0x082;
+#use constant CMD_setBufferSize => 0x081;
+sub CMD_setBufferSize { 0x081 };
+#use constant CMD_setEncoding   => 0x082;
+sub CMD_setEncoding   { 0x082 };
 
-use constant CMD_detachSession    => 0x030;
-use constant CMD_detachedVoidEval => 0x031;
-use constant CMD_attachSession    => 0x032;
+#use constant CMD_detachSession    => 0x030;
+sub CMD_detachSession    { 0x030 };
+#use constant CMD_detachedVoidEval => 0x031;
+sub CMD_detachedVoidEval { 0x031 };
+#use constant CMD_attachSession    => 0x032;
+sub CMD_attachSession    { 0x032 };
 
 # control commands since 0.6-0
-use constant CMD_ctrlEval     => 0x42;
-use constant CMD_ctrlSource   => 0x45;
-use constant CMD_ctrlShutdown => 0x44;
+#use constant CMD_ctrlEval     => 0x42;
+sub CMD_ctrlEval     { 0x42 };
+#use constant CMD_ctrlSource   => 0x45;
+sub CMD_ctrlSource   { 0x45 };
+#use constant CMD_ctrlShutdown => 0x44;
+sub CMD_ctrlShutdown { 0x44 };
 
 # errors as returned by Rserve
-use constant ERR_auth_failed     => 0x41;
-use constant ERR_conn_broken     => 0x42;
-use constant ERR_inv_cmd         => 0x43;
-use constant ERR_inv_par         => 0x44;
-use constant ERR_Rerror          => 0x45;
-use constant ERR_IOerror         => 0x46;
-use constant ERR_not_open        => 0x47;
-use constant ERR_access_denied   => 0x48;
-use constant ERR_unsupported_cmd => 0x49;
-use constant ERR_unknown_cmd     => 0x4a;
-use constant ERR_data_overflow   => 0x4b;
-use constant ERR_object_too_big  => 0x4c;
-use constant ERR_out_of_mem      => 0x4d;
-use constant ERR_ctrl_closed     => 0x4e;
-use constant ERR_session_busy    => 0x50;
-use constant ERR_detach_failed   => 0x51;
+#use constant ERR_auth_failed     => 0x41;
+sub ERR_auth_failed     { 0x41 };
+#use constant ERR_conn_broken     => 0x42;
+sub ERR_conn_broken     { 0x42 };
+#use constant ERR_inv_cmd         => 0x43;
+sub ERR_inv_cmd         { 0x43 };
+#use constant ERR_inv_par         => 0x44;
+sub ERR_inv_par         { 0x44 };
+#use constant ERR_Rerror          => 0x45;
+sub ERR_Rerror          { 0x45 };
+#use constant ERR_IOerror         => 0x46;
+sub ERR_IOerror         { 0x46 };
+#use constant ERR_not_open        => 0x47;
+sub ERR_not_open        { 0x47 };
+#use constant ERR_access_denied   => 0x48;
+sub ERR_access_denied   { 0x48 };
+#use constant ERR_unsupported_cmd => 0x49;
+sub ERR_unsupported_cmd { 0x49 };
+#use constant ERR_unknown_cmd     => 0x4a;
+sub ERR_unknown_cmd     { 0x4a };
+#use constant ERR_data_overflow   => 0x4b;
+sub ERR_data_overflow   { 0x4b };
+#use constant ERR_object_too_big  => 0x4c;
+sub ERR_object_too_big  { 0x4c };
+#use constant ERR_out_of_mem      => 0x4d;
+sub ERR_out_of_mem      { 0x4d };
+#use constant ERR_ctrl_closed     => 0x4e;
+sub ERR_ctrl_closed     { 0x4e };
+#use constant ERR_session_busy    => 0x50;
+sub ERR_session_busy    { 0x50 };
+#use constant ERR_detach_failed   => 0x51;
+sub ERR_detach_failed   { 0x51 };
 
 use Config;
 
@@ -305,40 +353,35 @@ sub evalString() {
     if ( !$r{'is_error'} ) {
         my $buf = $r{'contents'};
         my @res = undef;
-        for ($parser) {
-            if ($parser == PARSER_NATIVE) {
-                Rserve::debug "calling parser.parse()\n";
-                Rserve::debug "buf = $buf\n";
-                Rserve::debug "i = $i\n";
-                Rserve::debug "attr = ";
-		        Rserve::debug Dumper %attr;
-		        Rserve::debug "\n";
-
-                @res = Rserve::Parser::parse( $buf, $i, %attr );
-                last;
-            }
-            elsif ($parser == PARSER_REXP) {
-                @res = Rserve::Parser::parseREXP( $buf, $i, %attr );
-                last;
-            }
-            elsif ($parser == PARSER_DEBUG) {
-                @res = Rserve::Parser::parseDebug( $buf, $i, %attr );
-                last;
-            }
-            elsif ($parser == PARSER_NATIVE_WRAPPED) {
-                my $old = Rserve::Parser->use_array_object();
-                Rserve::Parser->use_array_object(Rserve::TRUE);
-                @res = Rserve::Parser->parse( $buf, $i, %attr );
-                Rserve::Parser->use_array_object($old);
-                last;
-            }
-            else {
-                die( new Rserve::Exception('Unknown parser') );
-                die('Unknown parser');
-            }
-        }
-        return @res;
+	if ($parser == PARSER_NATIVE) {
+	    Rserve::debug "calling parser.parse()\n";
+	    Rserve::debug "buf = $buf\n";
+	    Rserve::debug "i = $i\n";
+	    Rserve::debug "attr = \n";
+	    Rserve::debug "  " . Dumper %attr . "\n";
+	    Rserve::debug "\n";
+	    
+	    @res = Rserve::Parser::parse( $buf, $i, %attr );
+	}
+	elsif ($parser == PARSER_REXP) {
+	    @res = Rserve::Parser::parseREXP( $buf, $i, %attr );
+	}
+	elsif ($parser == PARSER_DEBUG) {
+	    @res = Rserve::Parser::parseDebug( $buf, $i, %attr );
+	}
+	elsif ($parser == PARSER_NATIVE_WRAPPED) {
+	    my $old = Rserve::Parser->use_array_object();
+	    Rserve::Parser->use_array_object(Rserve::TRUE);
+	    @res = Rserve::Parser->parse( $buf, $i, %attr );
+	    Rserve::Parser->use_array_object($old);
+	}
+	else {
+	    die( new Rserve::Exception('Unknown parser') );
+	    die('Unknown parser');
+	}
+	return @res;
     }
+
     # TODO: contents and code in exception
     #die(new Rserve::Exception('unable to evaluate'));
     my @loc = caller(1);
