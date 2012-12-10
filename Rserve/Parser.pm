@@ -75,32 +75,23 @@ sub factor_as_string() {
 # * @param unknown_type $attr
 #public static function parse($buf, $offset, $attr = NULL) {
 
-sub parse($\$;%);
 
-sub parse($\$;%) {
+sub parse {
     Rserve::debug "parse()\n";
-
-    my $buf;
-    my $offset;
-    my %attr = ();
-
-    $offset = 0;
-
-    Rserve::debug Dumper(@_);
-
     my $n = @_;
     Rserve::debug "num args = $n\n";
+    Rserve::debug Dumper(@_);
 
-    if ( @_ == 3 ) {
-        $buf    = shift;
-        my $offset_ref = shift;
-        $offset = $$offset_ref;
-        %attr   = shift;
+    my $buf = $_[0];
+    my $offset = 0;
+    my %attr = ();
+
+    if ( $n == 3 ) {
+        $offset = $_[1];
+        %attr   = $_[2];
     }
-    elsif ( @_ == 2 ) {
-        $buf = shift;
-        my $offset_ref = shift;
-        $offset = $$offset_ref;
+    elsif ( $n == 2 ) {
+        $offset = $_[1];
     }
     elsif ( @_ == 1 ) {
         die "Rserve::Parser::parse(): too few arguments.\n";
@@ -117,6 +108,9 @@ sub parse($\$;%) {
     my @r     = split '', $buf;
 
     # foreach (@r) {print "[" . ord($_). ":". $_ . "]"};  print "\n";
+    my $pbuf = Rserve::buf2str(\@r);
+
+    Rserve::debug $pbuf;
 
     my $i = $offset;
     my $eoa;
@@ -150,21 +144,19 @@ sub parse($\$;%) {
 
     for ($ra) {
 	if ($ra == Rserve::XT_NULL) {
-            Rserve::debug "Null";
-            Rserve::debug "\n";
+            Rserve::debug "Null\n";
             @a = undef;
             # break;
         }
 	
 	elsif ($ra == Rserve::XT_VECTOR)  {    # generic vector
-            Rserve::debug "Vector";
-            Rserve::debug "\n";
+            Rserve::debug "Vector\n";
             @a = ();
             while ( $i < $eoa ) {
                 Rserve::debug "******* i = $i\n";
                 #$a[] = parse($buf, &$i);
-                print("recursive call to parse($buf, $i)\n");
-                #my @parse_result = parse( $buf, \$i, @attr );
+                Rserve::debug("recursive call to parse($buf, $i)\n");
+                #my @parse_result = parse( $buf, $i, @attr );
                 #push( @a, \@parse_result );
                 #print "*{" . Dumper(@parse_result) . "}*\n";
                 #print Dumper(@a) . "\n";
@@ -233,9 +225,15 @@ sub parse($\$;%) {
         {                              # pairlist with tags
             Rserve::debug "Rserve::XT_LIST_TAG or Rserve::XT_LANG_TAG\n";
             @a = ();
+
+	    Rserve::debug "eoa = $eoa\n";
+
             while ( $i < $eoa ) {
+		Rserve::debug "before parse: i = $i\n";
                 my $val = parse( $buf, $i );
+		Rserve::debug "after first parse: i = $i\n";
                 my $tag = parse( $buf, $i );
+		Rserve::debug "after second parse: i = $i\n";
                 $a[$tag] = $val;
             }
             # break;
@@ -292,9 +290,6 @@ sub parse($\$;%) {
             @a = ();
             my $oi = $i;
 
-            #Rserve::debug "i = $i\n";
-            #Rserve::debug "eoa = $eoa\n";
-
             while ( $i < $eoa ) {
                 if ( ord( $r[$i] ) == 0 ) {
                     #$a[] = substr($r, $oi, $i - $oi);
@@ -348,7 +343,7 @@ sub parse($\$;%) {
         }
 
 	else {
-            print(    'Warning: type '
+            warn (    'Warning: type '
 		      . $ra
 		      . ' is currently not implemented in the Perl client.' );
             @a = undef;
@@ -365,6 +360,9 @@ sub parse($\$;%) {
             return @a;
         }
     }
+    Rserve::debug "after parse: offset = $offset\n";
+    Rserve::debug "after parse: \$_[1] = " .$_[1] . "\n";
+    $_[1] = $offset;
     return @a;
 }
 
@@ -615,7 +613,7 @@ sub parseREXP(@) {
             @v = ();
             while ( $i < $eoa ) {
                 # $v[] = self::parseREXP($buf, &$i);
-                push( @v, parseREXP( $buf, &$i ) );
+                push( @v, parseREXP( $buf, $i ) );
             }
             $a = new Rserve::REXP::GenericVector();
             $a->setValues(@v);
@@ -639,7 +637,7 @@ sub parseREXP(@) {
             @v = ();
             while ( $i < $eoa ) {
                 #$v[] = self::parseREXP($buf, &$i);
-                push( @v, parseREXP( $buf, &$i ) );
+                push( @v, parseREXP( $buf, $i ) );
             }
             my $clasz = ( $ra == Rserve::XT_LIST_NOTAG )
                 ? 'Rserve::REXP::List'
@@ -660,9 +658,9 @@ sub parseREXP(@) {
             my @names = ();
             while ( $i < $eoa ) {
                 #$v[] = self::parseREXP($buf, &$i);
-                push( @v, parseREXP( $buf, &$i ) );
+                push( @v, parseREXP( $buf, $i ) );
                 # $names[] = self::parseREXP($buf, &$i);
-                push( @names, parseREXP( $buf, &$i ) );
+                push( @names, parseREXP( $buf, $i ) );
             }
             $a = new $$clasz();
             $a->setValues(@v);
@@ -757,7 +755,7 @@ sub parseREXP(@) {
         }
 
         else {
-            print(    'Warning: type '
+            warn(    'Warning: type '
                     . $ra
                     . ' is currently not implemented in the Perl client.' );
             @a = Rserve::FALSE;
