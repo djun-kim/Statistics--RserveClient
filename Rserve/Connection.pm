@@ -157,20 +157,23 @@ sub new {
     my $debug = Rserve::FALSE;
 
     if ( @_ == 3 ) {
-        my ( $host, $port, $debug ) = shift;
+	Rserve::debug "3 args to Rserve::Connection::new()\n";
+	( $host, $port, $debug ) = shift;
     }
     elsif ( @_ == 2 ) {
-        my ( $host, $port ) = shift;
+	Rserve::debug "2 args to Rserve::Connection::new()\n";
+	( $host, $port ) = shift;
     }
     elsif ( @_ == 1 ) {
-        my $host = shift;
+	Rserve::debug "1 args to Rserve::Connection::new()\n";
+	$host = shift;
     }
     else {
         die("Bad number of arguments in creating connection\n");
     }
 
-    #Rserve::debug "host: $host\n";
-    #Rserve::debug "port: $port\n";
+    Rserve::debug "host: $host\n";
+    Rserve::debug "port: $port\n";
 
     my $proto = getprotobyname('tcp');
     my $inet_addr;

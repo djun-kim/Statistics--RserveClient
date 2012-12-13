@@ -10,8 +10,16 @@ use strict;
 
 use Rserve::Connection;
 
-print "Opening connection...\n";
-my $cnx = new Rserve::Connection('localhost');
+my $server = "localhost";
+
+if (@ARGV > 0) {
+    $server = @ARGV[0];
+}
+
+print "Opening connection to $server...\n";
+
+my $cnx = new Rserve::Connection($server);
+
 print "Established connection: $cnx.\n";
 
 print "Checking if connection initialized... " . 
