@@ -52,8 +52,6 @@ our %EXPORT_TAGS = (
     ]
 );
 
-my $DEBUG = Rserve::TRUE;
-
 my %typeHash = ();
 
 #my $DEBUG = Rserve::FALSE;
