@@ -11,9 +11,8 @@
 # * This code is inspired from Java client for Rserve (Rserve package
 # * v0.6.2) developed by Simon Urbanek(c)
 
-use v5.12;
-use warnings;
-use autodie;
+#use warnings;
+#use autodie;
 
 use Rserve;
 use Rserve qw (:xt_types );
@@ -26,7 +25,7 @@ use Exporter;
 # R Double vector
 # class Rserve_REXP_Vector extends Rserve_REXP {
 package Rserve::REXP::Vector;
-our @ISA = ( "Rserve::REXP", qw(Exporter) );
+our @ISA = qw(Rserve::REXP Exporter);
 
 sub new() {
     my $class = shift;

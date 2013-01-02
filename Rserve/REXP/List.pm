@@ -12,9 +12,8 @@
 # * v0.6.2) developed by Simon Urbanek(c)
 
 
-use v5.12;
-use warnings;
-use autodie;
+#use warnings;
+#use autodie;
 
 # * R List
 
@@ -25,7 +24,7 @@ use Rserve qw( :xt_types );
 use Rserve::REXP::Vector;
 
 package Rserve::REXP::List;
-our @ISA = qw( Rserve::REXP::Vector );
+our @ISA = qw(Rserve::REXP::Vector);
 
 my $names    = ();               # protected
 my $is_named = Rserve::FALSE;    # protected

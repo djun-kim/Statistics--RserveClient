@@ -11,9 +11,8 @@
 # * This code is inspired from Java client for Rserve (Rserve package
 # * v0.6.2) developed by Simon Urbanek(c)
 
-use v5.12;
-use warnings;
-use autodie;
+#use warnings;
+#use autodie;
 
 # R Generic vector
 # class Rserve_REXP_GenericVector extends Rserve_REXP_Vector
@@ -25,7 +24,7 @@ use Rserve qw (:xt_types );
 
 use Rserve::REXP::Vector;
 
-our @ISA = qw( Rserve::REXP::Vector );
+our @ISA = qw(Rserve::REXP::Vector);
 
 sub isList() { return Rserve::TRUE; }
 

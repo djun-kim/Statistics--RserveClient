@@ -1,8 +1,9 @@
-use v5.12;
 use warnings;
 use autodie;
 
 use Rserve::Connection;
+use Rserve::REXP::Logical;
+use Rserve::REXP::Symbol;
 
 use Test::More;# tests => 12;
 
@@ -31,6 +32,40 @@ $cnx->assign('x', $x);
 my @bool_vector = $cnx->evalString('x');
 is_deeply(\@bool_vector, \@expected_bool_vector, 'boolean array') or
     diag explain @bool_vector;
+
+my @expected_char_scalar = 'z';
+$x = new Rserve::REXP::String;
+$x->setValues(\@expected_char_scalar);
+$cnx->assign('x', $x);
+my @char_scalar = $cnx->evalString('x');
+is_deeply(\@char_scalar, \@expected_char_scalar,
+   'single-char string scalar') or
+    diag explain @char_scalar;
+
+my @expected_char_vector = ('a', 'b', 'c', 'd');
+$x->setValues(\@expected_char_vector);
+$cnx->assign('x', $x);
+my @char_vector = $cnx->evalString('x');
+is_deeply(\@char_vector, \@expected_char_vector,
+   'vector of single-char strings') or
+    diag explain @char_vector;
+
+my @expected_string_scalar = 'Dec';
+$x->setValues(\@expected_string_scalar);
+$cnx->assign('x', $x);
+my @string_scalar = $cnx->evalString('x');
+is_deeply(\@string_scalar, \@expected_string_scalar,
+   'string scalar') or
+    diag explain @string_scalar;
+
+my @expected_string_vector = ('Jan', 'Feb', 'Mar');
+$x->setValues(\@expected_string_vector);
+$cnx->assign('x', $x);
+
+my @string_vector = $cnx->evalString('x');
+is_deeply(\@string_vector, \@expected_string_vector,
+   'vector of strings') or
+    diag explain @string_vector;
 
 my @expected_int_scalar = 123;
 $x = new Rserve::REXP::Integer;

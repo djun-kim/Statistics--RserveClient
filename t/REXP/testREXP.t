@@ -1,4 +1,3 @@
-use v5.12;
 use warnings;
 use autodie;
 
@@ -12,7 +11,7 @@ isa_ok( $rexp, 'Rserve::REXP', 'new returns an object that' );
 ok( !$rexp->isExpression(), 'Rexp is not an expression' );
 
 is( $rexp->toHTML(),
-    "<div class='rexp xt_Rserve::XT_VECTOR'><span class='typename'>null</span></div>\n",
+    "<div class='rexp xt_16'><span class='typename'>vector</span></div>\n",
     'HTML representation'
 );
 

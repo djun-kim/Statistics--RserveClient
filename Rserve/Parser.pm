@@ -5,34 +5,35 @@
 
 package Rserve::Parser;
 
-use Data::Dumper;
-
-use Rserve;
-use Rserve qw( debug :xt_types );
-
-use Rserve::funclib;
-
-use Rserve::REXP;
-use Rserve::REXP::Null;
-use Rserve::REXP::GenericVector;
-
-use Rserve::REXP::Symbol;
-use Rserve::REXP::List;
-use Rserve::REXP::Language;
-use Rserve::REXP::Integer;
-use Rserve::REXP::Double;
-use Rserve::REXP::String;
-use Rserve::REXP::Raw;
-use Rserve::REXP::Logical;
-
-use strict;
+#use strict;
 #use warnings;
+#use diagnostics;
 
 use Exporter;
-our @ISA    = qw( Exporter );
-our @EXPORT = qw( parse );
+our @ISA    = qw(Exporter);
+our @EXPORT = qw(parse);
 
-use v5.12;
+use Data::Dumper;
+
+#use Rserve;
+#use Rserve::ParserException;
+
+use Rserve::funclib;
+use Rserve qw( :xt_types );
+
+use Rserve::REXP;
+
+#use Rserve::REXP::Null;
+#use Rserve::REXP::GenericVector;
+
+#use Rserve::REXP::Symbol;
+#use Rserve::REXP::List;
+#use Rserve::REXP::Language;
+#use Rserve::REXP::Integer;
+#use Rserve::REXP::Double;
+#use Rserve::REXP::String;
+#use Rserve::REXP::Raw;
+#use Rserve::REXP::Logical;
 
 # * Global parameters to parse() function
 # * If true, use Rserve_RNative wrapper instead of native array to
@@ -40,6 +41,9 @@ use v5.12;
 
 #public static $use_array_object = FALSE;
 my $_use_array_object = Rserve::FALSE;
+
+#forward definition to avoid warnings pragma complaints
+sub use_array_object();
 
 sub use_array_object() {
     my $value = shift;
@@ -68,33 +72,30 @@ sub factor_as_string() {
 # * @param int $offset
 # * @param unknown_type $attr
 #public static function parse($buf, $offset, $attr = NULL) {
-sub parse($\$;\@) {
-    # Rserve::debug Dumper(@_);
 
-    Rserve::debug( "debug: In parse(); caller is " . caller() . "\n" );
-    my $buf = shift;
-    #    my $offset = ${shift()};
-    my $offset = shift;
-    my @attr   = ();
+sub parse {
+    Rserve::debug "parse()\n";
+    my $n = @_;
+    Rserve::debug "num args = $n\n";
+    Rserve::debug Dumper(@_);
 
-    Rserve::debug "parse:buf = $buf\n";
-    Rserve::debug "parse:offset = $offset\n";
+    my $buf = $_[0];
+    my $offset = 0;
+    my %attr = ();
 
-    if ( @_ == 1 ) {
-        Rserve::debug "num args = 1\n";
-        @attr = shift;
+    if ( $n == 3 ) {
+        $offset = $_[1];
+        %attr   = $_[2];
     }
-    elsif ( @_ == 2 ) {
-        Rserve::debug "num args = 2\n";
+    elsif ( $n == 2 ) {
+        $offset = $_[1];
     }
-    else {
-        Rserve::debug "num args is " . @_ . "\n";
+    elsif ( @_ == 1 ) {
         die "Rserve::Parser::parse(): too few arguments.\n";
     }
 
-    Rserve::debug "parse:buf = $buf\n";
-    Rserve::debug "parse:offset = $offset\n";
-    Rserve::debug "parse:attr = @attr\n";
+    Rserve::debug "buf = $buf\n";
+    Rserve::debug "offset = $offset\n";
 
     use vars qw(@a);
     @a = ();
@@ -103,19 +104,19 @@ sub parse($\$;\@) {
     my @na    = ();
     my @r     = split '', $buf;
 
-    my $debug_msg = "";
-    foreach (@r) { $debug_msg .= "[" . ord($_) . ":" . $_ . "]" }
-    $debug_msg .= "\n";
-    Rserve::debug ($debug_msg);
+    # foreach (@r) {print "[" . ord($_). ":". $_ . "]"};  print "\n";
+    my $pbuf = Rserve::buf2str(\@r);
 
-    my $i = $$offset;
+    Rserve::debug $pbuf;
+
+    my $i = $offset;
     my $eoa;
 
-    Rserve::debug ("i = $i\n");
+    Rserve::debug "i = $i\n";
 
     # some simple parsing - just skip attributes and assume short responses
-    my $ra = int8( \@r, $i );
-    my $rl = int24( \@r, $i + 1 );
+    my $ra = Rserve::funclib::int8( \@r, $i );
+    my $rl = Rserve::funclib::int24( \@r, $i + 1 );
 
     Rserve::debug "ra = $ra\n";
     Rserve::debug "rl = $rl\n";
@@ -124,46 +125,44 @@ sub parse($\$;\@) {
 
     $i += 4;
 
-    $$offset = $eoa = $i + $rl;
-    Rserve::debug '[ '
-        . Rserve::Parser::xtName( $ra & 63 )
-        . ', length '
-        . $rl . ' ['
-        . $i . ' - '
-        . $eoa . "]\n";
+    $offset = $eoa = $i + $rl;
+    # Rserve::debug '[ '.Rserve::Parser::xtName($ra & 63).', length '.$rl.' ['.$i.' - '.$eoa."]\n";
     if ( ( $ra & 64 ) == 64 ) {
-        throw new Exception('long packets are not supported (yet).');
+        die ('Fatal error: long packets are not supported (yet).');
     }
     if ( $ra > Rserve::XT_HAS_ATTR ) {
-        # Rserve::debug ('(ATTR*[');
+        # Rserve::debug '(ATTR*[';
         $ra &= ~Rserve::XT_HAS_ATTR;
-        $al = int24( \@r, $i + 1 );
-        @attr = parse( $buf, $i, @attr );
-        # Rserve::debug ( '])' );
+        $al = Rserve::funclib::int24( \@r, $i + 1 );
+        %attr = parse( $buf, $i );
+        # Rserve::debug '])';
         $i += $al + 4;
     }
 
-    given ($ra) {
-        when (Rserve::XT_NULL) {
-	    Rserve::debug("Null\n");
+    for ($ra) {
+	if ($ra == Rserve::XT_NULL) {
+            Rserve::debug "Null\n";
             @a = undef;
+            # break;
         }
-        when (Rserve::XT_VECTOR) {    # generic vector
-            Rserve::debug( "Vector" );
-            @a = undef;
+	elsif ($ra == Rserve::XT_VECTOR)  {    # generic vector
+            Rserve::debug "Vector\n";
+            @a = ();
             while ( $i < $eoa ) {
-                Rserve::debug( "******* i = $i\n" );
+                Rserve::debug "******* i = $i\n";
                 #$a[] = parse($buf, &$i);
                 Rserve::debug("recursive call to parse($buf, $i)\n");
-                my @parse_result = parse( $buf, \$i, @attr );
-                push( @a, \@parse_result );
-                Rserve::debug "*{\n" . Dumper(@parse_result) . "}*\n";
-                Rserve::debug Dumper(@a) . "\n";
+                #my @parse_result = parse( $buf, $i, @attr );
+                #push( @a, \@parse_result );
+                #print "*{" . Dumper(@parse_result) . "}*\n";
+                #print Dumper(@a) . "\n";
+                push( @a, parse( $buf, $i ) );
+
             }
             Rserve::debug Dumper(@a);
          # if the 'names' attribute is set, convert the plain array into a map
-            if ( defined( $attr['names'] ) ) {
-                @names = $attr['names'];
+            if ( defined( $attr{'names'} ) ) {
+                @names = $attr{'names'};
                 @na    = ();
                 my $n = length($a);
                 for ( my $k = 0; $k < $n; $k++ ) {
@@ -171,92 +170,92 @@ sub parse($\$;\@) {
                 }
                 @a = @na;
             }
+            # break;
         }
 
-        when (Rserve::XT_INT) {
-            Rserve::debug( "Rserve::XT_INT\n" );
-            @a = int32( \@r, $i );
+	elsif ($ra == Rserve::XT_INT)  {
+            Rserve::debug "Rserve::XT_INT\n";
+            @a = Rserve::funclib::int32( \@r, $i );
             $i += 4;
+            # break;
         }
 
-        when (Rserve::XT_DOUBLE) {
-            Rserve::debug( "Rserve::XT_DOUBLE\n" );
-            @a = flt64( \@r, $i );
-
-	    my $debug_msg = "";
-            foreach (@r) { $debug_msg .= "[" . ord($_) . ":" . $_ . "]" }
-	    $debug_msg .= "\n";
-	    Rserve::debug ($debug_msg);
-
-            Rserve::debug Dumper(@r);
-
-            foreach (@a) { $debug_msg .= "[" . ord($_) . ":" . $_ . "]" }
-	    $debug_msg .= "\n";
-	    Rserve::debug ($debug_msg);
-
-
+	elsif ($ra == Rserve::XT_DOUBLE)  {
+            Rserve::debug "Rserve::XT_DOUBLE\n";
+            @a = Rserve::funclib::flt64( \@r, $i );
             $i += 8;
+            # break;
         }
 
-        when (Rserve::XT_BOOL) {
-            Rserve::debug( "Rserve::XT_BOOL\n" );
-            my $v = int8( \@r, $i++ );
+	elsif ($ra == Rserve::XT_BOOL)  {
+            Rserve::debug "Rserve::XT_BOOL\n";
+            my $v = Rserve::funclib::int8( \@r, $i++ );
             @a
                 = ( $v == 1 )
                 ? Rserve::TRUE
                 : ( ( $v == 0 ) ? Rserve::FALSE : undef );
+            # break;
         }
 
-        when (Rserve::XT_SYMNAME) {    # symbol
-            Rserve::debug( "Rserve::XT_SYMNAME\n" );
+	elsif ($ra == Rserve::XT_SYMNAME)  {    # symbol
+            Rserve::debug "Rserve::XT_SYMNAME\n";
             my $oi = $i;
             while ( $i < $eoa && ord( $r[$i] ) != 0 ) {
                 $i++;
             }
             @a = split '', substr( $buf, $oi, $i - $oi );
+            # break; 
         }
 
-        when ( Rserve::XT_LANG_NOTAG or Rserve::XT_LIST_NOTAG )
+	elsif ($ra == Rserve::XT_LANG_NOTAG or $ra == Rserve::XT_LIST_NOTAG ) 
         {                              # pairlist w/o tags
-	    Rserve::debug( "Rserve::XT_LANG_NOTAG or Rserve::XT_LIST_NOTAG\n" );
+            Rserve::debug "Rserve::XT_LANG_NOTAG or Rserve::XT_LIST_NOTAG\n";
             @a = ();
             while ( $i < $eoa ) {
                 # $a[] = self::parse($buf, &$i);
-                push( @a, parse( $buf, $i, @attr ) );
+                push( @a, parse( $buf, $i, %attr ) );
             }
+            # break;
         }
 
-        when ( Rserve::XT_LIST_TAG or Rserve::XT_LANG_TAG )
+	elsif ($ra == Rserve::XT_LIST_TAG or $ra == Rserve::XT_LANG_TAG ) 
         {                              # pairlist with tags
-            Rserve::debug( "Rserve::XT_LIST_TAG or Rserve::XT_LANG_TAG\n" );
+            Rserve::debug "Rserve::XT_LIST_TAG or Rserve::XT_LANG_TAG\n";
             @a = ();
+
+	    Rserve::debug "eoa = $eoa\n";
+
             while ( $i < $eoa ) {
-                my $val = parse( $buf, $i, @attr );
-                my $tag = parse( $buf, $i, @attr );
-                @a[$tag] = $val;
+		Rserve::debug "before parse: i = $i\n";
+                my $val = parse( $buf, $i );
+		Rserve::debug "after first parse: i = $i\n";
+                my $tag = parse( $buf, $i );
+		Rserve::debug "after second parse: i = $i\n";
+                $a[$tag] = $val;
             }
+            # break;
         }
 
-        when (Rserve::XT_ARRAY_INT) {    # integer array
-            Rserve::debug( "Rserve::XT_ARRAY_INT\n" );
+	elsif ($ra == Rserve::XT_ARRAY_INT)  {    # integer array
+            Rserve::debug "Rserve::XT_ARRAY_INT\n";
             @a = ();
             while ( $i < $eoa ) {
                 # $a[] = int32(@r, $i);
-                push( @a, int32( \@r, $i ) );
+                push( @a, Rserve::funclib::int32( \@r, $i ) );
                 $i += 4;
             }
             if ( scalar(@a) == 1 ) {
-                @a = @a[0];
+                @a = $a[0];
             }
             # If factor, then transform to characters
             #if (self::$factor_as_string and isset($attr['class'])) {
-            if ( factor_as_string() and defined( $attr['class'] ) ) {
-                my $c = $attr['class'];
+            if ( factor_as_string() and defined( $attr{'class'} ) ) {
+                my $c = $attr{'class'};
                 if ( $c eq 'factor' ) {
                     my $n      = scalar(@a);
-                    my @levels = $attr['levels'];
+                    my @levels = $attr{'levels'};
                     for ( my $k = 0; $k < $n; ++$k ) {
-                        $i = @a[$k];
+                        $i = $a[$k];
                         if ( $i < 0 ) {
                             $a[$k] = undef;
                         }
@@ -266,28 +265,27 @@ sub parse($\$;\@) {
                     }
                 }
             }
+            # break;
         }
 
-        when (Rserve::XT_ARRAY_DOUBLE) {    # double array
-            Rserve::debug( "Rserve::XT_ARRAY_DOUBLE\n" );
+	elsif ($ra == Rserve::XT_ARRAY_DOUBLE)  {    # double array
+            Rserve::debug "Rserve::XT_ARRAY_DOUBLE\n";
             @a = ();
             while ( $i < $eoa ) {
                 #$a[] = flt64(@r, $i);
-                push( @a, flt64( \@r, $i ) );
+                push( @a, Rserve::funclib::flt64( \@r, $i ) );
                 $i += 8;
             }
             if ( scalar(@a) == 1 ) {
                 @a = $a[0];
             }
+            # break;
         }
 
-        when (Rserve::XT_ARRAY_STR) {    # string array
-            Rserve::debug( "Rserve::XT_ARRAY_STR\n" );
+	elsif ($ra == Rserve::XT_ARRAY_STR)  {    # string array
+            Rserve::debug "Rserve::XT_ARRAY_STR\n";
             @a = ();
             my $oi = $i;
-
-            #Rserve::debug "i = $i\n";
-            #Rserve::debug "eoa = $eoa\n";
 
             while ( $i < $eoa ) {
                 if ( ord( $r[$i] ) == 0 ) {
@@ -300,16 +298,17 @@ sub parse($\$;\@) {
             if ( scalar(@a) == 1 ) {
                 @a = $a[0];
             }
+            # break;
         }
 
-        when (Rserve::XT_ARRAY_BOOL) {    # boolean vector
-            Rserve::debug( "Rserve::XT_ARRAY_BOOL\n" );
-            my $n = int32( \@r, $i );
+	elsif ($ra == Rserve::XT_ARRAY_BOOL)  {    # boolean vector
+            Rserve::debug "Rserve::XT_ARRAY_BOOL\n";
+            my $n = Rserve::funclib::int32( \@r, $i );
             $i += 4;
             my $k = 0;
             @a = ();
             while ( $k < $n ) {
-                my $v = int8( \@r, $i++ );
+                my $v = Rserve::funclib::int8( \@r, $i++ );
                 $a[ $k++ ]
                     = ( $v == 1 )
                     ? Rserve::TRUE
@@ -318,28 +317,32 @@ sub parse($\$;\@) {
             if ( $n == 1 ) {
                 @a = $a[0];
             }
+            # break;
         }
 
-        when (Rserve::XT_RAW) {    # raw vector
-            Rserve::debug( "Rserve::XT_RAW\n" );
-            my $len = int32( \@r, $i );
+	elsif ($ra == Rserve::XT_RAW)  {    # raw vector
+            Rserve::debug "Rserve::XT_RAW\n";
+            my $len = Rserve::funclib::int32( \@r, $i );
             $i += 4;
             @a = splice( @r, $i, $len );
+            # break;
         }
 
-        # when(Rserve::XT_ARRAY_CPLX) {
+        #  elsif ($ra == Rserve::XT_ARRAY_CPLX) {
+        #   break;
         # }
 
-        when (48) {    # unimplemented type in Rserve
-            my $uit = int32( \@r, $i );
-        # echo "Note: result contains type #$uit unsupported by Rserve.<br/>";
+	elsif ($ra == 48) {    # unimplemented type in Rserve
+            my $uit = Rserve::funclib::int32( \@r, $i );
+            warn "Note: result contains type #$uit unsupported by Rserve.<br/>";
             @a = undef;
+            # break;
         }
 
-        default {
-            warn(    'Warning: type '
-                    . $ra
-                    . ' is currently not implemented in the Perl client.' );
+	else {
+            warn (    'Warning: type '
+		      . $ra
+		      . ' is currently not implemented in the Perl client.' );
             @a = undef;
         }
     }    # end switch
@@ -347,13 +350,16 @@ sub parse($\$;\@) {
     #if (self::$use_array_object) {
     if ( use_array_object() ) {
         # if ( is_array(@a) & @attr ) {
-        if ( ( ref(@a) == 'ARRAY' ) & @attr ) {
-            return new Rserve::RNative( @a, @attr );
+        if ( ( ref(@a) == 'ARRAY' ) & %attr ) {
+            return new Rserve::RNative( @a, %attr );
         }
         else {
             return @a;
         }
     }
+    Rserve::debug "after parse: offset = $offset\n";
+    Rserve::debug "after parse: \$_[1] = " .$_[1] . "\n";
+    $_[1] = $offset;
     return @a;
 }
 
@@ -361,12 +367,15 @@ sub parse($\$;\@) {
 # * @param string $buf
 # * @param int $offset
 # * @param unknown_type $attr
-sub parseDebug($;\$\@) {
+
+sub parseDebug(@);
+
+sub parseDebug(@) {
     Rserve::debug "parseDebug()\n";
 
     my $buf;
     my $offset;
-    my @attr = ();
+    my @attr = undef;
 
     if ( @_ == 3 ) {
         $buf    = shift;
@@ -380,8 +389,8 @@ sub parseDebug($;\$\@) {
         die "Rserve::Parser::parse(): too few arguments.\n";
     }
 
-    Rserve::debug( "buf = $buf\n" );
-    Rserve::debug( "offset = $offset\n" );
+    Rserve::debug "buf = $buf\n";
+    Rserve::debug "offset = $offset\n";
 
     my @r = split '', $buf;
 
@@ -390,94 +399,94 @@ sub parseDebug($;\$\@) {
     my @a = ();
 
     # some simple parsing - just skip attributes and assume short responses
-    my $ra = int8( \@r, $i );
-    my $rl = int24( \@r, $i + 1 );
+    my $ra = Rserve::funclib::int8( \@r, $i );
+    my $rl = Rserve::funclib::int24( \@r, $i + 1 );
 
-    Rserve::debug( "ra = $ra\n" );
-    Rserve::debug( "rl = $ra\n" );
+    Rserve::debug "ra = $ra\n";
+    Rserve::debug "rl = $ra\n";
 
     $i += 4;
 
     my $eoa;
-    my $offset = $eoa = $i + $rl;
+    $offset = $eoa = $i + $rl;
 
-    my @result = ();
+    my %result = ();
 
-    $result['type']   = Rserve::Parser::xtName( $ra & 63 );
-    $result['length'] = $rl;
-    $result['offset'] = $i;
-    $result['eoa']    = $eoa;
+    $result{'type'}   = Rserve::Parser::xtName( $ra & 63 );
+    $result{'length'} = $rl;
+    $result{'offset'} = $i;
+    $result{'eoa'}    = $eoa;
     if ( ( $ra & 64 ) == 64 ) {
-        $result['long'] = Rserve::TRUE;
-        return @result;
+        $result{'long'} = Rserve::TRUE;
+        return %result;
     }
     if ( $ra > Rserve::XT_HAS_ATTR ) {
 
         $ra &= ~Rserve::XT_HAS_ATTR;
-        my $al = int24( \@r, $i + 1 );
+        my $al = Rserve::funclib::int24( \@r, $i + 1 );
         @attr = parseDebug( $buf, $i );
-        $result['attr'] = @attr;
+        $result{'attr'} = @attr;
         $i += $al + 4;
     }
     if ( $ra == Rserve::XT_NULL ) {
-        return @result;
+        return %result;
     }
     if ( $ra == Rserve::XT_VECTOR ) {    # generic vector
         @a = ();
         while ( $i < $eoa ) {
             #$a[] = self::parseDebug($buf, &$i);
-            push( @a, parseDebug( $buf, $i ) );
+            push( @a, parseDebug( $buf, &$i ) );
         }
-        $result['contents'] = $a;
+        $result{'contents'} = $a;
     }
     if ( $ra == Rserve::XT_SYMNAME ) {    # symbol
         my $oi = $i;
         while ( $i < $eoa && ord( $r[$i] ) != 0 ) {
             $i++;
         }
-        $result['contents'] = substr( $buf, $oi, $i - $oi );
+        $result{'contents'} = substr( $buf, $oi, $i - $oi );
     }
     if ( $ra == Rserve::XT_LIST_NOTAG || $ra == Rserve::XT_LANG_NOTAG )
     {                                     # pairlist w/o tags
         @a = ();
         while ( $i < $eoa ) {
             #$a[] = self::parseDebug($buf, &$i);
-            push( @a, parseDebug( $buf, $i ) );
+            push( @a, parseDebug( $buf, &$i ) );
         }
-        $result['contents'] = $a;
+        $result{'contents'} = $a;
     }
     if ( $ra == Rserve::XT_LIST_TAG || $ra == Rserve::XT_LANG_TAG )
     {                                     # pairlist with tags
         @a = ();
         while ( $i < $eoa ) {
-            my $val = parseDebug( $buf, $i );
-            my $tag = parse( $buf, $i, @attr );
+            my $val = parseDebug( $buf, &$i );
+            my $tag = parse( $buf, $i );
             $a[$tag] = $val;
         }
-        $result['contents'] = $a;
+        $result{'contents'} = $a;
     }
     if ( $ra == Rserve::XT_ARRAY_INT ) {    # integer array
         @a = ();
         while ( $i < $eoa ) {
             #$a[] = int32(@r, $i);
-            push( @a, int32( \@r, $i ) );
+            push( @a, Rserve::funclib::int32( \@r, $i ) );
             $i += 4;
         }
         if ( length($a) == 1 ) {
-            $result['contents'] = $a[0];
+            $result{'contents'} = $a[0];
         }
-        $result['contents'] = $a;
+        $result{'contents'} = $a;
     }
     if ( $ra == Rserve::XT_ARRAY_DOUBLE ) {    # double array
         @a = ();
         while ( $i < $eoa ) {
-            push( @a, flt64( \@r, $i ) );
+            push( @a, Rserve::funclib::flt64( \@r, $i ) );
             $i += 8;
         }
         if ( length($a) == 1 ) {
-            $result['contents'] = $a[0];
+            $result{'contents'} = $a[0];
         }
-        $result['contents'] = $a;
+        $result{'contents'} = $a;
     }
     if ( $ra == Rserve::XT_ARRAY_STR ) {       # string array
         @a = ();
@@ -491,18 +500,18 @@ sub parseDebug($;\$\@) {
             $i++;
         }
         if ( length($a) == 1 ) {
-            $result['contents'] = $a[0];
+            $result{'contents'} = $a[0];
         }
-        $result['contents'] = $a;
+        $result{'contents'} = $a;
     }
     if ( $ra == Rserve::XT_ARRAY_BOOL ) {    # boolean vector
-        my $n = int32( \@r, $i );
-        $result['size'] = $n;
+        my $n = Rserve::funclib::int32( \@r, $i );
+        $result{'size'} = $n;
         $i += 4;
         my $k = 0;
         @a = ();
         while ( $k < $n ) {
-            my $v = int8( \@r, $i++ );
+            my $v = Rserve::funclib::int8( \@r, $i++ );
   # $a[$k] = ($v === 1) ? Rserve::TRUE : (($v === 0) ? Rserve::FALSE : undef);
             $a[$k]
                 = ( ( $v == 1 ) && is_number($v) )
@@ -512,36 +521,37 @@ sub parseDebug($;\$\@) {
             ++$k;
         }
         if ( length($a) == 1 ) {
-            $result['contents'] = $a[0];
+            $result{'contents'} = $a[0];
         }
-        $result['contents'] = $a;
+        $result{'contents'} = $a;
     }
     if ( $ra == Rserve::XT_RAW ) {    # raw vector
-        my $len = int32( \@r, $i );
+        my $len = Rserve::funclib::int32( \@r, $i );
         $i += 4;
-        $result['size'] = $len;
+        $result{'size'} = $len;
         my $contents = join( '', substr( @r, $i, $len ) );
-        $result['contents'] = $contents;
+        $result{'contents'} = $contents;
     }
     if ( $ra == Rserve::XT_ARRAY_CPLX ) {
-        $result['not_implemented'] = Rserve::TRUE;
+        $result{'not_implemented'} = Rserve::TRUE;
         # TODO: complex
     }
     if ( $ra == 48 ) {                # unimplemented type in Rserve
-        my $uit = int32( \@r, $i );
-        $result['unknownType'] = $uit;
+        my $uit = Rserve::funclib::int32( \@r, $i );
+        $result{'unknownType'} = $uit;
     }
-    return @result;
+    return %result;
 }
 
 #public static function parseREXP($buf, $offset, $attr = NULL) {
-sub parseREXP($;\$\@) {
+sub parseREXP(@);
+sub parseREXP(@) {
 
-    Rserve::debug( "parseREXP()\n" );
+    Rserve::debug "parseREXP()\n";
 
     my $buf;
     my $offset;
-    my @attr = ();
+    my @attr = undef;
 
     if ( @_ == 3 ) {
         $buf    = shift;
@@ -564,11 +574,11 @@ sub parseREXP($;\$\@) {
     my @v = ();
 
     # some simple parsing - just skip attributes and assume short responses
-    my $ra = int8( \@r, $i );
-    my $rl = int24( \@r, $i + 1 );
+    my $ra = Rserve::funclib::int8( \@r, $i );
+    my $rl = Rserve::funclib::int24( \@r, $i + 1 );
 
-    Rserve::debug( "ra = $ra\n" );
-    Rserve::debug( "rl = $ra\n" );
+    Rserve::debug "ra = $ra\n";
+    Rserve::debug "rl = $ra\n";
 
     # Rserve::debug Dumper($rl);
 
@@ -579,60 +589,63 @@ sub parseREXP($;\$\@) {
 
     $offset = $eoa = $i + $rl;
     if ( ( $ra & 64 ) == 64 ) {
-        throw new Exception('Long packets are not supported (yet).');
+        die ('Fatal error: long packets are not supported (yet).');
     }
 
     if ( $ra > Rserve::XT_HAS_ATTR ) {
         $ra &= ~Rserve::XT_HAS_ATTR;
-        $al = int24( \@r, $i + 1 );
-        @attr = parseREXP( $buf, $i, @attr );
+        $al = Rserve::funclib::int24( \@r, $i + 1 );
+        @attr = parseREXP( $buf, $i );
         $i += $al + 4;
     }
-    given ($ra) {
-        when (Rserve::XT_NULL) {
-            Rserve::debug( "Rserve::XT_NULL\n" );
+    for ($ra) {
+        if ($ra == Rserve::XT_NULL) {
+            Rserve::debug "Rserve::XT_NULL\n";
             $a = new Rserve::REXP::Null();
+            # break;
         }
-        when (Rserve::XT_VECTOR) {    # generic vector
-            Rserve::debug( "Rserve::XT_VECTOR\n" );
+        elsif ($ra == Rserve::XT_VECTOR) {    # generic vector
+            Rserve::debug "Rserve::XT_VECTOR\n";
             @v = ();
             while ( $i < $eoa ) {
                 # $v[] = self::parseREXP($buf, &$i);
-                push( @v, parseREXP( $buf, $i, @attr ) );
+                push( @v, parseREXP( $buf, $i ) );
             }
             $a = new Rserve::REXP::GenericVector();
             $a->setValues(@v);
+            # break;
         }
 
-        when (Rserve::XT_SYMNAME) {    # symbol
-            Rserve::debug( "Rserve::XT_SYMNAME\n" );
+        elsif ($ra == Rserve::XT_SYMNAME) {    # symbol
+            Rserve::debug "Rserve::XT_SYMNAME\n";
             my $oi = $i;
             while ( $i < $eoa && ord( $r[$i] ) != 0 ) {
                 $i++;
             }
             my $v = substr( $buf, $oi, $i - $oi );
             my $a = new Rserve::REXP::Symbol();
-            my $a->setValue($v);
+            $a->setValue($v);
+            # break;
         }
-        when ( Rserve::XT_LIST_NOTAG or Rserve::XT_LANG_NOTAG )
+        elsif ($ra ==  Rserve::XT_LIST_NOTAG or $ra == Rserve::XT_LANG_NOTAG )
         {                              # pairlist w/o tags
-            Rserve::debug( "Rserve::XT_LIST_NOTAG or Rserve::XT_LANG_NOTAG\n" );
+            Rserve::debug "Rserve::XT_LIST_NOTAG or Rserve::XT_LANG_NOTAG\n";
             @v = ();
             while ( $i < $eoa ) {
                 #$v[] = self::parseREXP($buf, &$i);
-                push( @v, parseREXP( $buf, $i, @attr ) );
+                push( @v, parseREXP( $buf, $i ) );
             }
-            my $clasz
-                = ( $ra == Rserve::XT_LIST_NOTAG )
+            my $clasz = ( $ra == Rserve::XT_LIST_NOTAG )
                 ? 'Rserve::REXP::List'
                 : 'Rserve::REXP::Language';
-            $a = new ${clasz}();
+            $a = new $$clasz();
             $a->setValues($a);
+            # break;
         }
 
-        when ( Rserve::XT_LIST_TAG or Rserve::XT_LANG_TAG )
+        elsif ($ra == Rserve::XT_LIST_TAG or  $ra == Rserve::XT_LANG_TAG)
         {    # pairlist with tags
-            Rserve::debug( "Rserve::XT_LIST_TAG or Rserve::XT_LANG_TAG\n" );
+            Rserve::debug "Rserve::XT_LIST_TAG or Rserve::XT_LANG_TAG\n";
             my $clasz
                 = ( $ra == Rserve::XT_LIST_TAG )
                 ? 'Rserve::REXP::List'
@@ -641,41 +654,44 @@ sub parseREXP($;\$\@) {
             my @names = ();
             while ( $i < $eoa ) {
                 #$v[] = self::parseREXP($buf, &$i);
-                push( @v, parseREXP( $buf, $i, @attr ) );
+                push( @v, parseREXP( $buf, $i ) );
                 # $names[] = self::parseREXP($buf, &$i);
-                push( @names, parseREXP( $buf, $i, @attr ) );
+                push( @names, parseREXP( $buf, $i ) );
             }
-            $a = new ${clasz}();
+            $a = new $$clasz();
             $a->setValues(@v);
             $a->setNames(@names);
+            # break;
         }
 
-        when (Rserve::XT_ARRAY_INT) {    # integer array
-            Rserve::debug( "Rserve::XT_ARRAY_INT\n" );
+        elsif ($ra == Rserve::XT_ARRAY_INT) {    # integer array
+            Rserve::debug "Rserve::XT_ARRAY_INT\n";
             my @v = ();
             while ( my $i < $eoa ) {
                 #$v[] = int32(@r, $i);
-                push( @v, int32( \@r, $i ) );
+                push( @v, Rserve::funclib::int32( \@r, $i ) );
                 $i += 4;
             }
             $a = new Rserve::REXP::Integer();
             $a->setValues(@v);
+            # break;
         }
 
-        when (Rserve::XT_ARRAY_DOUBLE) {    # double array
-            Rserve::debug( "Rserve::XT_ARRAY_DOUBLE\n" );
+        elsif ($ra == Rserve::XT_ARRAY_DOUBLE) {    # double array
+            Rserve::debug "Rserve::XT_ARRAY_DOUBLE\n";
             @v = ();
             while ( my $i < $eoa ) {
                 # $v[] = flt64($r, $i);
-                push( @v, flt64( \@r, $i ) );
+                push( @v, Rserve::funclib::flt64( \@r, $i ) );
                 $i += 8;
             }
             $a = new Rserve::REXP::Double();
             $a->setValues(@v);
+            # break;
         }
 
-        when (Rserve::XT_ARRAY_STR) {       # string array
-            Rserve::debug ("Rserve::XT_ARRAY_STR\n");
+        elsif ($ra == Rserve::XT_ARRAY_STR) {    # string array
+            Rserve::debug "Rserve::XT_ARRAY_STR\n";
             @v = ();
             my $oi = $i;
             while ( my $i < $eoa ) {
@@ -688,16 +704,17 @@ sub parseREXP($;\$\@) {
             }
             $a = new Rserve::REXP::String();
             $a->setValues(@v);
+            # break;
         }
 
-        when (Rserve::XT_ARRAY_BOOL) {    # boolean vector
-            Rserve::debug( "Rserve::XT_ARRAY_BOOL\n" );
-            my $n = int32( \@r, $i );
+        elsif ($ra == Rserve::XT_ARRAY_BOOL) {    # boolean vector
+            Rserve::debug "Rserve::XT_ARRAY_BOOL\n";
+            my $n = Rserve::funclib::int32( \@r, $i );
             $i += 4;
             my $k  = 0;
             my @vv = ();
             while ( $k < $n ) {
-                my $v = int8( \@r, $i++ );
+                my $v = Rserve::funclib::int8( \@r, $i++ );
                 $vv[$k]
                     = ( $v == 1 )
                     ? Rserve::TRUE
@@ -706,40 +723,47 @@ sub parseREXP($;\$\@) {
             }
             $a = new Rserve::REXP::Logical();
             $a->setValues(@vv);
+            # break;
         }
 
-        when (Rserve::XT_RAW) {    # raw vector
-            Rserve::debug( "Rserve::XT_RAW\n" );
-            my $len = int32( \@r, $i );
+        elsif ($ra == Rserve::XT_RAW) {    # raw vector
+            Rserve::debug "Rserve::XT_RAW\n";
+            my $len = Rserve::funclib::int32( \@r, $i );
             $i += 4;
             my @v = substr( @r, $i, $len );
             my $a = new Rserve::REXP::Raw();
             $a->setValue(@v);
+            # break;
         }
 
-        when (Rserve::XT_ARRAY_CPLX) {
-            Rserve::debug( "Rserve::XT_ARRAY_CPLX\n" );
+        elsif ($ra == Rserve::XT_ARRAY_CPLX) {
+            Rserve::debug "Rserve::XT_ARRAY_CPLX\n";
             $a = Rserve::FALSE;
+            # break;
         }
 
-        when (48) {    # unimplemented type in Rserve
-            Rserve::debug( "48\n" );
-            my $uit = int32( \@r, $i );
+        elsif ($ra == 48) {    # unimplemented type in Rserve
+            Rserve::debug "48\n";
+            my $uit = Rserve::funclib::int32( \@r, $i );
         # echo "Note: result contains type #$uit unsupported by Rserve.<br/>";
             @a = undef;
+            # break;
         }
 
-        default {
-	    warn(    'Warning: type '
+        else {
+            warn(    'Warning: type '
                     . $ra
                     . ' is currently not implemented in the Perl client.' );
             @a = Rserve::FALSE;
         }
     }
 
-    Rserve::debug( "dumping a:\n" . Dumper(@a) . "\ndone\n" );
+    Rserve::debug "dumping a:\n";
+    Rserve::debug Dumper(@a);
+    Rserve::debug "done\n";
 
-    if ( scalar(@attr) && is_object(@a) ) {
+    #if ( scalar(@attr) && is_object(@a) ) {
+    if ( scalar(@attr) && defined(@a) ) {
         @a->setAttributes(@attr);
     }
 
@@ -749,43 +773,44 @@ sub parseREXP($;\$\@) {
 #public static function  xtName($xt) {
 
 sub xtName($) {
-
     my $xt = shift;
-
-    given ($xt) {
-        when (Rserve::XT_NULL)         { return ('null'); }
-        when (Rserve::XT_INT)          { return 'int'; }
-        when (Rserve::XT_STR)          { return 'string'; }
-        when (Rserve::XT_DOUBLE)       { return 'real'; }
-        when (Rserve::XT_BOOL)         { return 'logical'; }
-        when (Rserve::XT_ARRAY_INT)    { return 'int*'; }
-        when (Rserve::XT_ARRAY_STR)    { return 'string*'; }
-        when (Rserve::XT_ARRAY_DOUBLE) { return 'real*'; }
-        when (Rserve::XT_ARRAY_BOOL)   { return 'logical*'; }
-        when (Rserve::XT_ARRAY_CPLX)   { return 'complex*'; }
-        when (Rserve::XT_SYM)          { return 'symbol'; }
-        when (Rserve::XT_SYMNAME)      { return 'symname'; }
-        when (Rserve::XT_LANG)         { return 'lang'; }
-        when (Rserve::XT_LIST)         { return 'list'; }
-        when (Rserve::XT_LIST_TAG)     { return 'list+T'; }
-        when (Rserve::XT_LIST_NOTAG)   { return 'list/T'; }
-        when (Rserve::XT_LANG_TAG)     { return 'lang+T'; }
-        when (Rserve::XT_LANG_NOTAG)   { return 'lang/T'; }
-        when (Rserve::XT_CLOS)         { return 'clos'; }
-        when (Rserve::XT_RAW)          { return 'raw'; }
-        when (Rserve::XT_S4)           { return 'S4'; }
-        when (Rserve::XT_VECTOR)       { return 'vector'; }
-        when (Rserve::XT_VECTOR_STR)   { return 'string[]'; }
-        when (Rserve::XT_VECTOR_EXP)   { return 'expr[]'; }
-        when (Rserve::XT_FACTOR)       { return 'factor'; }
-        when (Rserve::XT_UNKNOWN)      { return 'unknown'; }
+    
+    if    ($xt == Rserve::XT_NULL)         { return ('null'); }
+    elsif ($xt == Rserve::XT_INT)          { return 'int'; }
+    elsif ($xt == Rserve::XT_STR)          { return 'string'; }
+    elsif ($xt == Rserve::XT_DOUBLE)       { return 'real'; }
+    elsif ($xt == Rserve::XT_BOOL)         { return 'logical'; }
+    elsif ($xt == Rserve::XT_ARRAY_INT)    { return 'int*'; }
+    elsif ($xt == Rserve::XT_ARRAY_STR)    { return 'string*'; }
+    elsif ($xt == Rserve::XT_ARRAY_DOUBLE) { return 'real*'; }
+    elsif ($xt == Rserve::XT_ARRAY_BOOL)   { return 'logical*'; }
+    elsif ($xt == Rserve::XT_ARRAY_CPLX)   { return 'complex*'; }
+    elsif ($xt == Rserve::XT_SYM)          { return 'symbol'; }
+    elsif ($xt == Rserve::XT_SYMNAME)      { return 'symname'; }
+    elsif ($xt == Rserve::XT_LANG)         { return 'lang'; }
+    elsif ($xt == Rserve::XT_LIST)         { return 'list'; }
+    elsif ($xt == Rserve::XT_LIST_TAG)     { return 'list+T'; }
+    elsif ($xt == Rserve::XT_LIST_NOTAG)   { return 'list/T'; }
+    elsif ($xt == Rserve::XT_LANG_TAG)     { return 'lang+T'; }
+    elsif ($xt == Rserve::XT_LANG_NOTAG)   { return 'lang/T'; }
+    elsif ($xt == Rserve::XT_CLOS)         { return 'clos'; }
+    elsif ($xt == Rserve::XT_RAW)          { return 'raw'; }
+    elsif ($xt == Rserve::XT_S4)           { return 'S4'; }
+    elsif ($xt == Rserve::XT_VECTOR)       { return 'vector'; }
+    elsif ($xt == Rserve::XT_VECTOR_STR)   { return 'string[]'; }
+    elsif ($xt == Rserve::XT_VECTOR_EXP)   { return 'expr[]'; }
+    elsif ($xt == Rserve::XT_FACTOR)       { return 'factor'; }
+    elsif ($xt == Rserve::XT_UNKNOWN)      { return 'unknown'; }
+    else  {  
+	# unknown type
+	return '<? ' . $xt . '>'; 
     }
-    return '<? ' . $xt . '>';
 }
 
 # * @param Rserve::REXP $value
 #  * This function is not functional. Please use it only for testing
 #public static function createBinary(Rserve::REXP $value) {
+sub createBinary($);
 sub createBinary($) {
 
     my $value = shift;
@@ -793,146 +818,163 @@ sub createBinary($) {
     my $o        = 0;                   # Init with header size
     my $contents = '';
     my $type     = $value->getType();
-    given ($type) {
-        when (Rserve::XT_S4) { continue; }
-        when (Rserve::XT_NULL) {
-        }
-        when (Rserve::XT_INT) {
-            my $v = 0 + $value->at(0);
-            $contents .= mkint32($v);
-            $o += 4;
-        }
-        when (Rserve::XT_DOUBLE) {
-            my $v = 0.0 + $value->at(0);
-            $contents .= mkfloat64($v);
-            $o += 8;
-        }
-        when (Rserve::XT_ARRAY_INT) {
-            my @vv = $value->getValues();
-            my $n  = scalar(@vv);
-            my $v;
-            for ( my $i = 0; $i < $n; ++$i ) {
-                $v = $vv[$i];
-                $contents .= mkint32($v);
-                $o += 4;
-            }
-        }
-        when (Rserve::XT_ARRAY_BOOL) {
-            my @vv = $value->getValues();
-            my $n  = scalar(@vv);
-            my $v;
-            $contents .= mkint32($n);
-            $o += 4;
-            if ($n) {
-                for ( my $i = 0; $i < $n; ++$i ) {
-                    $v = $vv[$i];
-                    if ( !defined($v) ) {
-                        $v = 2;
-                    }
-                    else {
-                        $v = 0 + $v;
-                    }
-                    if ( $v != 0 and $v != 1 ) {
-                        $v = 2;
-                    }
-                    $contents .= chr($v);
-                    ++$o;
-                }
-                while ( ( $o & 3 ) != 0 ) {
-                    $contents .= chr(3);
-                    ++$o;
-                }
-            }
-        }
-        when (Rserve::XT_ARRAY_DOUBLE) {
-            my @vv = $value->getValues();
-            my $n  = scalar(@vv);
-            my $v;
-            for ( my $i = 0; $i < $n; ++$i ) {
-                $v = 0.0 + $vv[$i];
-                $contents .= mkfloat64($v);
-                $o += 8;
-            }
-        }
-        when (Rserve::XT_RAW) {
-            my $v = $value->getValue();
-            my $n = $value->length();
-            $contents .= mkint32($n);
-            $o += 4;
-            $contents .= $v;
-        }
-        when (Rserve::XT_ARRAY_STR) {
-            my @vv = $value->getValues();
-            my $n  = scalar(@vv);
-            my @v;
-            for ( my $i = 0; $i < $n; ++$i ) {
-                @v = $vv[$i];
-                if (@v) {
-                    if ( ord( $v[0] ) == 255 ) {
-                        $contents .= chr(255);
-                        ++$o;
-                    }
-                    $contents .= join( '', @v );
-                    $o += scalar(@v);
-                }
-                else {
-                    $contents .= chr(255) . chr(0);
-                    $o += 2;
-                }
-            }
-            while ( ( $o & 3 ) != 0 ) {
-                $contents .= chr(1);
-                ++$o;
-            }
-        }
-        when (Rserve::XT_LIST_TAG)   { continue; }
-        when (Rserve::XT_LIST_NOTAG) { continue; }
-        when (Rserve::XT_LANG_TAG)   { continue; }
-        when (Rserve::XT_LANG_NOTAG) { continue; }
-        when (Rserve::XT_LIST)       { continue; }
-        when (Rserve::XT_VECTOR)     { continue; }
-        when (Rserve::XT_VECTOR_EXP) {
-            my @l     = $value->getValues();
-            my @names = ();
-            if (   $type == Rserve::XT_LIST_TAG
-                || $type == Rserve::XT_LANG_TAG )
-            {
-                @names = $value->getNames();
-            }
-            my $i = 0;
-            my $n = scalar(@l);
-            while ( $i < $n ) {
-                my $x = $l[$i];
-                if ( defined($x) ) {
-                    $x = new Rserve::REXP::Null();
-                }
-                my $iof = strlen($contents);
-                $contents .= createBinary($x);
-                if (   $type == Rserve::XT_LIST_TAG
-                    || $type == Rserve::XT_LANG_TAG )
-                {
-                    my $sym = new Rserve::REXP::Symbol();
-                    $sym->setValue( $names[$i] );
-                    $contents .= createBinary($sym);
-                }
-                ++$i;
-            }
-        }
 
-        when ( Rserve::XT_SYMNAME or Rserve::XT_STR ) {
-            my $s = '' . $value->getValue();
-            $contents .= $s;
-            $o += strlen($s);
-            $contents .= chr(0);
-            ++$o;
-            #padding if necessary
-            while ( ( $o & 3 ) != 0 ) {
-                $contents .= chr(0);
-                ++$o;
-            }
-        }
+    
+    for ($type) {
+	if ($type == Rserve::XT_S4 || $type == Rserve::XT_NULL) {
+	    # break;
+	}
+	elsif ($type == Rserve::XT_INT) {
+	    my $v = 0 + $value->at(0);
+	    $contents .= Rserve::funclib::mkint32($v);
+	    $o += 4;
+	    # break;
+	}
+	elsif ($type == Rserve::XT_DOUBLE) {
+	    my $v = 0.0 + $value->at(0);
+	    $contents .= Rserve::funclib::mkfloat64($v);
+	    $o += 8;
+	    # break;
+	}
+	elsif ($type == Rserve::XT_ARRAY_INT) {
+	    my @vv = $value->getValues();
+	    my $n  = scalar(@vv);
+	    my $v;
+	    for ( my $i = 0; $i < $n; ++$i ) {
+		$v = $vv[$i];
+		$contents .= Rserve::funclib::mkint32($v);
+		$o += 4;
+	    }
+	    # break;
+	}
+	elsif ($type == Rserve::XT_ARRAY_BOOL) {
+	    my @vv = $value->getValues();
+	    my $n  = scalar(@vv);
+	    my $v;
+	    $contents .= Rserve::funclib::mkint32($n);
+	    $o += 4;
+	    if ($n) {
+		for ( my $i = 0; $i < $n; ++$i ) {
+		    $v = $vv[$i];
+		    if ( !defined($v) ) {
+			$v = 2;
+		    }
+		    else {
+			$v = 0 + $v;
+		    }
+		    if ( $v != 0 and $v != 1 ) {
+			$v = 2;
+		    }
+		    $contents .= chr($v);
+		    ++$o;
+		}
+		while ( ( $o & 3 ) != 0 ) {
+		    $contents .= chr(3);
+		    ++$o;
+		}
+	    }
+	    # break;
+	}
+	elsif ($type == Rserve::XT_ARRAY_DOUBLE) {
+	    my @vv = $value->getValues();
+	    my $n  = scalar(@vv);
+	    my $v;
+	    for ( my $i = 0; $i < $n; ++$i ) {
+		$v = 0.0 + $vv[$i];
+		$contents .= Rserve::funclib::mkfloat64($v);
+		$o += 8;
+	    }
+	    # break;
+	}
+	elsif ($type == Rserve::XT_RAW) {
+	    my $v = $value->getValue();
+	    my $n = $value->length();
+	    $contents .= Rserve::funclib::mkint32($n);
+	    $o += 4;
+	    $contents .= $v;
+	    # break;
+	}
+	elsif ($type == Rserve::XT_ARRAY_STR) {
+	    my @vv = $value->getValues();
+	    my $n  = scalar(@vv);
+	    my $v;
+	    for ( my $i = 0; $i < $n; ++$i ) {
+		$v = $vv[$i];
+		if ($v) {
+		    if ( ord( substr($v, 0, 1) ) == 255 ) {
+			$contents .= chr(255);
+			++$o;
+		    }
+		    $contents .= $v . chr(0);
+		    $o += length($v) + 1;
+		}
+		else {
+		    $contents .= chr(255) . chr(0);
+		    $o += 2;
+		}
+	    }
+	    while ( ( $o & 3 ) != 0 ) {
+		$contents .= chr(1);
+		++$o;
+	    }
+	    # break;
+	}
+	elsif ($type == Rserve::XT_LIST_TAG ||
+	       $type == Rserve::XT_LIST_NOTAG || 
+	       $type == Rserve::XT_LANG_TAG ||
+	       $type == Rserve::XT_LANG_NOTAG ||
+	       $type == Rserve::XT_LIST ||
+	       $type == Rserve::XT_VECTOR ||     
+	       $type == Rserve::XT_VECTOR_EXP ) 
+	{
+	    my @l     = $value->getValues();
+	    my @names = ();
+	    if (   $type == Rserve::XT_LIST_TAG
+		   || $type == Rserve::XT_LANG_TAG )
+	    {
+		@names = $value->getNames();
+	    }
+	    my $i = 0;
+	    my $n = scalar(@l);
+	    while ( $i < $n ) {
+		my $x = $l[$i];
+		if ( defined($x) ) {
+		    $x = new Rserve::REXP::Null();
+		}
+		my $iof = strlen($contents);
+		$contents .= createBinary($x);
+		if (   $type == Rserve::XT_LIST_TAG
+		       || $type == Rserve::XT_LANG_TAG )
+		{
+		    my $sym = new Rserve::REXP::Symbol();
+		    $sym->setValue( $names[$i] );
+		    $contents .= createBinary($sym);
+		}
+		++$i;
+	    }
+	    # break;
+	}
+    
+	elsif ($type == Rserve::XT_SYMNAME or $type == Rserve::XT_STR) {
+	    my $s = '' . $value->getValue();
+	    $contents .= $s;
+	    $o += strlen($s);
+	    $contents .= chr(0);
+	    ++$o;
+	    #padding if necessary
+	    while ( ( $o & 3 ) != 0 ) {
+		$contents .= chr(0);
+		++$o;
+	    }
+	    # break;
+	}
+
+	else {
+	    # default for switch - handle this?
+	    die "unknown type";
+	}
     }
-
+    
     #
     # TODO: handling attr
     #  $attr = $value->attr();
@@ -949,18 +991,18 @@ sub createBinary($) {
     # [4]   (4) header attribute SEXP: len=n
     # [8]   (n) data attribute SEXP
     # [8+n] (m) data SEXP
-
+    
     my $attr_flag = 0;
     my $length    = $o;
     my $isLarge   = ( $length > 0xfffff0 );
     my $code      = $type | $attr_flag;
-
+    
     # SEXP Header (without ATTR)
     # [0]  (byte) eXpression Type
     # [1]  (24-bit int) length
     my @r;
     push( @r, chr( $code & 255 ) );
-    push( @r, mkint24($length) );
+    push( @r, Rserve::funclib::mkint24($length) );
     push( @r, $contents );
     return @r;
 }

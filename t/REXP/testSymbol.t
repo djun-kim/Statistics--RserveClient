@@ -1,10 +1,9 @@
-use v5.12;
 use warnings;
 use autodie;
 
 use Rserve::REXP::Symbol;
 
-use Test::More tests => 6;
+use Test::More tests => 7;
 
 my $symbol = new Rserve::REXP::Symbol('foo');
 
@@ -14,6 +13,7 @@ ok( $symbol->isSymbol(),      'Symbol is a symbol' );
 
 is( $symbol->getValue(), 'foo', 'symbol name') ;
 is( $symbol->__toString(), '"foo"', 'symbol string') ;
+is( Rserve::Parser::xtName($symbol->getType()), 'symbol', 'symbol type') ;
 
 my $expected_html = << 'END_HTML';
 <div class="rexp xt_5">

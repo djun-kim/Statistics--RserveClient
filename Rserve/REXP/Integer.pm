@@ -13,9 +13,8 @@
 
 #  R Integer vector
 
-use v5.12;
-use warnings;
-use autodie;
+#use warnings;
+#use autodie;
 
 use Rserve;
 use Rserve qw (:xt_types );
