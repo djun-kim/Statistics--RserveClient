@@ -36,6 +36,12 @@ sub new($$) {
     return $self;
 }
 
+sub setValue($$) {
+    my $self = shift;
+    my $name = shift;
+    $self->{name} = $name;
+}
+
 sub getValue($) {
     my $self = shift;
     return $self->{name};
