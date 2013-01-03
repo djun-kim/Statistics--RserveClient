@@ -438,7 +438,7 @@ sub parseDebug(@) {
         @a = ();
         while ( $i < $eoa ) {
             #$a[] = self::parseDebug($buf, &$i);
-            push( @a, parseDebug( $buf, &$i ) );
+            push( @a, parseDebug( $buf, $i ) );
         }
         $result{'contents'} = $a;
     }
@@ -454,7 +454,7 @@ sub parseDebug(@) {
         @a = ();
         while ( $i < $eoa ) {
             #$a[] = self::parseDebug($buf, &$i);
-            push( @a, parseDebug( $buf, &$i ) );
+            push( @a, parseDebug( $buf, $i ) );
         }
         $result{'contents'} = $a;
     }
@@ -462,7 +462,7 @@ sub parseDebug(@) {
     {                                     # pairlist with tags
         @a = ();
         while ( $i < $eoa ) {
-            my $val = parseDebug( $buf, &$i );
+            my $val = parseDebug( $buf, $i );
             my $tag = parse( $buf, $i );
             $a[$tag] = $val;
         }
