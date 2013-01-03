@@ -269,7 +269,7 @@ sub new() {
 }
 
 sub DESTROY() {
-    Rserve::Connection::close();
+  close_connection();
 }
 
 # Evaluate a string as an R code and return result
@@ -405,7 +405,7 @@ sub evalStringToFile() {
 #
 # * Close the current connection
 #
-sub close() {
+sub close_connection() {
     my $self = shift;
     if ( $self->{socket} ) {
         return CORE::close($self->{socket});
@@ -584,7 +584,7 @@ sub assign($$$) {
     unless ($symbol->isa('Rserve::REXP::Symbol') ||
             $symbol->isa('Rserve::REXP::String')) {
         $symbol = '' . $symbol;
-        my $s = new Rserve::REXP::Symbol($symbol);
+        my $s = Rserve::REXP::Symbol->new($symbol);
         $symbol = $s;
     }
     unless ($value->isa('Rserve::REXP')) {

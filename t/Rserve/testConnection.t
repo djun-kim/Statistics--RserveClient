@@ -9,6 +9,6 @@ my $cnx = new_ok(
 
 ok( $cnx->initialized(), 'connection is initialized' );
 
-ok( $cnx->close(), 'closing a connection' );
+ok( $cnx->close_connection(), 'closing a connection' );
 
 done_testing($number_of_tests);
