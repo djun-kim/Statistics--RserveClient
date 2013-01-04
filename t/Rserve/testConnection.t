@@ -1,9 +1,9 @@
-use Rserve::Connection;
+use Statistics::RserveClient::Connection;
 
 use Test::More tests => 3;
 
 my $cnx = new_ok(
-    'Rserve::Connection' => ['localhost'],
+    'Statistics::RserveClient::Connection' => ['localhost'],
     'new local connection'
 );
 

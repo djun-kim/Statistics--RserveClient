@@ -1,12 +1,12 @@
 use warnings;
 use autodie;
 
-use Rserve::REXP::Double;
+use Statistics::RserveClient::REXP::Double;
 
 use Test::More tests => 8;
 
-my $dbl = new Rserve::REXP::Double;
-isa_ok( $dbl, 'Rserve::REXP::Double', 'new returns an object that' );
+my $dbl = new Statistics::RserveClient::REXP::Double;
+isa_ok( $dbl, 'Statistics::RserveClient::REXP::Double', 'new returns an object that' );
 ok( $dbl->isDouble(), 'Double is a double' );
 ok( $dbl->isVector(), 'Double is a vector' );
 

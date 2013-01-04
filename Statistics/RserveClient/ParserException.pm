@@ -4,25 +4,25 @@
 # * @author Djun Kim
 # * Licensed under# GPL v2 or at your option v3
 
-# * Rserve::ParserException extends Rserve::Exception
+# * Statistics::RserveClient::ParserException extends Statistics::RserveClient::Exception
 # * @author Djun Kim
 
 #use strict;
 #use warnings;
 #use autodie;
 
-package Rserve::ParserException;
+package Statistics::RserveClient::ParserException;
 
-use Rserve::Exception;
+use Statistics::RserveClient::Exception;
 
 use Exporter;
 
-our @ISA = qw(Exporter Rserve::Exception);    # inherits from Exception
+our @ISA = qw(Exporter Statistics::RserveClient::Exception);    # inherits from Exception
 our @EXPORT = qw( new );
 
 sub new {
     my $class = shift;
-    my $self  = Rserve::Exception->new();
+    my $self  = Statistics::RserveClient::Exception->new();
     bless $self, $class;
     return $self;
 }

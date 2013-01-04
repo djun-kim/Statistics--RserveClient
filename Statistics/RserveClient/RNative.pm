@@ -9,7 +9,7 @@
 #use warnings;
 #use autodie;
 
-package Rserve::RNative;
+package Statistics::RserveClient::RNative;
 
 # @var array Data
 my $data = {};    # private

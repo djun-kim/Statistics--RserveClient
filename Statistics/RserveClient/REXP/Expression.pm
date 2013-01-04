@@ -14,22 +14,20 @@
 #use warnings;
 #use autodie;
 
-# R character vector
-# class Rserve_REXP_String extends Rserve_REXP_Vector {
+use Statistics::RserveClient;
+use Statistics::RserveClient qw (:xt_types );
 
-use Rserve;
-use Rserve qw (:xt_types );
+use Statistics::RserveClient::REXP;
+use Statistics::RserveClient::REXP::GenericVector;
 
-use Rserve::REXP::Vector;
+#class Rserve_REXP_Factor extends Rserve_REXP_GenericVector {
+package Statistics::RserveClient::REXP::Expression;
+our @ISA = qw(Statistics::RserveClient::REXP::GenericVector);
 
-package Rserve::REXP::String;
-our @ISA = qw(Rserve::REXP::Vector);
-
-sub isString() { return Rserve::TRUE; }
+sub isExpression() { return Statistics::RserveClient::TRUE; }
 
 sub getType() {
-    return Rserve::XT_ARRAY_STR;
+    return Statistics::RserveClient::XT_VECTOR_EXP;
 }
 
 1;
-

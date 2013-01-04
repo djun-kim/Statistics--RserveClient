@@ -14,22 +14,24 @@
 #use warnings;
 #use autodie;
 
-# R Generic vector
-# class Rserve_REXP_GenericVector extends Rserve_REXP_Vector
+# R Null value
 
-package Rserve::REXP::GenericVector;
+use Statistics::RserveClient;
+use Statistics::RserveClient qw (:xt_types );
 
-use Rserve;
-use Rserve qw (:xt_types );
+use Statistics::RserveClient::REXP;
 
-use Rserve::REXP::Vector;
+# class Rserve_REXP_Null extends Rserve_REXP {
+package Statistics::RserveClient::REXP::Null;
 
-our @ISA = qw(Rserve::REXP::Vector);
+our @ISA = qw(Statistics::RserveClient::REXP);
 
-sub isList() { return Rserve::TRUE; }
+sub isList() { return Statistics::RserveClient::TRUE; }
+sub isNull() { return Statistics::RserveClient::TRUE; }
 
 sub getType() {
-    return Rserve::XT_VECTOR;
+    return Statistics::RserveClient::XT_NULL;
 }
 
 1;
+

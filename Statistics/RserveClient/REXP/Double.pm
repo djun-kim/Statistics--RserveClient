@@ -17,20 +17,20 @@
 #use warnings;
 #use autodie;
 
-use Rserve;
-use Rserve qw (:xt_types );
+use Statistics::RserveClient;
+use Statistics::RserveClient qw (:xt_types );
 
-use Rserve::REXP::Vector;
+use Statistics::RserveClient::REXP::Vector;
 
-package Rserve::REXP::Double;
-our @ISA = qw(Rserve::REXP::Vector);
+package Statistics::RserveClient::REXP::Double;
+our @ISA = qw(Statistics::RserveClient::REXP::Vector);
 
-sub isInteger() { return Rserve::FALSE; }
-sub isNumeric() { return Rserve::TRUE; }
-sub isDouble()  { return Rserve::TRUE; }
+sub isInteger() { return Statistics::RserveClient::FALSE; }
+sub isNumeric() { return Statistics::RserveClient::TRUE; }
+sub isDouble()  { return Statistics::RserveClient::TRUE; }
 
 sub getType() {
-    return Rserve::XT_ARRAY_DOUBLE;
+    return Statistics::RserveClient::XT_ARRAY_DOUBLE;
 }
 
 1;

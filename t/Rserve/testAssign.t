@@ -1,16 +1,19 @@
 use warnings;
 use autodie;
 
-use Rserve::Connection;
-use Rserve::REXP::Logical;
-use Rserve::REXP::Symbol;
+use Statistics::RserveClient::Connection;
+use Statistics::RserveClient::REXP::Logical;
+use Statistics::RserveClient::REXP::Symbol;
+use Statistics::RserveClient::REXP::String;
+use Statistics::RserveClient::REXP::Integer;
+use Statistics::RserveClient::REXP::Double;
 
 use Test::More;# tests => 12;
 
-my $cnx = new_ok('Rserve::Connection' => ['localhost']);
+my $cnx = new_ok('Statistics::RserveClient::Connection' => ['localhost']);
 
 my @expected_true_scalar = (1);
-my $x = new Rserve::REXP::Logical;
+my $x = new Statistics::RserveClient::REXP::Logical;
 $x->setValues(\@expected_true_scalar);
 $cnx->assign('x', $x);
 my @true_scalar = $cnx->evalString('x');
@@ -34,7 +37,7 @@ is_deeply(\@bool_vector, \@expected_bool_vector, 'boolean array') or
     diag explain @bool_vector;
 
 my @expected_char_scalar = 'z';
-$x = new Rserve::REXP::String;
+$x = new Statistics::RserveClient::REXP::String;
 $x->setValues(\@expected_char_scalar);
 $cnx->assign('x', $x);
 my @char_scalar = $cnx->evalString('x');
@@ -68,7 +71,7 @@ is_deeply(\@string_vector, \@expected_string_vector,
     diag explain @string_vector;
 
 my @expected_int_scalar = 123;
-$x = new Rserve::REXP::Integer;
+$x = new Statistics::RserveClient::REXP::Integer;
 $x->setValues(\@expected_int_scalar);
 $cnx->assign('x', $x);
 my @int_scalar = $cnx->evalString('x');
@@ -85,7 +88,7 @@ is_deeply(\@int_vector, \@expected_int_vector,
     diag explain @int_vector;
 
 my @expected_double_scalar = 1.5;
-$x = new Rserve::REXP::Double;
+$x = new Statistics::RserveClient::REXP::Double;
 $x->setValues(\@expected_double_scalar);
 $cnx->assign('x', $x);
 my @double_scalar = $cnx->evalString('x');

@@ -16,18 +16,18 @@
 
 # R Double Factor
 # class Rserve_REXP_Factor extends Rserve_REXP_Integer {
-package Rserve::REXP::Factor;
-our @ISA = qw (Rserve::REXP::Integer);
+package Statistics::RserveClient::REXP::Factor;
+our @ISA = qw (Statistics::RserveClient::REXP::Integer);
 
-use Rserve;
-use Rserve qw (:xt_types );
+use Statistics::RserveClient;
+use Statistics::RserveClient qw (:xt_types );
 
-use Rserve::REXP::Integer;
+use Statistics::RserveClient::REXP::Integer;
 
 #protected $levels;
 my @_levels;
 
-sub isFactor() { return Rserve::TRUE; }
+sub isFactor() { return Statistics::RserveClient::TRUE; }
 
 sub getLevels() {
     return @_levels;
@@ -47,7 +47,7 @@ sub asCharacters() {
 }
 
 sub getType() {
-    return Rserve::XT_FACTOR;
+    return Statistics::RserveClient::XT_FACTOR;
 }
 
 1;

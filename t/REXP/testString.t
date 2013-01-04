@@ -1,13 +1,13 @@
 use warnings;
 use autodie;
 
-use Rserve::REXP::String;
+use Statistics::RserveClient::REXP::String;
 
 use Test::More tests => 8;
 
-my $string = new Rserve::REXP::String;
+my $string = new Statistics::RserveClient::REXP::String;
 
-isa_ok( $string, 'Rserve::REXP::String', 'new returns an object that' );
+isa_ok( $string, 'Statistics::RserveClient::REXP::String', 'new returns an object that' );
 ok( $string->isString(),      'String is a string' );
 ok( $string->isVector(),      'String is a vector' );
 

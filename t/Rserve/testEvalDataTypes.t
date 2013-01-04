@@ -1,8 +1,8 @@
-use Rserve::Connection;
+use Statistics::RserveClient::Connection;
 
 use Test::More tests => 12;
 
-my $cnx = new_ok( 'Rserve::Connection' => ['localhost'] );
+my $cnx = new_ok( 'Statistics::RserveClient::Connection' => ['localhost'] );
 
 @expected_true_scalar = (1);
 @true_scalar          = $cnx->evalString('TRUE');

@@ -8,7 +8,7 @@
 
 use strict;
 
-use Rserve::Connection;
+use Statistics::RserveClient::Connection;
 
 my $server = "localhost";
 
@@ -18,12 +18,12 @@ if (@ARGV > 0) {
 
 print "Opening connection to $server...\n";
 
-my $cnx = new Rserve::Connection($server);
+my $cnx = new Statistics::RserveClient::Connection($server);
 
 print "Established connection: $cnx.\n";
 
 print "Checking if connection initialized... " . 
-  (Rserve::Connection::initialized() ? "TRUE" : "FALSE") . "\n";
+  (Statistics::RserveClient::Connection::initialized() ? "TRUE" : "FALSE") . "\n";
 
 print "Sending string to R server for evaluation. Result is:\n";
 

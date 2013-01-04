@@ -4,14 +4,14 @@
 # * @author Djun Kim
 # * Licensed under# GPL v2 or at your option v3
 
-# * Rserve::Exception
+# * Statistics::RserveClient::Exception
 # * @author Djun Kim
 
 #use strict;
 #use warnings;
 #use autodie;
 
-package Rserve::Exception;
+package Statistics::RserveClient::Exception;
 
 sub new() {
     my $class   = shift;

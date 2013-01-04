@@ -1,9 +1,9 @@
 #! /usr/bin/env perl
 
-use Rserve::Connection;
+use Statistics::RserveClient::Connection;
 
-$cnx = new Rserve::Connection('localhost');
-Rserve::Connection->init();
+$cnx = new Statistics::RserveClient::Connection('localhost');
+Statistics::RserveClient::Connection->init();
 
 my $EOF = 0;
 my @result = undef;

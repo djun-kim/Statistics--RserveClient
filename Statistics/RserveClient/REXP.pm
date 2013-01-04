@@ -16,12 +16,12 @@
 #use warnings;
 #use autodie;
 
-package Rserve::REXP;
+package Statistics::RserveClient::REXP;
 
-use Rserve;
-use Rserve qw (:xt_types );
+use Statistics::RserveClient;
+use Statistics::RserveClient qw (:xt_types );
 
-use Rserve::Parser;
+use Statistics::RserveClient::Parser;
 
 use Exporter;
 our @ISA    = qw(Exporter);
@@ -52,7 +52,7 @@ sub setAttributes($) {
 sub hasAttribute($) {
     my $self = shift;
     if ( @{ $self->{_attr} } ) {
-        return Rserve::FALSE;
+        return Statistics::RserveClient::FALSE;
     }
 }
 
@@ -70,18 +70,18 @@ sub attr() {
     return @{ $self->{_attr} };
 }
 
-sub isVector()     { return Rserve::FALSE; }
-sub isInteger()    { return Rserve::FALSE; }
-sub isNumeric()    { return Rserve::FALSE; }
-sub isLogical()    { return Rserve::FALSE; }
-sub isString()     { return Rserve::FALSE; }
-sub isSymbol()     { return Rserve::FALSE; }
-sub isRaw()        { return Rserve::FALSE; }
-sub isList()       { return Rserve::FALSE; }
-sub isNull()       { return Rserve::FALSE; }
-sub isLanguage()   { return Rserve::FALSE; }
-sub isFactor()     { return Rserve::FALSE; }
-sub isExpression() { return Rserve::FALSE; }
+sub isVector()     { return Statistics::RserveClient::FALSE; }
+sub isInteger()    { return Statistics::RserveClient::FALSE; }
+sub isNumeric()    { return Statistics::RserveClient::FALSE; }
+sub isLogical()    { return Statistics::RserveClient::FALSE; }
+sub isString()     { return Statistics::RserveClient::FALSE; }
+sub isSymbol()     { return Statistics::RserveClient::FALSE; }
+sub isRaw()        { return Statistics::RserveClient::FALSE; }
+sub isList()       { return Statistics::RserveClient::FALSE; }
+sub isNull()       { return Statistics::RserveClient::FALSE; }
+sub isLanguage()   { return Statistics::RserveClient::FALSE; }
+sub isFactor()     { return Statistics::RserveClient::FALSE; }
+sub isExpression() { return Statistics::RserveClient::FALSE; }
 
 sub toHTML() {
     my $self = shift;
@@ -89,7 +89,7 @@ sub toHTML() {
           "<div class='rexp xt_"
         . $self->getType()
         . "'><span class='typename'>"
-        . Rserve::Parser::xtName( $self->getType() )
+        . Statistics::RserveClient::Parser::xtName( $self->getType() )
         . "</span>"
         . $self->attrToHTML()
         . "</div>\n";
@@ -107,7 +107,7 @@ sub attrToHTML() {
 }
 
 sub getType() {
-    return Rserve::XT_VECTOR;
+    return Statistics::RserveClient::XT_VECTOR;
 }
 
 1;

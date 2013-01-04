@@ -14,23 +14,22 @@
 #use warnings;
 #use autodie;
 
-# wrapper for R Unknown type
+# R Generic vector
+# class Rserve_REXP_GenericVector extends Rserve_REXP_Vector
 
-#class Rserve_REXP_Unknown extends Rserve_REXP {
+package Statistics::RserveClient::REXP::GenericVector;
 
-package Rserve::REXP::Unknown;
+use Statistics::RserveClient;
+use Statistics::RserveClient qw (:xt_types );
 
-sub new($) {
-    my $class = shift;
-    my $type  = shift;
-    my $self  = { unknowntype => $type, };
-    bless $self, $class;
-    return $self;
-}
+use Statistics::RserveClient::REXP::Vector;
 
-sub getUnknownType($) {
-    my $this = shift;
-    return $this->{unknowntype};
+our @ISA = qw(Statistics::RserveClient::REXP::Vector);
+
+sub isList() { return Statistics::RserveClient::TRUE; }
+
+sub getType() {
+    return Statistics::RserveClient::XT_VECTOR;
 }
 
 1;

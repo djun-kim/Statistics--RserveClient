@@ -19,15 +19,15 @@
 
 # class Rserve_REXP_List extends Rserve_REXP_Vector implements ArrayAccess {
 
-use Rserve;
-use Rserve qw( :xt_types );
-use Rserve::REXP::Vector;
+use Statistics::RserveClient;
+use Statistics::RserveClient qw( :xt_types );
+use Statistics::RserveClient::REXP::Vector;
 
-package Rserve::REXP::List;
-our @ISA = qw(Rserve::REXP::Vector);
+package Statistics::RserveClient::REXP::List;
+our @ISA = qw(Statistics::RserveClient::REXP::Vector);
 
 my $names    = ();               # protected
-my $is_named = Rserve::FALSE;    # protected
+my $is_named = Statistics::RserveClient::FALSE;    # protected
 
 #sub setValues($values, $getNames = FALSE) {
 sub setValues(@) {
@@ -35,7 +35,7 @@ sub setValues(@) {
     my $values   = shift;
     my $getNames = shift;
     if ( !defined($getNames) ) {
-        $getNames = Rserve::FALSE;
+        $getNames = Statistics::RserveClient::FALSE;
     }
 
     my $names = undef;
@@ -62,7 +62,7 @@ sub setNames($$) {
                 . count($names) );
     }
     $self::names    = $names;
-    $self::is_named = Rserve::TRUE;
+    $self::is_named = Statistics::RserveClient::TRUE;
 }
 
 # * return array list of names
@@ -96,7 +96,7 @@ sub at($) {
 
 # * Return element at the index $i
 # * @param int $i
-# * @return mixed Rserve_REXP or native value
+# * @return mixed Statistics::RserveClient::REXP or native value
 
 sub atIndex($) {
     my $self = shift;
@@ -110,7 +110,7 @@ sub atIndex($) {
     return $self::values[$i];
 }
 
-sub isList() { return Rserve::TRUE; }
+sub isList() { return Statistics::RserveClient::TRUE; }
 
 sub offsetExists($) {
     my $self   = shift;
@@ -147,10 +147,10 @@ sub offsetUnset($) {
 sub getType() {
     my $self = shift;
     if ( $self->isNamed() ) {
-        return Rserve::XT_LIST_TAG;
+        return Statistics::RserveClient::XT_LIST_TAG;
     }
     else {
-        return Rserve::XT_LIST_NOTAG;
+        return Statistics::RserveClient::XT_LIST_NOTAG;
     }
 }
 
@@ -165,7 +165,7 @@ sub toHTML() {
         my $idx = ($is_named) ? $self::names[$i] : $i;
         $s .= '<div class="name">' . $idx . '</div>:<div class="value">';
         my $v = $self::values[$i];
-        if ( is_object($v) and ( $v->isa('Rserve::REXP') ) ) {
+        if ( is_object($v) and ( $v->isa('Statistics::RserveClient::REXP') ) ) {
             $s .= $v->toHTML();
         }
         else {

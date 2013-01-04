@@ -1,12 +1,12 @@
-use v5.12;
+use strict;
 use warnings;
 use autodie;
 
-use Rserve::Connection;
+use Statistics::RserveClient::Connection;
 
 use Test::More;# tests => 12;
 
-my $cnx = new_ok('Rserve::Connection' => ['localhost']);
+my $cnx = new_ok('Statistics::RserveClient::Connection' => ['localhost']);
 
 my @empty_list = $cnx->evalString('list()');
 my @expected_empty_list = ();

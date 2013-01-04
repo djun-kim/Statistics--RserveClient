@@ -14,20 +14,21 @@
 #use warnings;
 #use autodie;
 
-use Rserve;
-use Rserve qw (:xt_types );
+use Statistics::RserveClient;
+use Statistics::RserveClient qw (:xt_types );
 
-use Rserve::REXP;
-use Rserve::REXP::GenericVector;
+use Statistics::RserveClient::REXP::List;
 
-#class Rserve_REXP_Factor extends Rserve_REXP_GenericVector {
-package Rserve::REXP::Expression;
-our @ISA = qw(Rserve::REXP::GenericVector);
+# R Language type vector
 
-sub isExpression() { return Rserve::TRUE; }
+#class Rserve_REXP_Language extends Rserve_REXP_List {
+package Statistics::RserveClient::REXP::Language;
+our @ISA = qw(Statistics::RserveClient::REXP::List);
+
+sub isLanguage() { return Statistics::RserveClient::TRUE; }
 
 sub getType() {
-    return Rserve::XT_VECTOR_EXP;
+    return Statistics::RserveClient::XT_LANG;
 }
 
 1;

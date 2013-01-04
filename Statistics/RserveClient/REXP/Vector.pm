@@ -14,18 +14,18 @@
 #use warnings;
 #use autodie;
 
-use Rserve;
-use Rserve qw (:xt_types );
+use Statistics::RserveClient;
+use Statistics::RserveClient qw (:xt_types );
 
-use Rserve::REXP;
-use Rserve::Parser;
+use Statistics::RserveClient::REXP;
+use Statistics::RserveClient::Parser;
 
 use Exporter;
 
 # R Double vector
 # class Rserve_REXP_Vector extends Rserve_REXP {
-package Rserve::REXP::Vector;
-our @ISA = qw(Rserve::REXP Exporter);
+package Statistics::RserveClient::REXP::Vector;
+our @ISA = qw(Statistics::RserveClient::REXP Exporter);
 
 sub new() {
     my $class = shift;
@@ -36,7 +36,7 @@ sub new() {
 
 # Returns TRUE (1)
 sub isVector() {
-    return Rserve::TRUE;
+    return Statistics::RserveClient::TRUE;
 }
 
 # Returns the length of the instance vector
@@ -71,7 +71,7 @@ sub at($) {
 
 # * Gets the type of this object
 sub getType() {
-    return Rserve::XT_VECTOR;
+    return Statistics::RserveClient::XT_VECTOR;
 }
 
 sub toHTML($) {
@@ -80,7 +80,7 @@ sub toHTML($) {
     my $n    = $self->length();
     $s
         .= '<span class="typename">'
-        . Rserve::Parser::xtName( $self->getType() )
+        . Statistics::RserveClient::Parser::xtName( $self->getType() )
         . "</span>\n"
         . "<span class='length'>$n</span>\n";
     $s .= "<div class='values'>\n";
@@ -88,7 +88,7 @@ sub toHTML($) {
         my $m = ( $n > 20 ) ? 20 : $n;
         for ( my $i = 0; $i < $m; ++$i ) {
             my $v = @{ $self->{_values} }[$i];
-            if ( ref($v) and ( $v->isa('Rserve::REXP') ) ) {
+            if ( ref($v) and ( $v->isa('Statistics::RserveClient::REXP') ) ) {
                 $v = $v->toHTML();
             }
             else {

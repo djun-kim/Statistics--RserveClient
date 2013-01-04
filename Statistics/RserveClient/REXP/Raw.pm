@@ -17,13 +17,13 @@
 #  R Raw data
 # class Rserve_REXP_Raw extends Rserve_REXP {
 
-use Rserve;
-use Rserve qw (:xt_types );
+use Statistics::RserveClient;
+use Statistics::RserveClient qw (:xt_types );
 
-use Rserve::REXP;
+use Statistics::RserveClient::REXP;
 
-package Rserve::REXP::Raw;
-our @ISA = qw(Rserve::REXP);
+package Statistics::RserveClient::REXP::Raw;
+our @ISA = qw(Statistics::RserveClient::REXP);
 
 my $_value;    #protected
 
@@ -45,10 +45,10 @@ sub getValue($) {
     return $self->_value;
 }
 
-sub isRaw() { return Rserve::TRUE; }
+sub isRaw() { return Statistics::RserveClient::TRUE; }
 
 sub getType() {
-    return Rserve::XT_RAW;
+    return Statistics::RserveClient::XT_RAW;
 }
 
 sub toHTML($) {

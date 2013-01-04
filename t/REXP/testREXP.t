@@ -1,13 +1,13 @@
 use warnings;
 use autodie;
 
-use Rserve::REXP;
+use Statistics::RserveClient::REXP;
 
 use Test::More tests => 3;
 
-my $rexp = new Rserve::REXP;
+my $rexp = new Statistics::RserveClient::REXP;
 
-isa_ok( $rexp, 'Rserve::REXP', 'new returns an object that' );
+isa_ok( $rexp, 'Statistics::RserveClient::REXP', 'new returns an object that' );
 ok( !$rexp->isExpression(), 'Rexp is not an expression' );
 
 is( $rexp->toHTML(),

@@ -1,13 +1,13 @@
 use warnings;
 use autodie;
 
-use Rserve::REXP::Vector;
+use Statistics::RserveClient::REXP::Vector;
 
 use Test::More tests => 18;
 
-my $vector = new Rserve::REXP::Vector;
+my $vector = new Statistics::RserveClient::REXP::Vector;
 
-isa_ok( $vector, 'Rserve::REXP::Vector', 'new returns an object that' );
+isa_ok( $vector, 'Statistics::RserveClient::REXP::Vector', 'new returns an object that' );
 ok( !$vector->isExpression(), 'Vector is not an expression' );
 ok( $vector->isVector(),      'Vector is an vector' );
 
@@ -35,9 +35,9 @@ chomp($expected_html);
 
 is( $vector->toHTML(), $expected_html, 'convert to HTML' );
 
-my $vector2 = new Rserve::REXP::Vector;
+my $vector2 = new Statistics::RserveClient::REXP::Vector;
 
-isa_ok( $vector2, 'Rserve::REXP::Vector', 'new returns an object that' );
+isa_ok( $vector2, 'Statistics::RserveClient::REXP::Vector', 'new returns an object that' );
 ok( !$vector2->isExpression(), 'Vector is not an expression' );
 ok( $vector2->isVector(),      'Vector is an vector' );
 

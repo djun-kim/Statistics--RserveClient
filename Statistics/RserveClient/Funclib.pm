@@ -12,7 +12,7 @@
 
 #use strict;
 
-package Rserve::funclib;
+package Statistics::RserveClient::funclib;
 
 use Exporter;
 our @EXPORT = qw( _rserve_make_packet int8 );
@@ -148,7 +148,7 @@ sub flt64($$) {
     my @ss = @buf[ $o .. ( $o + 7 ) ];
 
     #	if (Rserve_Connection::$machine_is_bigendian) {
-    if ( Rserve::Connection::machine_is_bigendian() ) {
+    if ( Statistics::RserveClient::Connection::machine_is_bigendian() ) {
         for ( my $k = 0; $k < 7; $k++ ) {
             $ss[ 7 - $k ] = $buf[ $o + $k ];
         }
@@ -219,7 +219,7 @@ sub _rserve_make_data($$) {
         ++$pad;
     }
     $s .= chr( $type & 255 )
-        | ( $is_large ? Rserve::Connection::DT_LARGE : 0 );
+        | ( $is_large ? Statistics::RserveClient::Connection::DT_LARGE : 0 );
     $s .= chr( $len & 255 );
     $s .= chr( ( $len & 0xff00 ) >> 8 );
     $s .= chr( ( $len & 0xff0000 ) >> 16 );

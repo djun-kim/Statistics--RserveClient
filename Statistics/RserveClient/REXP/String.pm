@@ -14,23 +14,21 @@
 #use warnings;
 #use autodie;
 
-# R Null value
+# R character vector
+# class Rserve_REXP_String extends Rserve_REXP_Vector {
 
-use Rserve;
-use Rserve qw (:xt_types );
+use Statistics::RserveClient;
+use Statistics::RserveClient qw (:xt_types );
 
-use Rserve::REXP;
+use Statistics::RserveClient::REXP::Vector;
 
-# class Rserve_REXP_Null extends Rserve_REXP {
-package Rserve::REXP::Null;
+package Statistics::RserveClient::REXP::String;
+our @ISA = qw(Statistics::RserveClient::REXP::Vector);
 
-our @ISA = qw(Rserve::REXP);
-
-sub isList() { return Rserve::TRUE; }
-sub isNull() { return Rserve::TRUE; }
+sub isString() { return Statistics::RserveClient::TRUE; }
 
 sub getType() {
-    return Rserve::XT_NULL;
+    return Statistics::RserveClient::XT_ARRAY_STR;
 }
 
 1;

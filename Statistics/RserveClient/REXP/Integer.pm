@@ -11,24 +11,26 @@
 # * This code is inspired from Java client for Rserve (Rserve package
 # * v0.6.2) developed by Simon Urbanek(c)
 
+#  R Integer vector
+
 #use warnings;
 #use autodie;
 
-use Rserve;
-use Rserve qw (:xt_types );
+use Statistics::RserveClient;
+use Statistics::RserveClient qw (:xt_types );
 
-use Rserve::REXP::List;
+use Statistics::RserveClient::REXP::Vector;
 
-# R Language type vector
+#class Rserve_REXP_Integer extends Rserve_REXP_Vector {
+package Statistics::RserveClient::REXP::Integer;
+our @ISA = qw(Statistics::RserveClient::REXP::Vector);
 
-#class Rserve_REXP_Language extends Rserve_REXP_List {
-package Rserve::REXP::Language;
-our @ISA = qw(Rserve::REXP::List);
-
-sub isLanguage() { return Rserve::TRUE; }
+sub isInteger() { return Statistics::RserveClient::TRUE; }
+sub isNumeric() { return Statistics::RserveClient::TRUE; }
 
 sub getType() {
-    return Rserve::XT_LANG;
+    return Statistics::RserveClient::XT_ARRAY_INT;
 }
 
 1;
+

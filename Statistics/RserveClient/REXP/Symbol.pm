@@ -17,15 +17,15 @@
 # R symbol element
 # class Rserve_REXP_Symbol extends Rserve_REXP {
 
-use Rserve;
-use Rserve qw (:xt_types );
+use Statistics::RserveClient;
+use Statistics::RserveClient qw (:xt_types );
 
-use Rserve::REXP;
-use Rserve::Parser;
+use Statistics::RserveClient::REXP;
+use Statistics::RserveClient::Parser;
 
-package Rserve::REXP::Symbol;
+package Statistics::RserveClient::REXP::Symbol;
 
-our @ISA = qw(Rserve::REXP);
+our @ISA = qw(Statistics::RserveClient::REXP);
 
 sub new($$) {
     my $class = shift;
@@ -47,10 +47,10 @@ sub getValue($) {
     return $self->{name};
 }
 
-sub isSymbol() { return Rserve::TRUE; }
+sub isSymbol() { return Statistics::RserveClient::TRUE; }
 
 sub getType() {
-    return Rserve::XT_SYM;
+    return Statistics::RserveClient::XT_SYM;
 }
 
 sub toHTML($) {
@@ -61,7 +61,7 @@ sub toHTML($) {
     return
           '<div class="rexp xt_' . $type . '">' . "\n"
         . '<span class="typename">'
-        . Rserve::Parser::xtName( $type )
+        . Statistics::RserveClient::Parser::xtName( $type )
         . '</span>' . "\n"
         . $self->{name}
         . $self->attrToHTML() . "\n"
