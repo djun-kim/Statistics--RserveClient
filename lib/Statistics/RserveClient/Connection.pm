@@ -142,7 +142,7 @@ sub init {
 # public
 #sub new($host='127.0.0.1', $port = 6311, $debug = FALSE) {
 
-sub new() {
+sub new {
     Statistics::RserveClient::debug( "new()\n" );
     my $class = shift;
     my $self  = {
