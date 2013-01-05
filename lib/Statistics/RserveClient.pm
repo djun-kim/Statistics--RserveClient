@@ -123,7 +123,7 @@ use constant TRUE  => 1;
 
 my %typeHash = ();
 
-
+my $DEBUG = FALSE;
 
 =head2 debug()
 
