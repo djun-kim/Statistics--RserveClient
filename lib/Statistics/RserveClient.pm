@@ -1,39 +1,16 @@
-# * RserveClient
-# * @author Djun Kim
-# * Licensed under GPL v2 or at your option v3
-
-#use warnings;
-#use autodie;
-
 package Statistics::RserveClient;
+use strict;
 
-use Exporter;
-
-use constant FALSE => 0;
-use constant TRUE  => 1;
-
-our @EXPORT = qw( TRUE FALSE );
-
-our @EXPORT_OK = (
-    'XT_NULL',       'XT_INT',
-    'XT_DOUBLE',     'XT_STR',
-    'XT_LANG',       'XT_SYM',
-    'XT_BOOL',       'XT_S4',
-    'XT_VECTOR',     'XT_LIST',
-    'XT_CLOS',       'XT_SYMNAME',
-    'XT_LIST_NOTAG', 'XT_LIST_TAG',
-    'XT_LANG_NOTAG', 'XT_LANG_TAG',
-    'XT_VECTOR_EXP', 'XT_VECTOR_STR',
-    'XT_ARRAY_INT',  'XT_ARRAY_DOUBLE',
-    'XT_ARRAY_STR',  'XT_ARRAY_BOOL_UA',
-    'XT_ARRAY_BOOL', 'XT_RAW',
-    'XT_ARRAY_CPLX', 'XT_UNKNOWN',
-    'XT_FACTOR',     'XT_HAS_ATTR',
-);
-
-our %EXPORT_TAGS = (
-    xt_types => [
-        'XT_NULL',       'XT_INT',
+BEGIN {
+    use Exporter ();
+    use vars qw($VERSION @ISA @EXPORT @EXPORT_OK %EXPORT_TAGS);
+    $VERSION     = '0.01';
+    @ISA         = qw(Exporter);
+    #Give a hoot don't pollute, do not export more than needed by default
+    our @EXPORT = qw( TRUE FALSE );
+    @EXPORT      = qw();
+    our @EXPORT_OK = (
+       'XT_NULL',       'XT_INT',
         'XT_DOUBLE',     'XT_STR',
         'XT_LANG',       'XT_SYM',
         'XT_BOOL',       'XT_S4',
@@ -47,22 +24,131 @@ our %EXPORT_TAGS = (
         'XT_ARRAY_BOOL', 'XT_RAW',
         'XT_ARRAY_CPLX', 'XT_UNKNOWN',
         'XT_FACTOR',     'XT_HAS_ATTR',
-    ]
-);
+    );
+ 
+    our %EXPORT_TAGS = (
+        xt_types => [
+            'XT_NULL',       'XT_INT',
+            'XT_DOUBLE',     'XT_STR',
+            'XT_LANG',       'XT_SYM',
+            'XT_BOOL',       'XT_S4',
+            'XT_VECTOR',     'XT_LIST',
+            'XT_CLOS',       'XT_SYMNAME',
+            'XT_LIST_NOTAG', 'XT_LIST_TAG',
+            'XT_LANG_NOTAG', 'XT_LANG_TAG',
+            'XT_VECTOR_EXP', 'XT_VECTOR_STR',
+            'XT_ARRAY_INT',  'XT_ARRAY_DOUBLE',
+            'XT_ARRAY_STR',  'XT_ARRAY_BOOL_UA',
+            'XT_ARRAY_BOOL', 'XT_RAW',
+            'XT_ARRAY_CPLX', 'XT_UNKNOWN',
+            'XT_FACTOR',     'XT_HAS_ATTR',
+        ]
+    );
+}
+
+#################### main pod documentation begin ###################
+
+=head1 NAME
+
+Statistics::RserveClient - An Rserve Client library for the R statistics platform.
+
+=head1 SYNOPSIS
+
+  use Statistics::RserveClient;
+
+  my $cnx = new Statistics::RserveClient::Connection($server);
+  my @result = $cnx->evalString("x='Hello, world!'; x");
+
+=head1 DESCRIPTION
+
+Rserve provides a network server interface to the R statistical
+platform. The Statistics::RserveClient package provides a Perl client
+library to enable interaction with Rserve from within Perl applications.
+
+Using RserveClient, your Perl application can pass strings to Rserve
+for evaluation by R. The results are returned as Perl objects.
+
+=head1 USAGE
+
+  use Statistics::RserveClient::Connection;
+
+  my $cnx = new Statistics::RserveClient::Connection($server);
+  my @result = $cnx->evalString("x='Hello, world!'; x");
+
+
+=head1 BUGS
+
+This library does not yet support the full rserve protocol. For example, long packets are not supported.
+
+=head1 SUPPORT
+
+
+
+=head1 AUTHOR
+
+    Djun M. Kim
+    CPAN ID: DJUNKIM
+    Cielo Systems Inc. / UBC Statistics
+    info@cielosystems.com
+    http://github.org/djun-kim/Statistics--RserveClient/wiki
+
+=head1 COPYRIGHT
+
+This program is free software licensed under the...
+
+	The General Public License (GPL)
+	Version 2, June 1991
+
+The full text of the license can be found in the
+LICENSE file included with this module.
+
+
+=head1 SEE ALSO
+
+perl(1).
+
+rserve: (http://www.rforge.net/Rserve/)
+
+R project: http://r-project.org
+
+=cut
+
+#################### main pod documentation end ###################
+
+#use warnings;
+#use autodie;
+
+use constant FALSE => 0;
+use constant TRUE  => 1;
 
 my %typeHash = ();
 
-#my $DEBUG = RserveClient::FALSE;
-my $DEBUG = Statistics::RserveClient::TRUE;
 
-open(DEBUGLOG, '>/tmp/debug.log') or die("can't open debug log: $!\n");
+
+=head2 debug()
+
+ Usage     : debug("This is a debug message;");
+ Purpose   : Prints a string to the debugging output stream.
+ Argument  : A string to be output to the debug stream.
+
+=cut
 
 sub debug($) {
   my $msg = shift;
   $msg = "debug [". caller() . "] $msg";
   print DEBUGLOG $msg if ($DEBUG);
+  return 1;
 }
 
+=head2 buf2str()
+
+ Usage     : buf2str(\@buf);
+ Purpose   : Takes a (reference to) a given array and returns a string representation
+ Argument  : A reference to an array.
+ Returns   : A string representation of the given array.
+ Comments  : Utility routine, intended to help printing debugging output.
+
+=cut
 
 sub buf2str {
     my $r = shift;
@@ -206,3 +292,4 @@ use constant XT_HAS_ATTR => 128;
 $typeHash{128} = 'HAS_ATTR';
 
 1;
+# The preceding line will help the module return a true value
