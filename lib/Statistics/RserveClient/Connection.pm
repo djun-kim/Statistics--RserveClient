@@ -24,7 +24,7 @@ our @EXPORT = qw ( new init close evalString evalStringToFile DT_LARGE );
 
 use Socket;
 
-use Statistics::RserveClient::funclib qw( _rserve_make_packet );
+use Statistics::RserveClient::Funclib qw( _rserve_make_packet );
 
 use Statistics::RserveClient::Parser qw( parse );
 use Statistics::RserveClient::Exception;
@@ -426,7 +426,7 @@ sub command() {
 
     #Statistics::RserveClient::debug "v = $v\n";
     #Statistics::RserveClient::debug "make pkt..\n";
-    my $pkt = Statistics::RserveClient::funclib::_rserve_make_packet( $command, $v );
+    my $pkt = Statistics::RserveClient::Funclib::_rserve_make_packet( $command, $v );
 
     # Statistics::RserveClient::debug "pkt = $pkt\n";
 
@@ -516,10 +516,10 @@ sub processResponse($) {
         return Statistics::RserveClient::FALSE;
     }
 
-    my $code = Statistics::RserveClient::funclib::int32( \@b, 0 );
+    my $code = Statistics::RserveClient::Funclib::int32( \@b, 0 );
     # Statistics::RserveClient::debug "code = $code\n";
 
-    my $len = Statistics::RserveClient::funclib::int32( \@b, 4 );
+    my $len = Statistics::RserveClient::Funclib::int32( \@b, 4 );
     # Statistics::RserveClient::debug "len = $len\n";
 
     my $ltg = $len;
@@ -601,10 +601,10 @@ sub assign($$$) {
     Statistics::RserveClient::debug $debug_msg;
 
     my $contents = '' . 
-	   Statistics::RserveClient::funclib::mkint8(DT_STRING) . 
-	     Statistics::RserveClient::funclib::mkint24($n+1) . $symbol->getValue() . chr(0) .
-         Statistics::RserveClient::funclib::mkint8(DT_SEXP) . 
-	     join('', Statistics::RserveClient::funclib::mkint24(length($data))) . $data;
+	   Statistics::RserveClient::Funclib::mkint8(DT_STRING) . 
+	     Statistics::RserveClient::Funclib::mkint24($n+1) . $symbol->getValue() . chr(0) .
+         Statistics::RserveClient::Funclib::mkint8(DT_SEXP) . 
+	     join('', Statistics::RserveClient::Funclib::mkint24(length($data))) . $data;
 
     my $debug_msg = "";
     foreach (split "", $contents) { $debug_msg .= "[" . ord($_) . "]"};

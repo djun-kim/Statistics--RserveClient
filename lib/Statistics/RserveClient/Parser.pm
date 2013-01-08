@@ -18,7 +18,7 @@ use Data::Dumper;
 #use Statistics::RserveClient;
 #use Statistics::RserveClient::ParserException;
 
-use Statistics::RserveClient::funclib;
+use Statistics::RserveClient::Funclib;
 use Statistics::RserveClient qw( :xt_types );
 
 use Statistics::RserveClient::REXP;
@@ -115,8 +115,8 @@ sub parse {
     Statistics::RserveClient::debug "i = $i\n";
 
     # some simple parsing - just skip attributes and assume short responses
-    my $ra = Statistics::RserveClient::funclib::int8( \@r, $i );
-    my $rl = Statistics::RserveClient::funclib::int24( \@r, $i + 1 );
+    my $ra = Statistics::RserveClient::Funclib::int8( \@r, $i );
+    my $rl = Statistics::RserveClient::Funclib::int24( \@r, $i + 1 );
 
     Statistics::RserveClient::debug "ra = $ra\n";
     Statistics::RserveClient::debug "rl = $rl\n";
@@ -133,7 +133,7 @@ sub parse {
     if ( $ra > Statistics::RserveClient::XT_HAS_ATTR ) {
         # Statistics::RserveClient::debug '(ATTR*[';
         $ra &= ~Statistics::RserveClient::XT_HAS_ATTR;
-        $al = Statistics::RserveClient::funclib::int24( \@r, $i + 1 );
+        $al = Statistics::RserveClient::Funclib::int24( \@r, $i + 1 );
         %attr = parse( $buf, $i );
         # Statistics::RserveClient::debug '])';
         $i += $al + 4;
@@ -175,21 +175,21 @@ sub parse {
 
         elsif ( $ra == Statistics::RserveClient::XT_INT ) {
             Statistics::RserveClient::debug "Statistics::RserveClient::XT_INT\n";
-            @a = Statistics::RserveClient::funclib::int32( \@r, $i );
+            @a = Statistics::RserveClient::Funclib::int32( \@r, $i );
             $i += 4;
             # break;
         }
 
         elsif ( $ra == Statistics::RserveClient::XT_DOUBLE ) {
             Statistics::RserveClient::debug "Statistics::RserveClient::XT_DOUBLE\n";
-            @a = Statistics::RserveClient::funclib::flt64( \@r, $i );
+            @a = Statistics::RserveClient::Funclib::flt64( \@r, $i );
             $i += 8;
             # break;
         }
 
         elsif ( $ra == Statistics::RserveClient::XT_BOOL ) {
             Statistics::RserveClient::debug "Statistics::RserveClient::XT_BOOL\n";
-            my $v = Statistics::RserveClient::funclib::int8( \@r, $i++ );
+            my $v = Statistics::RserveClient::Funclib::int8( \@r, $i++ );
             @a
                 = ( $v == 1 )
                 ? Statistics::RserveClient::TRUE
@@ -241,7 +241,7 @@ sub parse {
             @a = ();
             while ( $i < $eoa ) {
                 # $a[] = int32(@r, $i);
-                push( @a, Statistics::RserveClient::funclib::int32( \@r, $i ) );
+                push( @a, Statistics::RserveClient::Funclib::int32( \@r, $i ) );
                 $i += 4;
             }
             if ( scalar(@a) == 1 ) {
@@ -273,7 +273,7 @@ sub parse {
             @a = ();
             while ( $i < $eoa ) {
                 #$a[] = flt64(@r, $i);
-                push( @a, Statistics::RserveClient::funclib::flt64( \@r, $i ) );
+                push( @a, Statistics::RserveClient::Funclib::flt64( \@r, $i ) );
                 $i += 8;
             }
             if ( scalar(@a) == 1 ) {
@@ -303,12 +303,12 @@ sub parse {
 
         elsif ( $ra == Statistics::RserveClient::XT_ARRAY_BOOL ) {    # boolean vector
             Statistics::RserveClient::debug "Statistics::RserveClient::XT_ARRAY_BOOL\n";
-            my $n = Statistics::RserveClient::funclib::int32( \@r, $i );
+            my $n = Statistics::RserveClient::Funclib::int32( \@r, $i );
             $i += 4;
             my $k = 0;
             @a = ();
             while ( $k < $n ) {
-                my $v = Statistics::RserveClient::funclib::int8( \@r, $i++ );
+                my $v = Statistics::RserveClient::Funclib::int8( \@r, $i++ );
                 $a[ $k++ ]
                     = ( $v == 1 )
                     ? Statistics::RserveClient::TRUE
@@ -322,7 +322,7 @@ sub parse {
 
         elsif ( $ra == Statistics::RserveClient::XT_RAW ) {    # raw vector
             Statistics::RserveClient::debug "Statistics::RserveClient::XT_RAW\n";
-            my $len = Statistics::RserveClient::funclib::int32( \@r, $i );
+            my $len = Statistics::RserveClient::Funclib::int32( \@r, $i );
             $i += 4;
             @a = splice( @r, $i, $len );
             # break;
@@ -333,7 +333,7 @@ sub parse {
         # }
 
         elsif ( $ra == 48 ) {    # unimplemented type in Statistics::RserveClient
-            my $uit = Statistics::RserveClient::funclib::int32( \@r, $i );
+            my $uit = Statistics::RserveClient::Funclib::int32( \@r, $i );
             warn "Note: result contains type #$uit unsupported by Statistics::RserveClient.<br/>";
             @a = undef;
             # break;
@@ -399,8 +399,8 @@ sub parseDebug(@) {
     my @a = ();
 
     # some simple parsing - just skip attributes and assume short responses
-    my $ra = Statistics::RserveClient::funclib::int8( \@r, $i );
-    my $rl = Statistics::RserveClient::funclib::int24( \@r, $i + 1 );
+    my $ra = Statistics::RserveClient::Funclib::int8( \@r, $i );
+    my $rl = Statistics::RserveClient::Funclib::int24( \@r, $i + 1 );
 
     Statistics::RserveClient::debug "ra = $ra\n";
     Statistics::RserveClient::debug "rl = $ra\n";
@@ -423,7 +423,7 @@ sub parseDebug(@) {
     if ( $ra > Statistics::RserveClient::XT_HAS_ATTR ) {
 
         $ra &= ~Statistics::RserveClient::XT_HAS_ATTR;
-        my $al = Statistics::RserveClient::funclib::int24( \@r, $i + 1 );
+        my $al = Statistics::RserveClient::Funclib::int24( \@r, $i + 1 );
         @attr = parseDebug( $buf, $i );
         $result{'attr'} = @attr;
         $i += $al + 4;
@@ -469,7 +469,7 @@ sub parseDebug(@) {
         @a = ();
         while ( $i < $eoa ) {
             #$a[] = int32(@r, $i);
-            push( @a, Statistics::RserveClient::funclib::int32( \@r, $i ) );
+            push( @a, Statistics::RserveClient::Funclib::int32( \@r, $i ) );
             $i += 4;
         }
         if ( length($a) == 1 ) {
@@ -480,7 +480,7 @@ sub parseDebug(@) {
     if ( $ra == Statistics::RserveClient::XT_ARRAY_DOUBLE ) {    # double array
         @a = ();
         while ( $i < $eoa ) {
-            push( @a, Statistics::RserveClient::funclib::flt64( \@r, $i ) );
+            push( @a, Statistics::RserveClient::Funclib::flt64( \@r, $i ) );
             $i += 8;
         }
         if ( length($a) == 1 ) {
@@ -505,13 +505,13 @@ sub parseDebug(@) {
         $result{'contents'} = $a;
     }
     if ( $ra == Statistics::RserveClient::XT_ARRAY_BOOL ) {    # boolean vector
-        my $n = Statistics::RserveClient::funclib::int32( \@r, $i );
+        my $n = Statistics::RserveClient::Funclib::int32( \@r, $i );
         $result{'size'} = $n;
         $i += 4;
         my $k = 0;
         @a = ();
         while ( $k < $n ) {
-            my $v = Statistics::RserveClient::funclib::int8( \@r, $i++ );
+            my $v = Statistics::RserveClient::Funclib::int8( \@r, $i++ );
   # $a[$k] = ($v === 1) ? Statistics::RserveClient::TRUE : (($v === 0) ? Statistics::RserveClient::FALSE : undef);
             $a[$k]
                 = ( ( $v == 1 ) && is_number($v) )
@@ -526,7 +526,7 @@ sub parseDebug(@) {
         $result{'contents'} = $a;
     }
     if ( $ra == Statistics::RserveClient::XT_RAW ) {    # raw vector
-        my $len = Statistics::RserveClient::funclib::int32( \@r, $i );
+        my $len = Statistics::RserveClient::Funclib::int32( \@r, $i );
         $i += 4;
         $result{'size'} = $len;
         my $contents = join( '', substr( @r, $i, $len ) );
@@ -537,7 +537,7 @@ sub parseDebug(@) {
         # TODO: complex
     }
     if ( $ra == 48 ) {                # unimplemented type in Statistics::RserveClient
-        my $uit = Statistics::RserveClient::funclib::int32( \@r, $i );
+        my $uit = Statistics::RserveClient::Funclib::int32( \@r, $i );
         $result{'unknownType'} = $uit;
     }
     return %result;
@@ -575,8 +575,8 @@ sub parseREXP(@) {
     my @v = ();
 
     # some simple parsing - just skip attributes and assume short responses
-    my $ra = Statistics::RserveClient::funclib::int8( \@r, $i );
-    my $rl = Statistics::RserveClient::funclib::int24( \@r, $i + 1 );
+    my $ra = Statistics::RserveClient::Funclib::int8( \@r, $i );
+    my $rl = Statistics::RserveClient::Funclib::int24( \@r, $i + 1 );
 
     Statistics::RserveClient::debug "ra = $ra\n";
     Statistics::RserveClient::debug "rl = $ra\n";
@@ -595,7 +595,7 @@ sub parseREXP(@) {
 
     if ( $ra > Statistics::RserveClient::XT_HAS_ATTR ) {
         $ra &= ~Statistics::RserveClient::XT_HAS_ATTR;
-        $al = Statistics::RserveClient::funclib::int24( \@r, $i + 1 );
+        $al = Statistics::RserveClient::Funclib::int24( \@r, $i + 1 );
         @attr = parseREXP( $buf, $i );
         $i += $al + 4;
     }
@@ -671,7 +671,7 @@ sub parseREXP(@) {
             my @v = ();
             while ( my $i < $eoa ) {
                 #$v[] = int32(@r, $i);
-                push( @v, Statistics::RserveClient::funclib::int32( \@r, $i ) );
+                push( @v, Statistics::RserveClient::Funclib::int32( \@r, $i ) );
                 $i += 4;
             }
             $a = new Statistics::RserveClient::REXP::Integer();
@@ -684,7 +684,7 @@ sub parseREXP(@) {
             @v = ();
             while ( my $i < $eoa ) {
                 # $v[] = flt64($r, $i);
-                push( @v, Statistics::RserveClient::funclib::flt64( \@r, $i ) );
+                push( @v, Statistics::RserveClient::Funclib::flt64( \@r, $i ) );
                 $i += 8;
             }
             $a = new Statistics::RserveClient::REXP::Double();
@@ -711,12 +711,12 @@ sub parseREXP(@) {
 
         elsif ( $ra == Statistics::RserveClient::XT_ARRAY_BOOL ) {    # boolean vector
             Statistics::RserveClient::debug "Statistics::RserveClient::XT_ARRAY_BOOL\n";
-            my $n = Statistics::RserveClient::funclib::int32( \@r, $i );
+            my $n = Statistics::RserveClient::Funclib::int32( \@r, $i );
             $i += 4;
             my $k  = 0;
             my @vv = ();
             while ( $k < $n ) {
-                my $v = Statistics::RserveClient::funclib::int8( \@r, $i++ );
+                my $v = Statistics::RserveClient::Funclib::int8( \@r, $i++ );
                 $vv[$k]
                     = ( $v == 1 )
                     ? Statistics::RserveClient::TRUE
@@ -730,7 +730,7 @@ sub parseREXP(@) {
 
         elsif ( $ra == Statistics::RserveClient::XT_RAW ) {    # raw vector
             Statistics::RserveClient::debug "Statistics::RserveClient::XT_RAW\n";
-            my $len = Statistics::RserveClient::funclib::int32( \@r, $i );
+            my $len = Statistics::RserveClient::Funclib::int32( \@r, $i );
             $i += 4;
             my @v = substr( @r, $i, $len );
             my $a = new Statistics::RserveClient::REXP::Raw();
@@ -746,7 +746,7 @@ sub parseREXP(@) {
 
         elsif ( $ra == 48 ) {    # unimplemented type in Statistics::RserveClient
             Statistics::RserveClient::debug "48\n";
-            my $uit = Statistics::RserveClient::funclib::int32( \@r, $i );
+            my $uit = Statistics::RserveClient::Funclib::int32( \@r, $i );
         # echo "Note: result contains type #$uit unsupported by Statistics::RserveClient.<br/>";
             @a = undef;
             # break;
@@ -828,13 +828,13 @@ sub createBinary($) {
         }
         elsif ( $type == Statistics::RserveClient::XT_INT ) {
             my $v = 0 + $value->at(0);
-            $contents .= Statistics::RserveClient::funclib::mkint32($v);
+            $contents .= Statistics::RserveClient::Funclib::mkint32($v);
             $o += 4;
             # break;
         }
         elsif ( $type == Statistics::RserveClient::XT_DOUBLE ) {
             my $v = 0.0 + $value->at(0);
-            $contents .= Statistics::RserveClient::funclib::mkfloat64($v);
+            $contents .= Statistics::RserveClient::Funclib::mkfloat64($v);
             $o += 8;
             # break;
         }
@@ -844,7 +844,7 @@ sub createBinary($) {
             my $v;
             for ( my $i = 0; $i < $n; ++$i ) {
                 $v = $vv[$i];
-                $contents .= Statistics::RserveClient::funclib::mkint32($v);
+                $contents .= Statistics::RserveClient::Funclib::mkint32($v);
                 $o += 4;
             }
             # break;
@@ -853,7 +853,7 @@ sub createBinary($) {
             my @vv = $value->getValues();
             my $n  = scalar(@vv);
             my $v;
-            $contents .= Statistics::RserveClient::funclib::mkint32($n);
+            $contents .= Statistics::RserveClient::Funclib::mkint32($n);
             $o += 4;
             if ($n) {
                 for ( my $i = 0; $i < $n; ++$i ) {
@@ -883,7 +883,7 @@ sub createBinary($) {
             my $v;
             for ( my $i = 0; $i < $n; ++$i ) {
                 $v = 0.0 + $vv[$i];
-                $contents .= Statistics::RserveClient::funclib::mkfloat64($v);
+                $contents .= Statistics::RserveClient::Funclib::mkfloat64($v);
                 $o += 8;
             }
             # break;
@@ -891,7 +891,7 @@ sub createBinary($) {
         elsif ( $type == Statistics::RserveClient::XT_RAW ) {
             my $v = $value->getValue();
             my $n = $value->length();
-            $contents .= Statistics::RserveClient::funclib::mkint32($n);
+            $contents .= Statistics::RserveClient::Funclib::mkint32($n);
             $o += 4;
             $contents .= $v;
             # break;
@@ -1004,7 +1004,7 @@ sub createBinary($) {
     # [1]  (24-bit int) length
     my @r;
     push( @r, chr( $code & 255 ) );
-    push( @r, Statistics::RserveClient::funclib::mkint24($length) );
+    push( @r, Statistics::RserveClient::Funclib::mkint24($length) );
     push( @r, $contents );
     return @r;
 }

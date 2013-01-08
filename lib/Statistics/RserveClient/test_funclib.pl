@@ -1,5 +1,5 @@
 
-# Test funclib.
+# Test Funclib.
 
 # int8
 # Should extract a byte from a binary string, at a given (optional) offset

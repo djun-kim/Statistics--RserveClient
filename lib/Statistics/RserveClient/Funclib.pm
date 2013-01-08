@@ -12,7 +12,7 @@
 
 #use strict;
 
-package Statistics::RserveClient::funclib;
+package Statistics::RserveClient::Funclib;
 
 use Exporter;
 our @EXPORT = qw( _rserve_make_packet int8 );
