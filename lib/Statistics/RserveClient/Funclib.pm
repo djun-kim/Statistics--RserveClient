@@ -141,7 +141,7 @@ sub mkfloat64($) {
 #sub flt64($buf, $o = 0) {
 sub flt64($$) {
     my ( $b, $o ) = @_;
-    my $o = defined($o) ? $o : 0;
+    $o = defined($o) ? $o : 0;
 
     my @buf = @$b;
 
@@ -254,7 +254,7 @@ sub _rserve_get_response($) {
             $ltg -= $n;
         }
         else {
-            break;
+            last;
         }
     }
     return $buf;
