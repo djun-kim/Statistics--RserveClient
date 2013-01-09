@@ -314,7 +314,6 @@ sub evalString() {
         $string = shift;
     }
 
-
     Statistics::RserveClient::debug( "parser = $parser\n" );
     Statistics::RserveClient::debug( "attr = @attr\n" );
     Statistics::RserveClient::debug( "string = $string\n" );
@@ -622,7 +621,7 @@ sub assign($$$) {
          Statistics::RserveClient::Funclib::mkint8(DT_SEXP) . 
 	     join('', Statistics::RserveClient::Funclib::mkint24(length($data))) . $data;
 
-    my $debug_msg = "";
+    $debug_msg = "";
     foreach (split "", $contents) { $debug_msg .= "[" . ord($_) . "]"};
     $debug_msg .= "\n";
     Statistics::RserveClient::debug $debug_msg;
