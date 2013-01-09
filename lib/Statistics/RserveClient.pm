@@ -6,7 +6,6 @@ BEGIN {
     use vars qw($VERSION @ISA @EXPORT @EXPORT_OK %EXPORT_TAGS);
     $VERSION     = '0.01';
     @ISA         = qw(Exporter);
-    #Give a hoot don't pollute, do not export more than needed by default
     our @EXPORT = qw( TRUE FALSE );
     @EXPORT      = qw();
     our @EXPORT_OK = (
@@ -120,6 +119,10 @@ R project: http://r-project.org
 
 use constant FALSE => 0;
 use constant TRUE  => 1;
+
+use constant DebugLogfile  => "/tmp/rserve-debug.log";
+
+open(DEBUGLOG, '>'.DebugLogfile) or die("can't open debug log: $!\n");
 
 my %typeHash = ();
 
