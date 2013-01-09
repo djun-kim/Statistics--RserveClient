@@ -231,6 +231,11 @@ sub new {
 
     Statistics::RserveClient::debug( "connected...\n" );
 
+    # Rserve server ID string has the form (in quads)
+    #   [00] Rsrv
+    #   [04] xxxx - version string, e.g. 0103
+    #   [08] QAP1
+    #   [12] ... (additional quad attributes; /r/n and - are ignored)
     my $buf = '';
     eval {
         (          defined( recv( $self->{socket}, $buf, 32, 0 ) )
@@ -243,12 +248,23 @@ sub new {
         warn $@->getErrorMessage();
     }
 
+    # @TODO: need to be less specific here
     my $rv = substr( $buf, 4, 4 );
     if ( $rv ne '0103' ) {
         die Statistics::RserveClient::Exception->new('Unsupported protocol version.');
     }
 
-    # grab connection attributes (each is a quad)
+    # Parse attributes.  From the Rserve documentation
+    #  "R151" - version of R (here 1.5.1)
+    #  "ARpt" - authorization required (here "pt"=plain text, "uc"=unix crypt)
+    #           connection will be closed if the first packet is not CMD_login.
+    #           If more AR.. methods are specified, then client is free to
+    #           use the one he supports (usually the most secure)
+    #  "K***" - key if encoded authentification is challenged (*** is the key)
+    #           for Unix crypt the first two letters of the key are the salt
+    #           required by the server */
+
+    # Grab connection attributes (each is a quad)
     for ( my $i = 12; $i < 32; $i += 4 ) {
         my $attr = substr( $buf, $i, 4 );
 

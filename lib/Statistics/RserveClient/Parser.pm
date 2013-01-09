@@ -105,9 +105,7 @@ sub parse {
     my @r     = split '', $buf;
 
     # foreach (@r) {print "[" . ord($_). ":". $_ . "]"};  print "\n";
-    my $pbuf = Statistics::RserveClient::buf2str( \@r );
-
-    Statistics::RserveClient::debug $pbuf;
+    Rserve::debug Rserve::buf2str(\@r);
 
     my $i = $offset;
     my $eoa;
