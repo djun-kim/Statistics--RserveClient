@@ -763,7 +763,7 @@ sub parseREXP(@) {
     Statistics::RserveClient::debug "done\n";
 
     #if ( scalar(@attr) && is_object(@a) ) {
-    if ( scalar(@attr) && defined(@a) ) {
+    if ( scalar(@attr) && @a ) {
         @a->setAttributes(@attr);
     }
 
