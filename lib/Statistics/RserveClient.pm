@@ -53,9 +53,9 @@ Statistics::RserveClient - An Rserve Client library for the R statistics platfor
 
 =head1 SYNOPSIS
 
-  use Statistics::RserveClient;
+  use Statistics::RserveClient::Connection;
 
-  my $cnx = new Statistics::RserveClient::Connection($server);
+  my $cnx = new Statistics::RserveClient::Connection('localhost');
   my @result = $cnx->evalString("x='Hello, world!'; x");
 
 =head1 DESCRIPTION
@@ -71,7 +71,7 @@ for evaluation by R. The results are returned as Perl objects.
 
   use Statistics::RserveClient::Connection;
 
-  my $cnx = new Statistics::RserveClient::Connection($server);
+  my $cnx = new Statistics::RserveClient::Connection('localhost');
   my @result = $cnx->evalString("x='Hello, world!'; x");
 
 
