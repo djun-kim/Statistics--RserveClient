@@ -27,7 +27,7 @@ use Statistics::RserveClient::REXP::Integer;
 #protected $levels;
 my @_levels;
 
-sub isFactor() { return Statistics::RserveClient::TRUE; }
+sub isFactor() { return TRUE; }
 
 sub getLevels() {
     return @_levels;

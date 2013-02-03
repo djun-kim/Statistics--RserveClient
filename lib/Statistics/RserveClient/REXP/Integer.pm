@@ -25,8 +25,8 @@ use Statistics::RserveClient::REXP::Vector;
 package Statistics::RserveClient::REXP::Integer;
 our @ISA = qw(Statistics::RserveClient::REXP::Vector);
 
-sub isInteger() { return Statistics::RserveClient::TRUE; }
-sub isNumeric() { return Statistics::RserveClient::TRUE; }
+sub isInteger() { return TRUE; }
+sub isNumeric() { return TRUE; }
 
 sub getType() {
     return Statistics::RserveClient::XT_ARRAY_INT;

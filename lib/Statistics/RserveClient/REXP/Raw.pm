@@ -45,7 +45,7 @@ sub getValue($) {
     return $self->_value;
 }
 
-sub isRaw() { return Statistics::RserveClient::TRUE; }
+sub isRaw() { return TRUE; }
 
 sub getType() {
     return Statistics::RserveClient::XT_RAW;

@@ -25,7 +25,7 @@ use Statistics::RserveClient::REXP::Vector;
 package Statistics::RserveClient::REXP::String;
 our @ISA = qw(Statistics::RserveClient::REXP::Vector);
 
-sub isString() { return Statistics::RserveClient::TRUE; }
+sub isString() { return TRUE; }
 
 sub getType() {
     return Statistics::RserveClient::XT_ARRAY_STR;

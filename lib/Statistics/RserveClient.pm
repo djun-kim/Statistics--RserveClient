@@ -1,13 +1,13 @@
 package Statistics::RserveClient;
 use strict;
 
-BEGIN {
+
     use Exporter ();
     use vars qw($VERSION @ISA @EXPORT @EXPORT_OK %EXPORT_TAGS);
     $VERSION     = '0.01';
     @ISA         = qw(Exporter);
     our @EXPORT = qw( TRUE FALSE );
-    @EXPORT      = qw();
+
     our @EXPORT_OK = (
        'XT_NULL',       'XT_INT',
         'XT_DOUBLE',     'XT_STR',
@@ -43,7 +43,7 @@ BEGIN {
             'XT_FACTOR',     'XT_HAS_ATTR',
         ]
     );
-}
+
 
 #################### main pod documentation begin ###################
 
@@ -53,9 +53,9 @@ Statistics::RserveClient - An Rserve Client library for the R statistics platfor
 
 =head1 SYNOPSIS
 
-  use Statistics::RserveClient;
+  use Statistics::RserveClient::Connection;
 
-  my $cnx = new Statistics::RserveClient::Connection($server);
+  my $cnx = new Statistics::RserveClient::Connection('localhost');
   my @result = $cnx->evalString("x='Hello, world!'; x");
 
 =head1 DESCRIPTION
@@ -71,7 +71,7 @@ for evaluation by R. The results are returned as Perl objects.
 
   use Statistics::RserveClient::Connection;
 
-  my $cnx = new Statistics::RserveClient::Connection($server);
+  my $cnx = new Statistics::RserveClient::Connection('localhost');
   my @result = $cnx->evalString("x='Hello, world!'; x");
 
 
@@ -293,6 +293,13 @@ $typeHash{127} = 'XT_FACTOR';
 # used for transport only - has attribute
 use constant XT_HAS_ATTR => 128;
 $typeHash{128} = 'HAS_ATTR';
+
+sub import {
+
+    Statistics::RserveClient->export_to_level( 1, @_ );
+
+}
+
 
 1;
 # The preceding line will help the module return a true value
