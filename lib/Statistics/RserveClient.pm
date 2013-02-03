@@ -7,7 +7,7 @@ BEGIN {
     $VERSION     = '0.01';
     @ISA         = qw(Exporter);
     our @EXPORT = qw( TRUE FALSE );
-    @EXPORT      = qw();
+
     our @EXPORT_OK = (
        'XT_NULL',       'XT_INT',
         'XT_DOUBLE',     'XT_STR',
