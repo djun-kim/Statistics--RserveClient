@@ -36,7 +36,7 @@ sub new() {
 
 # Returns TRUE (1)
 sub isVector() {
-    return Statistics::RserveClient::TRUE;
+    return TRUE;
 }
 
 # Returns the length of the instance vector

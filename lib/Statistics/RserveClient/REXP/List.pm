@@ -27,7 +27,7 @@ package Statistics::RserveClient::REXP::List;
 our @ISA = qw(Statistics::RserveClient::REXP::Vector);
 
 my $names    = ();               # protected
-my $is_named = Statistics::RserveClient::FALSE;    # protected
+my $is_named = FALSE;    # protected
 
 #sub setValues($values, $getNames = FALSE) {
 sub setValues(@) {
@@ -35,7 +35,7 @@ sub setValues(@) {
     my $values   = shift;
     my $getNames = shift;
     if ( !defined($getNames) ) {
-        $getNames = Statistics::RserveClient::FALSE;
+        $getNames = FALSE;
     }
 
     my $names = undef;
@@ -62,7 +62,7 @@ sub setNames($$) {
                 . count($names) );
     }
     $self::names    = $names;
-    $self::is_named = Statistics::RserveClient::TRUE;
+    $self::is_named = TRUE;
 }
 
 # * return array list of names
@@ -110,7 +110,7 @@ sub atIndex($) {
     return $self::values[$i];
 }
 
-sub isList() { return Statistics::RserveClient::TRUE; }
+sub isList() { return TRUE; }
 
 sub offsetExists($) {
     my $self   = shift;

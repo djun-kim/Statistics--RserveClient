@@ -25,7 +25,7 @@ use Statistics::RserveClient::REXP::List;
 package Statistics::RserveClient::REXP::Language;
 our @ISA = qw(Statistics::RserveClient::REXP::List);
 
-sub isLanguage() { return Statistics::RserveClient::TRUE; }
+sub isLanguage() { return TRUE; }
 
 sub getType() {
     return Statistics::RserveClient::XT_LANG;
