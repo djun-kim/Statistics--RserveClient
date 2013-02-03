@@ -26,8 +26,8 @@ package Statistics::RserveClient::REXP::Null;
 
 our @ISA = qw(Statistics::RserveClient::REXP);
 
-sub isList() { return Statistics::RserveClient::TRUE; }
-sub isNull() { return Statistics::RserveClient::TRUE; }
+sub isList() { return TRUE; }
+sub isNull() { return TRUE; }
 
 sub getType() {
     return Statistics::RserveClient::XT_NULL;

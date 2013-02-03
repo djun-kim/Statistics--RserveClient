@@ -47,7 +47,7 @@ sub getValue($) {
     return $self->{name};
 }
 
-sub isSymbol() { return Statistics::RserveClient::TRUE; }
+sub isSymbol() { return TRUE; }
 
 sub getType() {
     return Statistics::RserveClient::XT_SYM;

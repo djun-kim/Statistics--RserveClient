@@ -25,9 +25,9 @@ use Statistics::RserveClient::REXP::Vector;
 package Statistics::RserveClient::REXP::Double;
 our @ISA = qw(Statistics::RserveClient::REXP::Vector);
 
-sub isInteger() { return Statistics::RserveClient::FALSE; }
-sub isNumeric() { return Statistics::RserveClient::TRUE; }
-sub isDouble()  { return Statistics::RserveClient::TRUE; }
+sub isInteger() { return FALSE; }
+sub isNumeric() { return TRUE; }
+sub isDouble()  { return TRUE; }
 
 sub getType() {
     return Statistics::RserveClient::XT_ARRAY_DOUBLE;

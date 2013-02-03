@@ -24,7 +24,7 @@ use Statistics::RserveClient::REXP::GenericVector;
 package Statistics::RserveClient::REXP::Expression;
 our @ISA = qw(Statistics::RserveClient::REXP::GenericVector);
 
-sub isExpression() { return Statistics::RserveClient::TRUE; }
+sub isExpression() { return TRUE; }
 
 sub getType() {
     return Statistics::RserveClient::XT_VECTOR_EXP;

@@ -26,7 +26,7 @@ use Statistics::RserveClient::REXP::Vector;
 
 our @ISA = qw(Statistics::RserveClient::REXP::Vector);
 
-sub isList() { return Statistics::RserveClient::TRUE; }
+sub isList() { return TRUE; }
 
 sub getType() {
     return Statistics::RserveClient::XT_VECTOR;

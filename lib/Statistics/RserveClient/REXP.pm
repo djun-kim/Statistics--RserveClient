@@ -52,7 +52,7 @@ sub setAttributes($) {
 sub hasAttribute($) {
     my $self = shift;
     if ( @{ $self->{_attr} } ) {
-        return Statistics::RserveClient::FALSE;
+        return FALSE;
     }
 }
 
@@ -70,18 +70,18 @@ sub attr() {
     return @{ $self->{_attr} };
 }
 
-sub isVector()     { return Statistics::RserveClient::FALSE; }
-sub isInteger()    { return Statistics::RserveClient::FALSE; }
-sub isNumeric()    { return Statistics::RserveClient::FALSE; }
-sub isLogical()    { return Statistics::RserveClient::FALSE; }
-sub isString()     { return Statistics::RserveClient::FALSE; }
-sub isSymbol()     { return Statistics::RserveClient::FALSE; }
-sub isRaw()        { return Statistics::RserveClient::FALSE; }
-sub isList()       { return Statistics::RserveClient::FALSE; }
-sub isNull()       { return Statistics::RserveClient::FALSE; }
-sub isLanguage()   { return Statistics::RserveClient::FALSE; }
-sub isFactor()     { return Statistics::RserveClient::FALSE; }
-sub isExpression() { return Statistics::RserveClient::FALSE; }
+sub isVector()     { return FALSE; }
+sub isInteger()    { return FALSE; }
+sub isNumeric()    { return FALSE; }
+sub isLogical()    { return FALSE; }
+sub isString()     { return FALSE; }
+sub isSymbol()     { return FALSE; }
+sub isRaw()        { return FALSE; }
+sub isList()       { return FALSE; }
+sub isNull()       { return FALSE; }
+sub isLanguage()   { return FALSE; }
+sub isFactor()     { return FALSE; }
+sub isExpression() { return FALSE; }
 
 sub toHTML() {
     my $self = shift;

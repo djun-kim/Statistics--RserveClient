@@ -40,7 +40,7 @@ use Statistics::RserveClient::REXP;
 #   handle attributes
 
 #public static $use_array_object = FALSE;
-my $_use_array_object = Statistics::RserveClient::FALSE;
+my $_use_array_object = FALSE;
 
 #forward definition to avoid warnings pragma complaints
 sub use_array_object();
@@ -56,7 +56,7 @@ sub use_array_object() {
 # * Transform factor to native strings, only for parse() method
 # * If false, factors are parsed as integers
 #public static $factor_as_string = TRUE;
-my $_factor_as_string = Statistics::RserveClient::TRUE;
+my $_factor_as_string = TRUE;
 
 sub factor_as_string() {
     my $value = shift;
@@ -190,8 +190,8 @@ sub parse {
             my $v = Statistics::RserveClient::Funclib::int8( \@r, $i++ );
             @a
                 = ( $v == 1 )
-                ? Statistics::RserveClient::TRUE
-                : ( ( $v == 0 ) ? Statistics::RserveClient::FALSE : undef );
+                ? TRUE
+                : ( ( $v == 0 ) ? FALSE : undef );
             # break;
         }
 
@@ -309,8 +309,8 @@ sub parse {
                 my $v = Statistics::RserveClient::Funclib::int8( \@r, $i++ );
                 $a[ $k++ ]
                     = ( $v == 1 )
-                    ? Statistics::RserveClient::TRUE
-                    : ( ( $v == 0 ) ? Statistics::RserveClient::FALSE : undef );
+                    ? TRUE
+                    : ( ( $v == 0 ) ? FALSE : undef );
             }
             if ( $n == 1 ) {
                 @a = $a[0];
@@ -415,7 +415,7 @@ sub parseDebug(@) {
     $result{'offset'} = $i;
     $result{'eoa'}    = $eoa;
     if ( ( $ra & 64 ) == 64 ) {
-        $result{'long'} = Statistics::RserveClient::TRUE;
+        $result{'long'} = TRUE;
         return %result;
     }
     if ( $ra > Statistics::RserveClient::XT_HAS_ATTR ) {
@@ -510,12 +510,12 @@ sub parseDebug(@) {
         @a = ();
         while ( $k < $n ) {
             my $v = Statistics::RserveClient::Funclib::int8( \@r, $i++ );
-  # $a[$k] = ($v === 1) ? Statistics::RserveClient::TRUE : (($v === 0) ? Statistics::RserveClient::FALSE : undef);
+  # $a[$k] = ($v === 1) ? TRUE : (($v === 0) ? FALSE : undef);
             $a[$k]
                 = ( ( $v == 1 ) && is_number($v) )
-                ? Statistics::RserveClient::TRUE
+                ? TRUE
                 : (
-                ( ( $v == 0 ) && is_number($v) ) ? Statistics::RserveClient::FALSE : undef );
+                ( ( $v == 0 ) && is_number($v) ) ? FALSE : undef );
             ++$k;
         }
         if ( length($a) == 1 ) {
@@ -531,7 +531,7 @@ sub parseDebug(@) {
         $result{'contents'} = $contents;
     }
     if ( $ra == Statistics::RserveClient::XT_ARRAY_CPLX ) {
-        $result{'not_implemented'} = Statistics::RserveClient::TRUE;
+        $result{'not_implemented'} = TRUE;
         # TODO: complex
     }
     if ( $ra == 48 ) {                # unimplemented type in Statistics::RserveClient
@@ -717,8 +717,8 @@ sub parseREXP(@) {
                 my $v = Statistics::RserveClient::Funclib::int8( \@r, $i++ );
                 $vv[$k]
                     = ( $v == 1 )
-                    ? Statistics::RserveClient::TRUE
-                    : ( ( $v == 0 ) ? Statistics::RserveClient::FALSE : undef );
+                    ? TRUE
+                    : ( ( $v == 0 ) ? FALSE : undef );
                 $k++;
             }
             $a = new Statistics::RserveClient::REXP::Logical();
@@ -738,7 +738,7 @@ sub parseREXP(@) {
 
         elsif ( $ra == Statistics::RserveClient::XT_ARRAY_CPLX ) {
             Statistics::RserveClient::debug "Statistics::RserveClient::XT_ARRAY_CPLX\n";
-            $a = Statistics::RserveClient::FALSE;
+            $a = FALSE;
             # break;
         }
 
@@ -754,7 +754,7 @@ sub parseREXP(@) {
             warn(     'Warning: type '
                     . $ra
                     . ' is currently not implemented in the Perl client.' );
-            @a = Statistics::RserveClient::FALSE;
+            @a = FALSE;
         }
     }
 
@@ -763,7 +763,7 @@ sub parseREXP(@) {
     Statistics::RserveClient::debug "done\n";
 
     #if ( scalar(@attr) && is_object(@a) ) {
-    if ( scalar(@attr) && defined(@a) ) {
+    if ( scalar(@attr) && @a ) {
         @a->setAttributes(@attr);
     }
 
@@ -1014,7 +1014,7 @@ sub is_object($$) {
         return isa $obj, $name;
     }
     else {
-        return Statistics::RserveClient::FALSE;
+        return FALSE;
     }
 }
 

@@ -14,7 +14,7 @@
 
 package Statistics::RserveClient::Connection;
 
-#use Statistics::RserveClient;
+use Statistics::RserveClient;
 
 use Data::Dumper;
 
@@ -93,7 +93,7 @@ use constant ERR_detach_failed   => 0x51;
 
 use Config;
 
-my $_initialized = Statistics::RserveClient::FALSE;    #class variable
+my $_initialized = FALSE;    #class variable
 
 # get/setter for class variable
 sub initialized(@) {
@@ -101,7 +101,7 @@ sub initialized(@) {
     return $_initialized;
 }
 
-my $_machine_is_bigendian = Statistics::RserveClient::FALSE;
+my $_machine_is_bigendian = FALSE;
 # get/setter for class variable
 sub machine_is_bigendian(;$) {
     $_machine_is_bigendian = shift if @_;
@@ -123,12 +123,12 @@ sub init {
     Statistics::RserveClient::debug( "setting byte order...\n" );
 
     if ( $Config{byteorder} eq '87654321' ) {
-        machine_is_bigendian(Statistics::RserveClient::TRUE);
+        machine_is_bigendian(TRUE);
     }
     else {
-        machine_is_bigendian(Statistics::RserveClient::FALSE);
+        machine_is_bigendian(FALSE);
     }
-    initialized(Statistics::RserveClient::TRUE);
+    initialized(TRUE);
 
     Statistics::RserveClient::debug( "set initialized to true...\n" );
     return $self;
@@ -147,7 +147,7 @@ sub new {
     my $class = shift;
     my $self  = {
         socket       => undef,
-        auth_request => Statistics::RserveClient::FALSE,
+        auth_request => FALSE,
         auth_method  => undef,
         auth_key     => undef,
     };
@@ -156,7 +156,7 @@ sub new {
 
     my $host  = '127.0.0.1';
     my $port  = 6311;
-    my $debug = Statistics::RserveClient::FALSE;
+    my $debug = FALSE;
 
     if ( @_ == 3 ) {
 	Statistics::RserveClient::debug "3 args to Statistics::RserveClient::Connection::new()\n";
@@ -270,11 +270,11 @@ sub new {
 
         Statistics::RserveClient::debug( "attr = $attr\n" );
         if ( $attr eq 'ARpt' ) {
-            $self->{auth_request} = Statistics::RserveClient::TRUE;
+            $self->{auth_request} = TRUE;
             $self->{auth_method}  = 'plain';
         }
         elsif ( $attr eq 'ARuc' ) {
-            $self->{auth_request} = Statistics::RserveClient::TRUE;
+            $self->{auth_request} = TRUE;
             $self->{auth_method}  = 'crypt';
         }
         if ( substr( $attr, 0, 1 ) eq 'K' ) {
@@ -345,7 +345,7 @@ sub evalString() {
 	}
 	elsif ($parser == PARSER_NATIVE_WRAPPED) {
 	    my $old = Statistics::RserveClient::Parser->use_array_object();
-	    Statistics::RserveClient::Parser->use_array_object(Statistics::RserveClient::TRUE);
+	    Statistics::RserveClient::Parser->use_array_object(TRUE);
 	    @res = Statistics::RserveClient::Parser->parse( $buf, $i, %attr );
 	    Statistics::RserveClient::Parser->use_array_object($old);
 	}
@@ -425,7 +425,7 @@ sub close_connection() {
     if ( $self->{socket} ) {
         return CORE::close($self->{socket});
     }
-    return Statistics::RserveClient::TRUE;
+    return TRUE;
 }
 
 #
@@ -455,7 +455,7 @@ sub command() {
     };
     if ($@) {
         warn "Error on " . $self->{socket} . ":" . $@->getErrorMessage() . "\n";
-        return Statistics::RserveClient::FALSE;
+        return FALSE;
     }
 
     #Statistics::RserveClient::debug "sent pkt..\n";
@@ -495,7 +495,7 @@ sub commandRaw() {
     };
     if ($@) {
         warn "Error: on " . $self->{socket} . ":" . $@->getErrorMessage() . "\n";
-        return Statistics::RserveClient::FALSE;
+        return FALSE;
     }
 
     #Statistics::RserveClient::debug "sent pkt..\n";
@@ -528,7 +528,7 @@ sub processResponse($) {
     #foreach (@b) {print "[" . ord($_) . "]" }; print "\n";
 
     if ( $n != 16 ) {
-        return Statistics::RserveClient::FALSE;
+        return FALSE;
     }
 
     my $code = Statistics::RserveClient::Funclib::int32( \@b, 0 );
@@ -579,7 +579,7 @@ sub processResponse($) {
 
     my %r = (
         code       => $code,
-        is_error   => ( ( $code & 15 ) != 1 ) ? Statistics::RserveClient::TRUE : Statistics::RserveClient::FALSE,
+        is_error   => ( ( $code & 15 ) != 1 ) ? TRUE : FALSE,
         'error'    => ( $code >> 24 ) & 127,
         'contents' => $buf
     );
