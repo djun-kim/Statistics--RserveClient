@@ -31,8 +31,10 @@ my $expected_html = << 'END_HTML';
 </div>
 </div>
 END_HTML
-chomp($expected_html);
 
+chomp($expected_html);
+     
 is( $dbl->toHTML(), $expected_html, 'convert to HTML' );
 
 done_testing();
+     

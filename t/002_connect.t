@@ -6,7 +6,13 @@ use Test::More tests => 2;
 
 use Statistics::RserveClient::Connection;
 
-my $object = Statistics::RserveClient::Connection->new('localhost');
-isnt ($object, undef, "Created a Connection object");
-isa_ok ($object, 'Statistics::RserveClient::Connection');
+SKIP: {
+    eval {
+	my $object = Statistics::RserveClient::Connection->new('localhost');
+    };
+    skip "Looks like Rserve is not reachable.  Skipping test.", 2 if $@;
+
+    isnt ($object, undef, "Created a Connection object");
+    isa_ok ($object, 'Statistics::RserveClient::Connection');
+}
 
