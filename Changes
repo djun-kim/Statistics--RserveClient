@@ -1,6 +1,25 @@
 Revision history for Perl module Statistics::RserveClient
 
-0.01 Mon Dec 10 13:50:13 2012
-    - original version; created by ExtUtils::ModuleMaker 0.51
+release-CPAN-0.02 Wed Mar 20 2013
 
+  * Added git tag for release-CPAN-0.01 release
+
+  * Fixed incorrect handling of errors in Connection.pm, simplified
+    error handling.
+
+  * Made tests depending on connection to Rserve server conditional,
+    so module can be installed
+
+  * Added basic test for connection to Rserve server
+
+  * [@aixtal] Export TRUE, FALSE from Statistics::RserveClient to
+    simplify usage throughout code
+
+  * [@aixtal] Correct deprecated "defined(@array)" usage (Parser.pm)
+
+  * [@aixtal] Fix incorrect example in POD synopsis (RserveClient.pm)
+
+
+release-CPAN-0.01 Thu Jan 10 2013
+  * original version; created by ExtUtils::ModuleMaker 0.51
 
