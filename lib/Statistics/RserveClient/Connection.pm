@@ -208,12 +208,7 @@ sub new {
         }
     };
     if ($@) {
-        die(Statistics::RserveClient::Exception->new(
-                      "Unable to create socket<pre>"
-                    . $@->getErrorMessage()
-                    . "</pre>"
-            )
-        );
+        die "Unable to create socket: $@";
     }
 
     Statistics::RserveClient::debug( "created socket...\n" );
@@ -225,8 +220,7 @@ sub new {
 
     eval { connect( $self->{socket}, $paddr ); };
     if ($@) {
-        die Statistics::RserveClient::Exception->new(
-            "Unable to connect" . $@->getErrorMessage() );
+        die "Unable to connect:$@";
     }
 
     Statistics::RserveClient::debug( "connected...\n" );
@@ -241,11 +235,10 @@ sub new {
         (          defined( recv( $self->{socket}, $buf, 32, 0 ) )
                 && length($buf) >= 32
                 && substr( $buf, 0, 4 ) eq 'Rsrv' )
-            or die Statistics::RserveClient::Exception->new(
-            "Invalid response from server:" . $@ . "\n" );
+	  or die "Invalid response from server: $@";
     };
     if ($@) {
-        warn $@->getErrorMessage();
+        warn $@;
     }
 
     # @TODO: need to be less specific here
@@ -350,7 +343,6 @@ sub evalString() {
 	    Statistics::RserveClient::Parser->use_array_object($old);
 	}
 	else {
-	    die( new Statistics::RserveClient::Exception('Unknown parser') );
 	    die('Unknown parser');
 	}
 	return @res;
@@ -454,7 +446,7 @@ sub command() {
             if ( $n == 0 );
     };
     if ($@) {
-        warn "Error on " . $self->{socket} . ":" . $@->getErrorMessage() . "\n";
+        warn "Error on " . $self->{socket} . ":" . $@ . "\n";
         return FALSE;
     }
 
@@ -490,11 +482,11 @@ sub commandRaw() {
         #socket_send($self->{socket}, $pkt, length($pkt), 0);
         my $n = send( $self->{socket}, $pkt, 0 );
         #Statistics::RserveClient::debug "n = $n\n";
-        die Statistics::RserveClient::Exception->new("Invalid (short) response from server:$!")
-            if ( $n == 0 );
-    };
+	if ( $n == 0 ) {
+	  die "Invalid (short) response from server:$! \n";
+	};
     if ($@) {
-        warn "Error: on " . $self->{socket} . ":" . $@->getErrorMessage() . "\n";
+        warn "Error: on " . $self->{socket} . ":" . $@ . "\n";
         return FALSE;
     }
 
@@ -512,13 +504,13 @@ sub processResponse($) {
         #Statistics::RserveClient::debug "receiving pkt..\n";
         ( defined( recv( $self->{socket}, $buf, 16, 0 ) )
                 && length($buf) >= 16 )
-            or die Statistics::RserveClient::Exception->new(
-            'Invalid (short) response from server:');
+            or die Statistics::RserveClient::Exception->new( 
+	      'Invalid (short) response from server:');
         $n = length($buf);
         #Statistics::RserveClient::debug "n = $n\n";
     };
     if ($@) {
-        warn $@->getErrorMessage();
+        warn $@;
     }
 
     # Statistics::RserveClient::debug "got response...$buf\n";
@@ -551,7 +543,7 @@ sub processResponse($) {
             # Statistics::RserveClient::debug "  n = $n\n";
         };
         if ($@) {
-            warn $@->getErrorMessage();
+            warn $@;
         }
 
         #Statistics::RserveClient::debug "buf = $buf\n";
