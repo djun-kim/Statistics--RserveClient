@@ -232,49 +232,51 @@ sub new {
     #   [12] ... (additional quad attributes; /r/n and - are ignored)
     my $buf = '';
     eval {
-        (          defined( recv( $self->{socket}, $buf, 32, 0 ) )
-                && length($buf) >= 32
-                && substr( $buf, 0, 4 ) eq 'Rsrv' )
-	  or die "Invalid response from server: $@";
+        ( defined( recv( $self->{socket}, $buf, 32, 0 ) )
+              && length($buf) >= 32
+              && substr( $buf, 0, 4 ) eq 'Rsrv' )
+	or die "Invalid response from server: $@";
     };
     if ($@) {
         warn $@;
+	return;
     }
+    else {
+        # @TODO: need to be less specific here
+        my $rv = substr( $buf, 4, 4 );
+        if ( $rv ne '0103' ) {
+           die Statistics::RserveClient::Exception->new('Unsupported protocol version.');
+        }
 
-    # @TODO: need to be less specific here
-    my $rv = substr( $buf, 4, 4 );
-    if ( $rv ne '0103' ) {
-        die Statistics::RserveClient::Exception->new('Unsupported protocol version.');
+        # Parse attributes.  From the Rserve documentation
+        #  "R151" - version of R (here 1.5.1)
+        #  "ARpt" - authorization required (here "pt"=plain text, "uc"=unix crypt)
+        #           connection will be closed if the first packet is not CMD_login.
+        #           If more AR.. methods are specified, then client is free to
+        #           use the one he supports (usually the most secure)
+        #  "K***" - key if encoded authentification is challenged (*** is the key)
+        #           for Unix crypt the first two letters of the key are the salt
+        #           required by the server */
+
+        # Grab connection attributes (each is a quad)
+        for ( my $i = 12; $i < 32; $i += 4 ) {
+            my $attr = substr( $buf, $i, 4 );
+    
+            Statistics::RserveClient::debug( "attr = $attr\n" );
+            if ( $attr eq 'ARpt' ) {
+                $self->{auth_request} = TRUE;
+                $self->{auth_method}  = 'plain';
+            }
+            elsif ( $attr eq 'ARuc' ) {
+                $self->{auth_request} = TRUE;
+                $self->{auth_method}  = 'crypt';
+            }
+            if ( substr( $attr, 0, 1 ) eq 'K' ) {
+                $self->{auth_key} = substr( $attr, 1, 3 );
+            }
+        }
+        return $self;
     }
-
-    # Parse attributes.  From the Rserve documentation
-    #  "R151" - version of R (here 1.5.1)
-    #  "ARpt" - authorization required (here "pt"=plain text, "uc"=unix crypt)
-    #           connection will be closed if the first packet is not CMD_login.
-    #           If more AR.. methods are specified, then client is free to
-    #           use the one he supports (usually the most secure)
-    #  "K***" - key if encoded authentification is challenged (*** is the key)
-    #           for Unix crypt the first two letters of the key are the salt
-    #           required by the server */
-
-    # Grab connection attributes (each is a quad)
-    for ( my $i = 12; $i < 32; $i += 4 ) {
-        my $attr = substr( $buf, $i, 4 );
-
-        Statistics::RserveClient::debug( "attr = $attr\n" );
-        if ( $attr eq 'ARpt' ) {
-            $self->{auth_request} = TRUE;
-            $self->{auth_method}  = 'plain';
-        }
-        elsif ( $attr eq 'ARuc' ) {
-            $self->{auth_request} = TRUE;
-            $self->{auth_method}  = 'crypt';
-        }
-        if ( substr( $attr, 0, 1 ) eq 'K' ) {
-            $self->{auth_key} = substr( $attr, 1, 3 );
-        }
-    }
-    return $self;
 }
 
 sub DESTROY() {
@@ -308,7 +310,7 @@ sub evalString() {
     }
 
     Statistics::RserveClient::debug( "parser = $parser\n" );
-    Statistics::RserveClient::debug( "attr = @attr\n" );
+    Statistics::RserveClient::debug( "attr = %attr\n" );
     Statistics::RserveClient::debug( "string = $string\n" );
 
     my %r = $self->command( Statistics::RserveClient::Connection::CMD_eval, $string );
@@ -485,6 +487,7 @@ sub commandRaw() {
 	if ( $n == 0 ) {
 	  die "Invalid (short) response from server:$! \n";
 	};
+      };
     if ($@) {
         warn "Error: on " . $self->{socket} . ":" . $@ . "\n";
         return FALSE;
