@@ -19,6 +19,10 @@ if (@ARGV > 0) {
 print "Opening connection to $server...\n";
 
 my $cnx = new Statistics::RserveClient::Connection($server);
+if ( !ref ($cnx) || ! UNIVERSAL::can($cnx, 'can') ) {
+  warn "$0: Can't create a connection\n";
+  exit;
+}
 
 print "Established connection: $cnx.\n";
 
