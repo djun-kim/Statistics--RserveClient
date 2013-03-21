@@ -9,7 +9,7 @@
 # Should be run after all code changes have been made, committed, and
 # pushed to github.  
 
-dirs_to_ignore=' ./scripts ./.git '
+files_to_ignore=' ./scripts ./.git ./.gitignore ./.perltidyrc'
 
 release=$1
 
@@ -21,7 +21,7 @@ fi
 
 echo "Preparing to release $release"
 
-echo "ignoring '$dirs_to_ignore'"
+echo "ignoring '$files_to_ignore'"
 
 #  * Updates the Version file
 echo release-CPAN-$release > VERSION
