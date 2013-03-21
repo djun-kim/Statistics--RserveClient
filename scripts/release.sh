@@ -10,18 +10,45 @@
 # pushed to github.  
 
 files_to_ignore=' ./scripts ./.git ./.gitignore ./.perltidyrc'
+dotag=0;
 
-release=$1
+usage="Usage: $0  [--tag] <release-tag>"
 
-if [ $# -ne 1 ] 
+if [ $# -lt 1 ] 
   then
-     echo "Usage: $0 <release-tag>"
+     echo $usage
      exit 1;
 fi
 
-echo "Preparing to release $release"
+arg1=$1;
+if [ $arg1 = '--tag' ] 
+   then 
+     dotag=1;
+     release=$2;
+     if [ $release ] 
+        then
+           echo "Release is $release"
+     else
+        echo $usage;
+        exit 1;
+     fi
+else
+     release=$1;
+     if [ $release ] 
+        then
+           echo "Release is $release"
+     else
+        echo $usage;
+        exit 1;
+     fi
+fi
 
-echo "ignoring '$files_to_ignore'"
+echo "Preparing to release release-CPAN-$release"
+if [ $dotag -eq 1 ] 
+   then
+      echo "Adding tag release-CPAN-$release to git and pushing."
+fi
+echo "Ignoring '$files_to_ignore'"
 
 #  * Updates the Version file
 echo release-CPAN-$release > VERSION
@@ -35,12 +62,15 @@ find . -type f \
 | cut -c3-254 > MANIFEST
 
 #  * Removes files and directories that should not be in the release.
-#    make distclean
+make distclean
 
 #  * Adds a release tag via 'git tag -a <release-tag>' and pushes it to github
 #    (We'll need to set up certificates for SSH/SSL on github...) 
-#    git tag -a release-CPAN-$release
-#    git push --tags
+if [ $dotag -eq 1 ] 
+   then
+      git tag -a release-CPAN-$release
+      #git push --tags
+fi
 
 # Create the tarball for upload to PAUSE
 pushd ..
