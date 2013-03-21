@@ -60,12 +60,13 @@ Statistics::RserveClient - An Rserve Client library for the R statistics platfor
 
 =head1 DESCRIPTION
 
-Rserve provides a network server interface to the R statistical
-platform. The Statistics::RserveClient package provides a Perl client
-library to enable interaction with Rserve from within Perl applications.
+Rserve provides a connection-oriented network interface to the R
+statistical platform. The Statistics::RserveClient package provides a
+Perl client library to enable interaction with Rserve from within Perl
+applications.
 
 Using RserveClient, your Perl application can pass strings to Rserve
-for evaluation by R. The results are returned as Perl objects.
+for evaluation by R. The results are returned as Perl arrays.
 
 =head1 USAGE
 
@@ -77,17 +78,20 @@ for evaluation by R. The results are returned as Perl objects.
 
 =head1 BUGS
 
-This library does not yet support the full rserve protocol. For example, long packets are not supported.
+This library does not yet support the full rserve protocol. For
+example, long packets are not supported.
 
 =head1 SUPPORT
 
-
+Please visit http://github.com/djun-kim/Statistics--RserveClient to
+view/file bug reports and feature requests and to browse additional
+documentation.
 
 =head1 AUTHOR
 
     Djun M. Kim
     CPAN ID: DJUNKIM
-    Cielo Systems Inc. / UBC Statistics
+    Cielo Systems Inc.
     info@cielosystems.com
     http://github.org/djun-kim/Statistics--RserveClient/wiki
 
@@ -101,10 +105,17 @@ This program is free software licensed under the...
 The full text of the license can be found in the
 LICENSE file included with this module.
 
+=head1 ACKNOWLEDGEMENTS
+
+This software was partially funded through the financial assistance of
+the University of British Columbia, via a Teaching and Learning
+Enhancement Fund project led by Dr. Bruce Dunham (UBC Statistics).
+
+The author would also like to thank Dr. Davor Cubranic (UBC
+Statistics) for many improvements to the code, in particular most of
+the tests.
 
 =head1 SEE ALSO
-
-perl(1).
 
 rserve: (http://www.rforge.net/Rserve/)
 
@@ -128,13 +139,14 @@ my %typeHash = ();
 
 my $DEBUG = FALSE;
 
-=head2 debug()
-
- Usage     : debug("This is a debug message;");
- Purpose   : Prints a string to the debugging output stream.
- Argument  : A string to be output to the debug stream.
-
-=cut
+##
+# =head2 debug()
+#
+# Usage     : debug("This is a debug message;");
+# Purpose   : Prints a string to the debugging output stream.
+# Argument  : A string to be output to the debug stream.
+#
+# =cut
 
 sub debug($) {
   my $msg = shift;
@@ -143,15 +155,16 @@ sub debug($) {
   return 1;
 }
 
-=head2 buf2str()
-
- Usage     : buf2str(\@buf);
- Purpose   : Takes a (reference to) a given array and returns a string representation
- Argument  : A reference to an array.
- Returns   : A string representation of the given array.
- Comments  : Utility routine, intended to help printing debugging output.
-
-=cut
+##
+# =head2 buf2str()
+# 
+#  Usage     : buf2str(\@buf);
+#  Purpose   : Takes a (reference to) a given array and returns a string representation
+#  Argument  : A reference to an array.
+#  Returns   : A string representation of the given array.
+#  Comments  : Utility routine, intended to help printing debugging output.
+# 
+# =cut
 
 sub buf2str {
     my $r = shift;
