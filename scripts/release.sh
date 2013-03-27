@@ -12,7 +12,7 @@
 files_to_ignore=' ./scripts ./.git ./.gitignore ./.perltidyrc'
 dotag=0;
 
-usage="Usage: $0  [--tag] <release-tag>"
+usage="Usage: $0 [ --tag ] <release-tag>"
 
 if [ $# -lt 1 ] 
   then
@@ -49,6 +49,9 @@ if [ $dotag -eq 1 ]
       echo "Adding tag release-CPAN-$release to git and pushing."
 fi
 echo "Ignoring '$files_to_ignore'"
+
+#  * Updates $VERSION string in lib/Statistics/RserveClient/VERSION
+echo  '$VERSION = '\'"$release"\'';' > lib/Statistics/RserveClient/VERSION
 
 #  * Updates the Version file
 echo release-CPAN-$release > VERSION
