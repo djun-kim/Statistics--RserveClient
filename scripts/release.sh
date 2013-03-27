@@ -71,7 +71,7 @@ make distclean
 #    (We'll need to set up certificates for SSH/SSL on github...) 
 if [ $dotag -eq 1 ] 
    then
-      git tag -a release-CPAN-$release
+      git tag -a -m "Release tag for release-CPAN-$release." release-CPAN-$release 
       #git push --tags
 fi
 
