@@ -17,6 +17,9 @@
 # R Double Factor
 # class Rserve_REXP_Factor extends Rserve_REXP_Integer {
 package Statistics::RserveClient::REXP::Factor;
+
+our $VERSION = '0.05'; #VERSION
+
 our @ISA = qw (Statistics::RserveClient::REXP::Integer);
 
 use Statistics::RserveClient;

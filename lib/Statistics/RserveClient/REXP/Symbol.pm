@@ -25,6 +25,8 @@ use Statistics::RserveClient::Parser;
 
 package Statistics::RserveClient::REXP::Symbol;
 
+our $VERSION = '0.05'; #VERSION
+
 our @ISA = qw(Statistics::RserveClient::REXP);
 
 sub new($$) {

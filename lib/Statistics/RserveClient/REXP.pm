@@ -18,6 +18,8 @@
 
 package Statistics::RserveClient::REXP;
 
+our $VERSION = '0.05'; #VERSION
+
 use Statistics::RserveClient;
 use Statistics::RserveClient qw (:xt_types );
 

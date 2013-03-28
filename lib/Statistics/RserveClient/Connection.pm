@@ -14,6 +14,8 @@
 
 package Statistics::RserveClient::Connection;
 
+our $VERSION = '0.05'; #VERSION
+
 use Statistics::RserveClient;
 
 use Data::Dumper;

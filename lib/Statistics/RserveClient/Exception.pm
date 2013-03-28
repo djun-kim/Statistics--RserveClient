@@ -13,6 +13,8 @@
 
 package Statistics::RserveClient::Exception;
 
+our $VERSION = '0.05'; #VERSION
+
 sub new() {
     my $class   = shift;
     my $message = shift;

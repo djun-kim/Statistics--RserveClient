@@ -5,6 +5,8 @@
 
 package Statistics::RserveClient::Parser;
 
+our $VERSION = '0.05'; #VERSION
+
 #use strict;
 #use warnings;
 #use diagnostics;

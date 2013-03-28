@@ -3,7 +3,9 @@ use strict;
 
 
     use Exporter ();
-    use vars qw(@ISA @EXPORT @EXPORT_OK %EXPORT_TAGS);
+    use vars qw($VERSION @ISA @EXPORT @EXPORT_OK %EXPORT_TAGS);
+    our $VERSION = '0.05';  #VERSION
+
     @ISA         = qw(Exporter);
     our @EXPORT = qw( TRUE FALSE );
 

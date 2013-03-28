@@ -23,6 +23,9 @@ use Statistics::RserveClient qw (:xt_types );
 use Statistics::RserveClient::REXP;
 
 package Statistics::RserveClient::REXP::Raw;
+
+our $VERSION = '0.05'; #VERSION
+
 our @ISA = qw(Statistics::RserveClient::REXP);
 
 my $_value;    #protected

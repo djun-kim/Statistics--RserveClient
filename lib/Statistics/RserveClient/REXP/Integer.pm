@@ -23,6 +23,9 @@ use Statistics::RserveClient::REXP::Vector;
 
 #class Rserve_REXP_Integer extends Rserve_REXP_Vector {
 package Statistics::RserveClient::REXP::Integer;
+
+our $VERSION = '0.05'; #VERSION
+
 our @ISA = qw(Statistics::RserveClient::REXP::Vector);
 
 sub isInteger() { return TRUE; }

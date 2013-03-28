@@ -25,6 +25,9 @@ use Exporter;
 # R Double vector
 # class Rserve_REXP_Vector extends Rserve_REXP {
 package Statistics::RserveClient::REXP::Vector;
+
+our $VERSION = '0.05'; #VERSION
+
 our @ISA = qw(Statistics::RserveClient::REXP Exporter);
 
 sub new() {

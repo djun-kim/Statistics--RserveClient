@@ -14,8 +14,12 @@
 
 package Statistics::RserveClient::Funclib;
 
+our $VERSION = '0.05'; #VERSION
+
 use Exporter;
+
 our @EXPORT = qw( _rserve_make_packet int8 );
+
 
 #sub int8($buf, $o = 0) {
 sub int8($$) {
