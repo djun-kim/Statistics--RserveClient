@@ -67,6 +67,13 @@ find . -type f \
 #  * Removes files and directories that should not be in the release.
 make distclean
 
+# Commit the changes resulting from updating the $VERSION variable and
+# push the changes to github.  The push requires git authentication
+# via certificates.
+
+# git commit -a -m "Updating $VERSION number."
+# git push
+
 #  * Adds a release tag via 'git tag -a <release-tag>' and pushes it to github
 #    (We'll need to set up certificates for SSH/SSL on github...) 
 if [ $dotag -eq 1 ] 
