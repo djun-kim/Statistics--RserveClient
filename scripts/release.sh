@@ -50,20 +50,8 @@ if [ $dotag -eq 1 ]
 fi
 echo "Ignoring '$files_to_ignore'"
 
-#  * Updates $VERSION string in lib/Statistics/RserveClient/VERSION.pm
-#echo  '$VERSION = '\'"$release"\'';' > lib/Statistics/RserveClient/VERSION.pm
-cat > lib/Statistics/RserveClient/VERSION.pm <<END-OF-FILE
-package Statistics::RserveClient::VERSION;
-
-use Exporter;
-
-use vars qw(\$VERSION @ISA @EXPORT @EXPORT_OK);
-@ISA         = qw(Exporter);
-
-\$VERSION = '$release';
-
-1;
-END-OF-FILE
+#  * Updates $VERSION strings in all '*.pm' files in lib/Statistics
+find lib/Statistics -name '*.pm' -exec scripts/update_version.pl {} $release \;
 
 #  * Updates the Version file
 echo release-CPAN-$release > VERSION
