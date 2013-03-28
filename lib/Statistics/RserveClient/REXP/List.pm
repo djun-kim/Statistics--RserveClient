@@ -25,7 +25,7 @@ use Statistics::RserveClient::REXP::Vector;
 
 package Statistics::RserveClient::REXP::List;
 
-our $VERSION = '0.05'; #VERSION
+our $VERSION = '0.06'; #VERSION
 
 our @ISA = qw(Statistics::RserveClient::REXP::Vector);
 

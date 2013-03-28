@@ -14,7 +14,7 @@
 
 package Statistics::RserveClient::Funclib;
 
-our $VERSION = '0.05'; #VERSION
+our $VERSION = '0.06'; #VERSION
 
 use Exporter;
 

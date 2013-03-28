@@ -13,7 +13,7 @@
 
 package Statistics::RserveClient::ParserException;
 
-our $VERSION = '0.05'; #VERSION
+our $VERSION = '0.06'; #VERSION
 
 use Statistics::RserveClient::Exception;
 
