@@ -21,7 +21,7 @@ use Data::Dumper;
 #use Statistics::RserveClient::ParserException;
 
 use Statistics::RserveClient::Funclib;
-use Statistics::RserveClient qw( :xt_types );
+use Statistics::RserveClient qw( TRUE FALSE :xt_types );
 
 use Statistics::RserveClient::REXP;
 
