@@ -99,8 +99,7 @@ sub parse {
     Statistics::RserveClient::debug "buf = $buf\n";
     Statistics::RserveClient::debug "offset = $offset\n";
 
-    use vars qw(@a);
-    @a = ();
+    my @a = ();
 
     my @names = ();
     my @na    = ();
