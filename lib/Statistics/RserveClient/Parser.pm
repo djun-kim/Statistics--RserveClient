@@ -99,8 +99,7 @@ sub parse {
     Statistics::RserveClient::debug "buf = $buf\n";
     Statistics::RserveClient::debug "offset = $offset\n";
 
-    use vars qw(@a);
-    @a = ();
+    my @a = ();
 
     my @names = ();
     my @na    = ();
@@ -347,19 +346,17 @@ sub parse {
         }
     }    # end switch
 
+    Statistics::RserveClient::debug "after parse: offset = $offset\n";
+    Statistics::RserveClient::debug "after parse: \$_[1] = " . $_[1] . "\n";
+    $_[1] = $offset;
+
     #if (self::$use_array_object) {
     if ( use_array_object() ) {
         # if ( is_array(@a) & @attr ) {
         if ( ( ref(@a) == 'ARRAY' ) & %attr ) {
             return new Statistics::RserveClient::RNative( @a, %attr );
         }
-        else {
-            return @a;
-        }
     }
-    Statistics::RserveClient::debug "after parse: offset = $offset\n";
-    Statistics::RserveClient::debug "after parse: \$_[1] = " . $_[1] . "\n";
-    $_[1] = $offset;
     return @a;
 }
 
