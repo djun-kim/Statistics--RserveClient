@@ -4,7 +4,7 @@ use autodie;
 
 use Statistics::RserveClient::Connection;
 
-use Test::More tests => 12;
+use Test::More tests => 8;
 
 SKIP: {
     eval {
