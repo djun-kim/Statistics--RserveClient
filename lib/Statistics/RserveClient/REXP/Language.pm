@@ -24,7 +24,7 @@ use Statistics::RserveClient::REXP::List;
 #class Rserve_REXP_Language extends Rserve_REXP_List {
 package Statistics::RserveClient::REXP::Language;
 
-our $VERSION = '0.06'; #VERSION
+our $VERSION = '0.07'; #VERSION
 
 our @ISA = qw(Statistics::RserveClient::REXP::List);
 

@@ -5,7 +5,7 @@
 
 package Statistics::RserveClient::Parser;
 
-our $VERSION = '0.06'; #VERSION
+our $VERSION = '0.07'; #VERSION
 
 #use strict;
 #use warnings;

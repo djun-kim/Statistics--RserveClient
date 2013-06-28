@@ -14,7 +14,7 @@
 
 package Statistics::RserveClient::Connection;
 
-our $VERSION = '0.06'; #VERSION
+our $VERSION = '0.07'; #VERSION
 
 use Statistics::RserveClient;
 

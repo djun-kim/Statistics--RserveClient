@@ -62,6 +62,7 @@ find . -type f \
 | grep -v scripts \
 | grep -v .perltidyrc \
 | grep -v .gitignore \
+| grep -v Makefile \
 | cut -c3-254 > MANIFEST
 
 #  * Removes files and directories that should not be in the release.
@@ -71,7 +72,7 @@ make distclean
 # push the changes to github.  The push requires git authentication
 # via certificates.
 
-# git commit -a -m "Updating $VERSION number."
+# git commit -a -m "Updating version number release-CPAN-$release."
 # git push
 
 #  * Adds a release tag via 'git tag -a <release-tag>' and pushes it to github

@@ -26,7 +26,7 @@ use Exporter;
 # class Rserve_REXP_Vector extends Rserve_REXP {
 package Statistics::RserveClient::REXP::Vector;
 
-our $VERSION = '0.06'; #VERSION
+our $VERSION = '0.07'; #VERSION
 
 our @ISA = qw(Statistics::RserveClient::REXP Exporter);
 
