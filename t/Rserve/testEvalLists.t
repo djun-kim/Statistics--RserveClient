@@ -69,7 +69,7 @@ SKIP: {
 
     my @deeply_nested_list = $cnx->evalString('list(list(list(1, 2:4, list("a", 123, "b"), "foo")))');
     my @expected_deeply_nested_list = ( [[1, [2, 3, 4], ["a", 123, "b"], "foo"]]);
-    is_deeply( \@deeply_nested_list, \@expected_deeply_nested_list, 'list of lists' )
+    is_deeply( \@deeply_nested_list, \@expected_deeply_nested_list, 'deep list of lists' )
         or diag explain @deeply_nested_list;
 
 }
