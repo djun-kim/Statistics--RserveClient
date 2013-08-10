@@ -151,12 +151,19 @@ sub parse {
                 Statistics::RserveClient::debug "******* i = $i\n";
                 #$a[] = parse($buf, &$i);
                 Statistics::RserveClient::debug("recursive call to parse($buf, $i)\n");
-                #my @parse_result = parse( $buf, $i, @attr );
-                #push( @a, \@parse_result );
+                my $sub_ra = Statistics::RserveClient::Funclib::int8( \@r, $i );
+                my @parse_result = parse( $buf, $i );
                 #print "*{" . Dumper(@parse_result) . "}*\n";
-                #print Dumper(@a) . "\n";
-                push( @a, parse( $buf, $i ) );
 
+                ## lists and arrays are added as references
+                if ($sub_ra == Statistics::RserveClient::XT_VECTOR ||
+                    scalar(@parse_result) > 1) {
+                    push( @a, \@parse_result );
+                } else {
+                    ## otherwise it's an R "scalar" (one-element array)
+                    push( @a, @parse_result );
+                }
+                #print Dumper(@a) . "\n";
             }
             Statistics::RserveClient::debug Dumper(@a);
          # if the 'names' attribute is set, convert the plain array into a map
