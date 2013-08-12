@@ -4,7 +4,7 @@ use autodie;
 
 use Statistics::RserveClient::Connection;
 
-use Test::More tests => 12;
+use Test::More tests => 10;
 
 SKIP: {
     eval {
@@ -61,5 +61,15 @@ SKIP: {
         \@expected_string_double_NULL_list,
         'mixed list of strings and numerics and NULLs'
     ) or diag explain @string_double_NULL_list;
+
+    my @nested_list = $cnx->evalString('list(1, 2:4, list("a", 123, "b"), "foo")');
+    my @expected_nested_list = ( 1, [2, 3, 4], ["a", 123, "b"], "foo");
+    is_deeply( \@nested_list, \@expected_nested_list, 'list of lists' )
+        or diag explain @nested_list;
+
+    my @deeply_nested_list = $cnx->evalString('list(list(list(1, 2:4, list("a", 123, "b"), "foo")))');
+    my @expected_deeply_nested_list = ( [[1, [2, 3, 4], ["a", 123, "b"], "foo"]]);
+    is_deeply( \@deeply_nested_list, \@expected_deeply_nested_list, 'deep list of lists' )
+        or diag explain @deeply_nested_list;
 
 }
