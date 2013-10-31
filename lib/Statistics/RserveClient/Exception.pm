@@ -13,7 +13,7 @@
 
 package Statistics::RserveClient::Exception;
 
-our $VERSION = '0.07'; #VERSION
+our $VERSION = 'CPAN-0.08'; #VERSION
 
 sub new() {
     my $class   = shift;

@@ -14,7 +14,7 @@
 
 package Statistics::RserveClient::Connection;
 
-our $VERSION = '0.07'; #VERSION
+our $VERSION = 'CPAN-0.08'; #VERSION
 
 use Statistics::RserveClient;
 
@@ -263,8 +263,7 @@ sub new {
         # Grab connection attributes (each is a quad)
         for ( my $i = 12; $i < 32; $i += 4 ) {
             my $attr = substr( $buf, $i, 4 );
-    
-            Statistics::RserveClient::debug( "attr = $attr\n" );
+
             if ( $attr eq 'ARpt' ) {
                 $self->{auth_request} = TRUE;
                 $self->{auth_method}  = 'plain';

@@ -24,7 +24,7 @@ use Statistics::RserveClient::REXP;
 
 package Statistics::RserveClient::REXP::Raw;
 
-our $VERSION = '0.07'; #VERSION
+our $VERSION = 'CPAN-0.08'; #VERSION
 
 our @ISA = qw(Statistics::RserveClient::REXP);
 

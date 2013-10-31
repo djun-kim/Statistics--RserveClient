@@ -66,6 +66,7 @@ find . -type f \
 | cut -c3-254 > MANIFEST
 
 #  * Removes files and directories that should not be in the release.
+perl Makefile.PL
 make distclean
 
 # Commit the changes resulting from updating the $VERSION variable and
@@ -80,7 +81,7 @@ make distclean
 if [ $dotag -eq 1 ] 
    then
       git tag -a -m "Release tag for release-CPAN-$release." release-CPAN-$release 
-      #git push --tags
+      git push --tags
 fi
 
 # Create the tarball for upload to PAUSE
