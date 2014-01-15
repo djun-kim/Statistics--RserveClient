@@ -18,7 +18,7 @@
 
 package Statistics::RserveClient::REXP;
 
-our $VERSION = 'CPAN-0.08'; #VERSION
+our $VERSION = 'CPAN-0.11'; #VERSION
 
 use Statistics::RserveClient;
 use Statistics::RserveClient qw (:xt_types );

@@ -18,7 +18,7 @@
 # class Rserve_REXP_Factor extends Rserve_REXP_Integer {
 package Statistics::RserveClient::REXP::Factor;
 
-our $VERSION = 'CPAN-0.08'; #VERSION
+our $VERSION = 'CPAN-0.11'; #VERSION
 
 our @ISA = qw (Statistics::RserveClient::REXP::Integer);
 

@@ -4,7 +4,7 @@ use strict;
 
     use Exporter ();
     use vars qw($VERSION @ISA @EXPORT @EXPORT_OK %EXPORT_TAGS);
-    our $VERSION = 'CPAN-0.08';  #VERSION
+    our $VERSION = 'CPAN-0.11';  #VERSION
 
     @ISA         = qw(Exporter);
     our @EXPORT = qw( TRUE FALSE );

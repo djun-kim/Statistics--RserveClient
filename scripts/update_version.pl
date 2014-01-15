@@ -14,7 +14,7 @@ open INPUT, "<", $file or die "Can't open file: $!\n" ;
 open OUTPUT, ">", $file.'.new' or die "Can't open file: $!\n" ;
 
 while (<INPUT>) {
-   $_ =~ s/(\s*)our(\s+)\$VERSION(\s*)=(\s*)'(\d\.\d+)';(\s*)\#VERSION/$1our$2\$VERSION$3=$4'$release';$6#VERSION/g;
+   $_ =~ s/(\s*)our(\s+)\$VERSION(\s*)=(\s*)'CPAN-(\d\.\d+)';(\s*)\#VERSION/$1our$2\$VERSION$3=$4'CPAN-$release';$6#VERSION/g;
 
    print OUTPUT $_;
 }
