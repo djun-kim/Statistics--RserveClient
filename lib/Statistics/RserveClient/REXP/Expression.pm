@@ -23,7 +23,7 @@ use Statistics::RserveClient::REXP::GenericVector;
 #class Rserve_REXP_Factor extends Rserve_REXP_GenericVector {
 package Statistics::RserveClient::REXP::Expression;
 
-our $VERSION = 'CPAN-0.11'; #VERSION
+our $VERSION = '0.12'; #VERSION
 
 our @ISA = qw(Statistics::RserveClient::REXP::GenericVector);
 

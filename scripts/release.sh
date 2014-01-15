@@ -25,29 +25,19 @@ if [ $arg1 = '--tag' ]
    then 
      dotag=1;
      release=$2;
-     if [ $release ] 
-        then
-           echo "Release is $release"
-     else
-        echo $usage;
-        exit 1;
-     fi
 else
      release=$1;
-     if [ $release ] 
-        then
-           echo "Release is $release"
-     else
-        echo $usage;
-        exit 1;
-     fi
+fi
+
+if [ $release ] 
+then
+    echo "Release is $release"
+else
+    echo $usage;
+    exit 1;
 fi
 
 echo "Preparing to release release-CPAN-$release"
-if [ $dotag -eq 1 ] 
-   then
-      echo "Adding tag release-CPAN-$release to git and pushing."
-fi
 echo "Ignoring '$files_to_ignore'"
 
 #  * Updates $VERSION strings in all '*.pm' files in lib/Statistics
@@ -69,20 +59,20 @@ find . -type f \
 perl Makefile.PL
 make distclean
 
-# Commit the changes resulting from updating the $VERSION variable and
-# push the changes to github.  The push requires git authentication
-# via certificates.
+# Commit the changes resulting from updating the $VERSION variable
 
-git commit -a -m "Updating version number release-CPAN-$release."
-git push
+echo "git commit -a -m \"Updating version number release-CPAN-$release.\""
 
 #  * Adds a release tag via 'git tag -a <release-tag>' and pushes it to github
 #    (We'll need to set up certificates for SSH/SSL on github...) 
 if [ $dotag -eq 1 ] 
    then
+      echo "Adding tag release-CPAN-$release to git and pushing."
       git tag -a -m "Release tag for release-CPAN-$release." release-CPAN-$release 
-      git push --tags
 fi
+#  * Push the changes to github.  The push requires git authentication
+#    via certificates.
+git push --tags
 
 # Create the tarball for upload to PAUSE
 pushd ..

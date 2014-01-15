@@ -11,7 +11,7 @@
 
 package Statistics::RserveClient::RNative;
 
-our $VERSION = 'CPAN-0.11'; #VERSION
+our $VERSION = '0.12'; #VERSION
 
 # @var array Data
 my $data = {};    # private
